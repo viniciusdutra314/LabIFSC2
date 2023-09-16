@@ -81,6 +81,10 @@ class Medida:
     def _converte_medida(self,objeto):
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)
+    def __str__(self):
+        return f"({self.nominal}+-{self.incerteza})"
+    def __repr__(self) :
+        return f"({self.nominal}+-{self.incerteza})"
     def __eq__(self,outro):
         '''True = Equivalentes
            False = Diferentes
@@ -92,17 +96,29 @@ class Medida:
             return True
         if delta_nominal>=3*delta_incerteza:
             return False
+    def __gt__(self,outro):
+        return self.nominal > outro.nominal
+    def __ge__(self,outro):
+        return self.nominal >= outro.nominal
     def __add__(self,outro):
+        #Como existe solução análitica da soma entre duas gaussianas
+        #iremos usar esse resultado para otimizar o código
         outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: x+y,self,outro)
+        media=self.nominal+outro.nominal
+        desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
+        return Medida(media,desvio_padrao)
     def __radd__(self,outro):
         return self.__add__(outro)
     def __sub__(self,outro):
         outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: x-y,self,outro)
+        media=self.nominal-outro.nominal
+        desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
+        return Medida(media,desvio_padrao)
     def __rsub__(self,outro):
         outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: y-x,self,outro)
+        media=-self.nominal+outro.nominal
+        desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
+        return Medida(media,desvio_padrao)
     def __mul__(self,outro):
         outro=self._converte_medida(outro)
         return montecarlo(lambda x,y: x*y,self,outro)
