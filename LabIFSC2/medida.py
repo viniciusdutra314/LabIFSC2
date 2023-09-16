@@ -116,10 +116,10 @@ class Medida:
         return montecarlo(lambda x,y: y/x,self,outro)
     def __pow__(self,outro):
         outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: x**y,self,outro)
+        return montecarlo(np.power,self,outro)
     def __rpow__(self,outro):
         outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: y**x,self,outro)
+        return montecarlo(np.power,outro,self)
     def __abs__(self):
         return Medida(abs(self.nominal),self.incerteza)
     def __int__(self):
@@ -128,6 +128,8 @@ class Medida:
         return float(self.nominal)
     def __complex__(self):
         return complex(self.nominal)
+
+
 
 
 def equivalente(medida1 : Medida, medida2 : Medida, sigmas : float ):
