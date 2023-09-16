@@ -1,4 +1,4 @@
-from medida import Medida, montecarlo
+from .medida import Medida, montecarlo
 import numpy as np
 
 def AceitaMedida(func :callable) -> callable:
@@ -57,5 +57,5 @@ power=AceitaMedida(np.power)
 __all__ = [ 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 
            'log', 'ln', 'log2', 'log10', 'sinh', 'cosh', 'tanh', 
            'arcsinh', 'arccosh', 'arctanh', 'exp', 'exp2', 'sqrt', 
-           'cbrt', 'power']
+           'cbrt', 'power','funcoes_matematicas']
 funcoes_matematicas=__all__
