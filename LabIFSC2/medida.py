@@ -82,9 +82,9 @@ class Medida:
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)
     def __str__(self):
-        return f"({self.nominal}+-{self.incerteza})"
+        return f"({self.nominal}±{self.incerteza})"
     def __repr__(self) :
-        return f"({self.nominal}+-{self.incerteza})"
+        return f"({self.nominal}±{self.incerteza})"
     def __eq__(self,outro):
         '''True = Equivalentes
            False = Diferentes
@@ -99,6 +99,7 @@ class Medida:
     def __gt__(self,outro):
         return self.nominal > outro.nominal
     def __ge__(self,outro):
+        outro=self._converte_medida(outro)
         return self.nominal >= outro.nominal
     def __add__(self,outro):
         #Como existe solução análitica da soma entre duas gaussianas
