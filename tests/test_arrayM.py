@@ -53,4 +53,4 @@ def test_curvamin():
 def test_curvamax():
     t=np.array([Medida(5,0.1),Medida(9,2),Medida(11,0.5)])
     assert np.array_equal(CurvaMax(t),np.array([5.2,13,12]))
-    assert np.array_equal(CurvaMax(t,3),np.array([5.3,15,12.5]))  
+    assert np.array_equal(CurvaMax(t,3),np.array([5.3,15,12.5]))      

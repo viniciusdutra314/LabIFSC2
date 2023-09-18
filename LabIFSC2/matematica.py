@@ -29,8 +29,7 @@ def AceitaMedida(func :callable) -> callable:
             return montecarlo(func,*args,**kargs)
         else:
             return func(*args,**kargs)
-    FuncaoLabificada.__doc__="teste"
-    return FuncaoLabificada
+    return np.vectorize(FuncaoLabificada)
 
 sin=AceitaMedida(np.sin)
 cos=AceitaMedida(np.cos)
