@@ -82,9 +82,13 @@ class Medida:
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)
     def __str__(self):
-        return f"({self.nominal}+-{self.incerteza})"
+        if self.nominal or self.incerteza:
+            return f"({self.nominal}±{self.incerteza})"
     def __repr__(self) :
-        return f"({self.nominal}+-{self.incerteza})"
+        if self.nominal or self.incerteza:
+            return f"({self.nominal}±{self.incerteza})"
+    def __neg__(self):
+        return Medida(-self.nominal,self.incerteza)
     def __eq__(self,outro):
         '''True = Equivalentes
            False = Diferentes
@@ -99,10 +103,14 @@ class Medida:
     def __gt__(self,outro):
         return self.nominal > outro.nominal
     def __ge__(self,outro):
+        outro=self._converte_medida(outro)
         return self.nominal >= outro.nominal
     def __add__(self,outro):
         #Como existe solução análitica da soma entre duas gaussianas
         #iremos usar esse resultado para otimizar o código
+        if isinstance(outro,np.ndarray):
+           self_broadcast=np.repeat(self,len(outro))
+           return self_broadcast + outro
         outro=self._converte_medida(outro)
         media=self.nominal+outro.nominal
         desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
@@ -110,6 +118,9 @@ class Medida:
     def __radd__(self,outro):
         return self.__add__(outro)
     def __sub__(self,outro):
+        if isinstance(outro,np.ndarray):
+           self_broadcast=np.repeat(self,len(outro))
+           return self_broadcast - outro
         outro=self._converte_medida(outro)
         media=self.nominal-outro.nominal
         desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
@@ -120,17 +131,32 @@ class Medida:
         desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
         return Medida(media,desvio_padrao)
     def __mul__(self,outro):
-        outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: x*y,self,outro)
+        if not isinstance(outro,Medida) and not isinstance(outro,np.ndarray):
+            constante=outro
+            return Medida(self.nominal*constante,(self.incerteza*abs(constante)))
+        elif isinstance(outro,np.ndarray):
+           self_broadcast=np.repeat(self,len(outro))
+           return self_broadcast * outro
+        else:
+            return montecarlo(lambda x,y: x*y,self,outro)
     def __rmul__(self,outro):
         return self.__mul__(outro)
     def __truediv__(self, outro):
-        outro=self._converte_medida(outro)
-        return montecarlo(lambda x,y: x/y,self,outro)
+        if not isinstance(outro,Medida) and not isinstance(outro,np.ndarray):
+            constante=outro
+            return Medida(self.nominal/constante,(self.incerteza/abs(constante)))
+        elif isinstance(outro,np.ndarray):
+           self_broadcast=np.repeat(self,len(outro))
+           return self_broadcast / outro
+        else:
+            return montecarlo(lambda x,y: x/y,self,outro)
     def __rtruediv__(self, outro):
         outro=self._converte_medida(outro)
         return montecarlo(lambda x,y: y/x,self,outro)
     def __pow__(self,outro):
+        if isinstance(outro,np.ndarray):
+           self_broadcast=np.repeat(self,len(outro))
+           return self_broadcast ** outro
         outro=self._converte_medida(outro)
         return montecarlo(np.power,self,outro)
     def __rpow__(self,outro):
