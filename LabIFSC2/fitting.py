@@ -89,7 +89,7 @@ class MPolinomio(Polynomial):
      return self.coef_pelas_raizes(raizes) 
 
 
-def regressao_polinomial(x:iter,y:iter,grau : int =1) -> MPolinomio:
+def regressao_polinomial(x,y,grau : int =1):
     '''Encontre o melhor polinômio em termos de erro
         quadrático para os seus dados
     Args:
@@ -106,7 +106,7 @@ def regressao_polinomial(x:iter,y:iter,grau : int =1) -> MPolinomio:
         coeficientes_medidas[j]=Medida(coeficientes[j],erros[j])
     return MPolinomio(coeficientes_medidas[::-1])
 
-def regressao_linear(x:iter,y:iter) -> MPolinomio:
+def regressao_linear(x,y):
     '''Encontre a melhor reta (minímos quadrados)
     
     y = a * x + b
@@ -119,7 +119,7 @@ def regressao_linear(x:iter,y:iter) -> MPolinomio:
 
     return regressao_polinomial(x,y,1)
 
-def regressao_exponencial(x: iter,y:iter) -> np.ndarray(Medida):
+def regressao_exponencial(x,y):
     '''Encontre a melhor exponencial da forma
     y = a * exp(-k*x)
 
@@ -132,7 +132,7 @@ def regressao_exponencial(x: iter,y:iter) -> np.ndarray(Medida):
     coefs=regressao_linear(x,np.log(y)).coef
     return np.array([exp(coefs[0]),coefs[1]])
 
-def regressao_potencia(x : iter , y: iter) -> np.ndarray(Medida):
+def regressao_potencia(x, y):
     '''Encontra a melhor lei de potência
        
        y=A * (x^n)  
