@@ -1,0 +1,10 @@
+site_name: LabIFSC2
+
+theme:
+   material
+
+markdown_extensions:
+  - pymdownx.highlight:
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences

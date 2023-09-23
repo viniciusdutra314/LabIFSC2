@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.polynomial import Polynomial
 from .medida import Medida
-from .matematica import exp
+from .matematica import exp,AceitaMedida
 from .arrayM import Nominais
 
 class MPolinomio(Polynomial):
@@ -89,7 +89,7 @@ class MPolinomio(Polynomial):
      return self.coef_pelas_raizes(raizes) 
 
 
-def regressao_polinomial(x:iter,y:iter,grau : int =1) -> MPolinomio:
+def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
     '''Encontre o melhor polinômio em termos de erro
         quadrático para os seus dados
     Args:
@@ -97,16 +97,22 @@ def regressao_polinomial(x:iter,y:iter,grau : int =1) -> MPolinomio:
 
         grau : int , grau do polinômio
     Return : 
-        MPolinomio com os coeficientes
+        Array com coeficientes
+        func=True:
+            MPolinomio(callable)
     '''
+    x=Nominais(x) ; y=Nominais(y)
+
     coeficientes, covarianca=np.polyfit(x,y,grau,cov=True)
     erros=np.sqrt(np.diag(covarianca))
     coeficientes_medidas=np.empty(len(coeficientes),dtype=Medida)
     for j in range(len(coeficientes)):
         coeficientes_medidas[j]=Medida(coeficientes[j],erros[j])
-    return MPolinomio(coeficientes_medidas[::-1])
-
-def regressao_linear(x:iter,y:iter) -> MPolinomio:
+    if not func:
+        return coeficientes_medidas[::-1]
+    if func:
+        return MPolinomio(coeficientes_medidas[::-1])
+def regressao_linear(x:iter,y:iter,func=False) -> MPolinomio:
     '''Encontre a melhor reta (minímos quadrados)
     
     y = a * x + b
@@ -114,25 +120,27 @@ def regressao_linear(x:iter,y:iter) -> MPolinomio:
     Args:
         x , y iterables (arrays,list,...) com floats ou Medidas
     Return : 
-        MPolinomio com os coeficientes
+        Array com Coeficientes
     '''
+    return regressao_polinomial(x,y,1,func)
 
-    return regressao_polinomial(x,y,1)
-
-def regressao_exponencial(x: iter,y:iter) -> np.ndarray(Medida):
+def regressao_exponencial(x,y,func=False):
     '''Encontre a melhor exponencial da forma
     y = a * exp(-k*x)
 
     Args:
         x , y iterables (arrays,list,...) com floats ou Medidas
     Return:
-        list com Medidas a , k
+        arrays com Medidas a , k
+        if func=True:
+        
     '''
-    x_nominal=Nominais(x) ; y_nominal=Nominais(x)
     coefs=regressao_linear(x,np.log(y)).coef
-    return np.array([exp(coefs[0]),coefs[1]])
+    coefs[0]=exp(coefs[0])
+    if not func: return coefs
+    else:  return AceitaMedida(lambda x:coefs[0]*np.exp(-coefs[1]*x))
 
-def regressao_potencia(x : iter , y: iter) -> np.ndarray(Medida):
+def regressao_potencia(x, y,func=False) :
     '''Encontra a melhor lei de potência
        
        y=A * (x^n)  
@@ -140,8 +148,9 @@ def regressao_potencia(x : iter , y: iter) -> np.ndarray(Medida):
     Args:
         x , y iterables (arrays,list,...) com floats ou Medidas
     Return:
-        list com Medidas a , n
+        list com Medidas A , n
     '''
-    x_nominal=Nominais(x) ; y_nominal=Nominais(x)
-    coefs=regressao_linear(np.log(x_nominal),np.log(y_nominal)).coef
-    return np.array([np.exp(coefs[0]), coefs[1]])
+    coefs=regressao_linear(np.log(x),np.log(y)).coef
+    coefs[0]=np.exp(coefs[0])
+    if not func: return coefs
+    else: return AceitaMedida(lambda x:coefs[0]*x**coefs[1])

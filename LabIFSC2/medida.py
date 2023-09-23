@@ -1,4 +1,5 @@
 import numpy as np
+from .unidades import TODAS_UNIDADES, Unidade
 
 def montecarlo(func : callable, *parametros  , 
                hist : bool=False,probabilidade : list[float] =[0,0]):
@@ -76,14 +77,43 @@ class Medida:
         try: float(incerteza) ; self.incerteza=incerteza
         except: raise TypeError("Incerteza inválida, é necessário um objeto que possa ser convertido para float")
 
-        if isinstance(unidade,str): self.unidade=unidade
-        else: raise TypeError("Unidade precisa ser uma string")
-    def _converte_medida(self,objeto):
-        if isinstance(objeto,Medida): return objeto
-        else: return Medida(objeto)
+        if isinstance(unidade,str) and unidade:
+            self.unidade=TODAS_UNIDADES[unidade]
+        if isinstance(unidade,Unidade):
+            self.unidade=unidade
+        if not unidade: 
+            self.unidade=TODAS_UNIDADES["adimensional"]
+
+        if self.unidade.simbolo!="adimensional":
+            self.si_nominal=self.nominal*self.unidade.cte_mult +self.unidade.cte_ad
+            self.si_incerteza=self.incerteza*self.unidade.cte_mult
+        else:
+            self.si_nominal=self.nominal
+            self.si_incerteza=self.incerteza
     def __str__(self):
-        if self.nominal or self.incerteza:
-            return f"({self.nominal}±{self.incerteza})"
+        from numpy import log10
+        from math import floor
+        if self.unidade.nome=="adimensional":simbolo=""
+        else:simbolo=self.unidade.simbolo
+        erro=self.incerteza ; nominal=self.nominal
+        potencia_erro=floor(log10(erro))
+        mantissa=erro*10**(-potencia_erro)
+        erro=round(mantissa) if mantissa<5 else 10
+        erro=erro*10**potencia_erro
+
+        parte_decimal_inteira=str(erro).split(".")
+
+        if len(parte_decimal_inteira)==2:
+            erro_casas_decimais=len(parte_decimal_inteira[1])
+        else:
+            erro_casas_decimais=0
+        potencia_nominal=floor(log10(nominal))
+        nominal_str=f"{nominal*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
+        erro_str=f"{erro*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
+        if potencia_nominal!=0:
+            return f"({nominal_str} ± {erro_str})E{potencia_nominal} {simbolo}"
+        else:
+            return f"({nominal_str} ± {erro_str}) {simbolo}"
     def __repr__(self) :
         if self.nominal or self.incerteza:
             return f"({self.nominal}±{self.incerteza})"
@@ -93,40 +123,56 @@ class Medida:
         '''True = Equivalentes
            False = Diferentes
            None  = Inconclusivo'''
-        outro=self._converte_medida(outro)
-        delta_nominal=abs(self.nominal - outro.nominal)
-        delta_incerteza=abs(self.incerteza + outro.incerteza)
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        delta_nominal=abs(self.si_nominal - outro.si_nominal)
+        delta_incerteza=abs(self.si_incerteza + outro.si_incerteza)
         if delta_nominal<=2*delta_incerteza:
             return True
         if delta_nominal>=3*delta_incerteza:
             return False
     def __gt__(self,outro):
-        return self.nominal > outro.nominal
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        return self.si_nominal > outro.si_nominal
     def __ge__(self,outro):
-        outro=self._converte_medida(outro)
-        return self.nominal >= outro.nominal
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        return self.si_nominal >= outro.si_nominal
+    def __lt__(self,outro):
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        return self.si_nominal < outro.si_nominal
+    def __le__(self,outro):
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        return self.si_nominal <= outro.si_nominal
     def __add__(self,outro):
         #Como existe solução análitica da soma entre duas gaussianas
         #iremos usar esse resultado para otimizar o código
         if isinstance(outro,np.ndarray):
            self_broadcast=np.repeat(self,len(outro))
            return self_broadcast + outro
-        outro=self._converte_medida(outro)
-        media=self.nominal+outro.nominal
-        desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
-        return Medida(media,desvio_padrao)
+        outro=self._torna_medida(outro)
+        self._checa_dimensao(outro.unidade.simbolo)
+        media=self.si_nominal+outro.si_nominal
+        desvio_padrao=np.sqrt(self.si_incerteza**2 + outro.si_incerteza**2)
+        unidade=self._unidade_mais_proxima(outro.unidade,media)
+        media=media*unidade.cte_mult + unidade.cte_ad
+        desvio_padrao=desvio_padrao*unidade.cte_mult
+        return Medida(media,desvio_padrao,unidade)
     def __radd__(self,outro):
         return self.__add__(outro)
     def __sub__(self,outro):
         if isinstance(outro,np.ndarray):
            self_broadcast=np.repeat(self,len(outro))
            return self_broadcast - outro
-        outro=self._converte_medida(outro)
+        outro=self._torna_medida(outro)
         media=self.nominal-outro.nominal
         desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
         return Medida(media,desvio_padrao)
     def __rsub__(self,outro):
-        outro=self._converte_medida(outro)
+        outro=self._torna_medida(outro)
         media=-self.nominal+outro.nominal
         desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
         return Medida(media,desvio_padrao)
@@ -151,16 +197,16 @@ class Medida:
         else:
             return montecarlo(lambda x,y: x/y,self,outro)
     def __rtruediv__(self, outro):
-        outro=self._converte_medida(outro)
+        outro=self._torna_medida(outro)
         return montecarlo(lambda x,y: y/x,self,outro)
     def __pow__(self,outro):
         if isinstance(outro,np.ndarray):
            self_broadcast=np.repeat(self,len(outro))
            return self_broadcast ** outro
-        outro=self._converte_medida(outro)
+        outro=self._torna_medida(outro)
         return montecarlo(np.power,self,outro)
     def __rpow__(self,outro):
-        outro=self._converte_medida(outro)
+        outro=self._torna_medida(outro)
         return montecarlo(np.power,outro,self)
     def __abs__(self):
         return Medida(abs(self.nominal),self.incerteza)
@@ -170,7 +216,36 @@ class Medida:
         return float(self.nominal)
     def __complex__(self):
         return complex(self.nominal)
-
+    def _unidade_mais_proxima(self,unidade_b,valor):
+        unidade_a=self.unidade
+        x=abs((unidade_a.cte_mult + unidade_a.cte_ad)-valor)
+        y=abs((unidade_b.cte_mult + unidade_b.cte_ad)-valor)
+        if x<y: return unidade_a
+        else: return unidade_b
+    def _checa_dimensao(self,outra_unidade : str):
+        outra_unidade=TODAS_UNIDADES[outra_unidade]
+        if not np.array_equal(self.unidade.dimensao,outra_unidade.dimensao):
+            raise ValueError("Unidades com dimensões diferentes")
+    def converte(self,outra_unidade):
+        self._checa_dimensao(outra_unidade)
+        outra_unidade=TODAS_UNIDADES[outra_unidade]
+        cte_mul=self.unidade.cte_mult/outra_unidade.cte_mult
+        return Medida(self.nominal*cte_mul,self.incerteza*cte_mul,unidade=outra_unidade.simbolo)
+    def _torna_medida(self,objeto):
+        if isinstance(objeto,Medida): return objeto
+        else: return Medida(objeto)
+    def _checa_dimensao(self,outra_unidade : str):
+        outra_unidade=TODAS_UNIDADES[outra_unidade]
+        if not np.array_equal(self.unidade.dimensao,outra_unidade.dimensao):
+            raise ValueError("Unidades com dimensões diferentes")
+    def converte(self,outra_unidade):
+        self._checa_dimensao(outra_unidade)
+        outra_unidade=TODAS_UNIDADES[outra_unidade]
+        cte_mul=self.unidade.cte_mult/outra_unidade.cte_mult
+        return Medida(self.nominal*cte_mul,self.incerteza*cte_mul,unidade=outra_unidade.simbolo)
+    def _torna_medida(self,objeto):
+        if isinstance(objeto,Medida): return objeto
+        else: return Medida(objeto)
 
 
 
