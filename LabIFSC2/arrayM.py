@@ -9,11 +9,10 @@ def Nominais(arrayM : iter) -> np.ndarray:
     tamanho=len(arrayM)
     array_nominais=np.zeros(tamanho)
     
-    for index,medida in enumerate(arrayM):
-        if not isinstance(medida,Medida):
-            raise TypeError("Todos os valores precisam ser Medidas")
-        else:
-            array_nominais[index]=medida.nominal
+    for index,valores in enumerate(arrayM):
+        if not isinstance(valores,Medida):
+            valores=Medida(valores)
+        array_nominais[index]=valores.nominal
     return array_nominais
 def Incertezas(arrayM : iter) -> np.ndarray:
     '''Transforma um array/lista/iterable de medidas, em
@@ -32,7 +31,7 @@ def Incertezas(arrayM : iter) -> np.ndarray:
     return array_incertezas
 
 
-def CurvaMin(arrayM : iter,sigmas=2):
+def CurvaMin(arrayM : iter,sigma=2):
     '''Usada para auxiliar o plot de curvas téoricas
     com erros, quantidade de sigmas usados personalizavel
 
@@ -43,9 +42,9 @@ def CurvaMin(arrayM : iter,sigmas=2):
         arrayM : iterable (array,lista,...) com Medidas
         sigma (default=2), relacionada com a confiança estátistica 
     '''
-    return Nominais(arrayM) -sigmas*Incertezas(arrayM)
+    return Nominais(arrayM) -sigma*Incertezas(arrayM)
 
-def CurvaMax(arrayM : iter,sigmas=2):
+def CurvaMax(arrayM : iter,sigma=2):
     '''Usada para auxiliar o plot de curvas téoricas
     com erros, quantidade de sigmas usados personalizavel
 
@@ -56,4 +55,4 @@ def CurvaMax(arrayM : iter,sigmas=2):
         arrayM : iterable (array,lista,...) com Medidas
         sigma (default=2), relacionada com a confiança estátistica 
     '''
-    return Nominais(arrayM) + sigmas*Incertezas(arrayM)
+    return Nominais(arrayM) + sigma*Incertezas(arrayM)
