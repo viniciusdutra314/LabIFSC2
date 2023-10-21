@@ -107,7 +107,7 @@ class Medida:
             erro_casas_decimais=len(parte_decimal_inteira[1])
         else:
             erro_casas_decimais=0
-        potencia_nominal=floor(log10(nominal))
+        potencia_nominal=floor(log10(np.abs(nominal))) if nominal!=0 else 0
         nominal_str=f"{nominal*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
         erro_str=f"{erro*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
         if potencia_nominal!=0:
