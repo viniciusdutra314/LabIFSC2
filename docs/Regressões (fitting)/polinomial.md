@@ -1,8 +1,8 @@
 Regressão polinomial usando o método dos [mínimos quadrados](https://www.researchgate.net/publication/337103890_Linear_Least_Squares_Versatile_Curve_and_Surface_Fitting_CDT-17), o código é escrito usando a função 
-`polyfit` do numpy, a sua grande vantagem é que são aceitas Medidas nos arrays x e y.
+`polyfit` do numpy, a sua grande vantagem é que são aceitas Medidas nos arrays \(x\) e \(y\).
 
 É retornado os coeficientes do polinômio como Medidas com seus erros estimados, um detalhe é que 
-os coeficientes são ordenados com **grau crescente (c+bx+ax^2 e não ax^2+bx+c )**
+os coeficientes são ordenados com **grau crescente (\(c+bx+ax^2\) e não \(ax^2+bx+c\) )**
 
 
 ```{.py3 title="Exemplo de 2º grau"}

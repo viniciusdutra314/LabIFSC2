@@ -1,4 +1,4 @@
-Por incrível que pareça, é possível transformar uma exponencial em uma reta. Temos a relação $y=ae^{kx}$, considerando somente numeros positivos, podemos aplicar a função $log$ em ambos os lados, obtendo $log(y)=log(a)+kx$, se fizermos um gráfico de $log(y)$ por $x$, será uma reta!
+Por incrível que pareça, é possível transformar uma exponencial em uma reta. Temos a relação \(y=ae^{kx}\), considerando somente numeros positivos, podemos aplicar a função \(log\) em ambos os lados, obtendo \(log(y)=log(a)+kx\), se fizermos um gráfico de \(log(y)\) por \(x\), será uma reta!
 
 Como já sabemos calcular a melhor reta ([Regressão Linear](linear.md)), podemos encontrar a melhor reta usando essa transformação e depois convertemos para as variaveis originais.
 

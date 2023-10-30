@@ -2,10 +2,10 @@
 
 
 Regressão linear usando o método dos [mínimos quadrados](https://www.researchgate.net/publication/337103890_Linear_Least_Squares_Versatile_Curve_and_Surface_Fitting_CDT-17), o código é escrito usando a função 
-`polyfit` do numpy, a sua grande vantagem é que são aceitas Medidas nos arrays x e y.
+`polyfit` do numpy, a sua grande vantagem é que são aceitas Medidas nos arrays \(x\) e \(y\).
 
 É retornado os coeficientes da reta como Medidas com seus erros estimados, um detalhe é que 
-os coeficientes são ordenados com **grau crescente (b+ax e não ax+b)**
+os coeficientes são ordenados com **grau crescente (\(b+ax\) e não \(ax+b\))**
 
 
 ```{.py3 title="Exemplo"}
