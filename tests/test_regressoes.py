@@ -1,7 +1,6 @@
 from LabIFSC2 import *
 import numpy as np
 import matplotlib.pyplot as plt
-plt.style.use("seaborn")
 def test_linear_coef():
     x=np.arange(0,30)
     for _ in range(10):
@@ -61,7 +60,6 @@ def test_exponencial():
 def test_exponencial_callable():
      x=np.array([0,1,2,3,4,5])
      y=np.array([1,2,3.9,7.85,17,31])
-     breakpoint()
      a,k=regressao_exponencial(x,y) #(0.99+-0.01)e^(0.693+-0.008)
      assert a==1 and k==np.log(2)
      a,k=regressao_exponencial(x,y,base=10)#(0.99+-0.01)10^(0.301+-0.003)

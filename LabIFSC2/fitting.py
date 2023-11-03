@@ -25,12 +25,11 @@ class MPolinomio(Polynomial):
 
         if not n>=1: raise ValueError("A ordem da derivada precisa ser igual ou maior que 1")
 
-        if n>len(self.coef)-1:
-            return MPolinomio(0)
+        if n>len(self.coef)-1: return MPolinomio(0)
 
         #Vamos inverter a ordem dos coeficientes (agora será decrescente no grau)
         #somente para facilitar o código, depois os coeficientes voltaram ao normal
-
+        
         coef_dec=self.coef[::-1] ; novos_coef=coef_dec
 
         def loop_derivada(coef_dec):     
@@ -42,7 +41,6 @@ class MPolinomio(Polynomial):
 
         for _ in range(n): 
             novos_coef=loop_derivada(novos_coef)
-            novos_coef=novos_coef[novos_coef!=0]
 
         return MPolinomio(novos_coef[::-1])
    def raizes(self):
@@ -87,7 +85,8 @@ class MPolinomio(Polynomial):
         return MPolinomio(coefs[::-1]) 
    def fromroots(self,raizes):
      return self.coef_pelas_raizes(raizes) 
-
+   def funcao(self):
+       AceitaMedida(lambda x:np.sum([j for j in range(len(self.coefs)+1)]))
 
 def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
     '''Encontre o melhor polinômio em termos de erro
