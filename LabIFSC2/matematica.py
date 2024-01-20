@@ -6,7 +6,7 @@ def AceitaMedida(func :callable) -> callable:
     a função é passada por uma simulação monte carlo com as Medidas
     como variáveis gaussianas, é retornada uma Medida como resultado final
     
-    Métodos como probabilidade, hist, continuam acessiveis, exemplos:
+    Métodos como probabilidade, hist, continuam acessíveis, exemplos:
 
     import numpy as np
 
@@ -27,7 +27,6 @@ def AceitaMedida(func :callable) -> callable:
     def FuncaoLabificada(*args,**kargs):
         if isinstance(args[0],Medida):
             result=montecarlo(func,*args,**kargs)
-           
             return result
         else:
             return func(*args,**kargs)

@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "labifsc2"
+version = "0.1.0"
+description = ""
+authors = ["viniciusdutra314 <dutravinisousa2@usp.br>"]
+license = "GNU General Public License v3.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+numpy = "^1.26"
+
+
+[tool.poetry.group.dev.dependencies]
+matplotlib = "^3.8"
+blue = "^0.9"
+isort = "^5.13"
+pandas = "^2.2"
+labifsc = "^0.1.13"
+pytest = "^7.4.4"
+pyarrow = "^14.0.2"
+
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "^1.5.3"
+mkdocs-material = "^9.5.4"
+pymdown-extensions = "^10.7"
+python-markdown-math = "^0.8"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

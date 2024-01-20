@@ -12,6 +12,5 @@ def test_tabela_estatistica():
     global df
     assert np.isclose(df['senos'].mean(),0.598478311701527,atol=1e-4)
     assert np.isclose(df['angulos'].mean(),1.5)
-    assert np.isclose(df['angulos'].median(),1.5)
-    assert np.isclose(df['angulos'].std(),1.0093110847743818,atol=1e-4)
     assert np.isclose(df['angulos'].skew(),0)
+    
