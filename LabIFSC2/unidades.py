@@ -91,11 +91,11 @@ Unidade("Watt","W","W",[-3,-2,1,0,0,0,0])
 Unidade("horse-power","hp","hp",[-3,-2,1,0,0,0,0],745.7)
 Unidade("cavalo-vapor","cv","cv",[-3,-2,1,0,0,0,0],735.4987)
 ##Resistência elétrica
-Unidade("Ohm", "Ohm", "\Omega", [-3,3,1,-2,0,0,0])
+Unidade("Ohm", "Ohm", r"\Omega", [-3,3,1,-2,0,0,0])
 ##Temperatura
 Unidade("Kelvin", "K", "K",[0,0,0,0,1,0,0])
-Unidade("Celsius", "ºC", "^\circ C",[0,0,0,0,1,0,0],0,273.15)
-Unidade("Fahrenheit", "ºF", "^\circ F",[0,0,0,0,1,0,0],5/9,255.372)
+Unidade("Celsius", "ºC", r"^\circ C",[0,0,0,0,1,0,0],0,273.15)
+Unidade("Fahrenheit", "ºF", r"^\circ F",[0,0,0,0,1,0,0],5/9,255.372)
 #Tempo
 Unidade("segundo", "s", "s", [1,0,0,0,0,0,0]),
 Unidade("minuto", "min", "min",[1,0,0,0,0,0,0] ,60)

@@ -1,4 +1,4 @@
-As funções `CurvaMin` e `CurvaMax` são usadas na criação de gráficos com propagação de erro em curvas, elas recebem um array de Medidas e retornam um array com a curva máximo/mínima,abaixo consta um gráfico de uma queda livre usando Matplotlib e utilizando a gravidade com valor (9.5 ± 0.5)m/s2 . 
+As funções `CurvaMin` e `CurvaMax` são usadas na criação de gráficos com propagação de erro em curvas, elas recebem um array de Medidas e retornam um array com a curva máximo/mínima,abaixo consta um gráfico de uma queda livre usando Matplotlib e utilizando a gravidade com valor \((9.5 \pm 0.5)ms^{-2}\) . 
 
 ```{.py3 linenums=1 hl_lines="5"}
     t=np.linspace(1,10,100)

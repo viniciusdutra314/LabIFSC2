@@ -8,7 +8,6 @@ def test_plot_gravidade():
     y=(g/2)*(t**2)
     plt.plot(t,Nominais(y),color='r')
     plt.fill_between(t,CurvaMin(y),CurvaMax(y),alpha=0.3)
-    plt.show()
     
 def test_exponencial():   
     t=np.linspace(1,3,100)
@@ -16,7 +15,7 @@ def test_exponencial():
     y=exp(-k*t)
     plt.plot(t,Nominais(y),color='r')
     plt.fill_between(t,CurvaMin(y),CurvaMax(y),alpha=0.3)
-    plt.show()
+    
     
 def test_seno():
     t=np.linspace(1,3,100)
@@ -26,4 +25,4 @@ def test_seno():
     y=A*sin(w*t+phi)
     plt.plot(t,Nominais(y),color='r')
     plt.fill_between(t,CurvaMin(y),CurvaMax(y),alpha=0.3)
-    plt.show()
+    

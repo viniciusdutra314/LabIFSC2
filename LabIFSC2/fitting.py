@@ -25,12 +25,11 @@ class MPolinomio(Polynomial):
 
         if not n>=1: raise ValueError("A ordem da derivada precisa ser igual ou maior que 1")
 
-        if n>len(self.coef)-1:
-            return MPolinomio(0)
+        if n>len(self.coef)-1: return MPolinomio(0)
 
         #Vamos inverter a ordem dos coeficientes (agora será decrescente no grau)
         #somente para facilitar o código, depois os coeficientes voltaram ao normal
-
+        
         coef_dec=self.coef[::-1] ; novos_coef=coef_dec
 
         def loop_derivada(coef_dec):     
@@ -42,7 +41,6 @@ class MPolinomio(Polynomial):
 
         for _ in range(n): 
             novos_coef=loop_derivada(novos_coef)
-            novos_coef=novos_coef[novos_coef!=0]
 
         return MPolinomio(novos_coef[::-1])
    def raizes(self):
@@ -87,7 +85,8 @@ class MPolinomio(Polynomial):
         return MPolinomio(coefs[::-1]) 
    def fromroots(self,raizes):
      return self.coef_pelas_raizes(raizes) 
-
+   def funcao(self):
+       AceitaMedida(lambda x:np.sum([j for j in range(len(self.coefs)+1)]))
 
 def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
     '''Encontre o melhor polinômio em termos de erro
@@ -124,21 +123,30 @@ def regressao_linear(x:iter,y:iter,func=False) -> MPolinomio:
     '''
     return regressao_polinomial(x,y,1,func)
 
-def regressao_exponencial(x,y,func=False):
+def regressao_exponencial(x,y,base=np.exp(1),func=False):
     '''Encontre a melhor exponencial da forma
-    y = a * exp(-k*x)
+    y = a * exp(k*x)
+
+    É possível mudar a base, por exemplo, base=2 ira encontrar
+    a melhor função
+
+    y=a*2**(kx)
 
     Args:
         x , y iterables (arrays,list,...) com floats ou Medidas
+        base = número de euler, é possível mudar para qualquer base
     Return:
         arrays com Medidas a , k
         if func=True:
         
     '''
-    coefs=regressao_linear(x,np.log(y)).coef
+    x=Nominais(x) ; y=Nominais(y)
+    assert np.all(y>0), 'Todos y precisam ser positivos para uma modelagem exponencial'
+    assert base>1, 'Bases precisam ser maiores que 1'
+    coefs=regressao_linear(x,np.log(y)/np.log(base))
     coefs[0]=exp(coefs[0])
     if not func: return coefs
-    else:  return AceitaMedida(lambda x:coefs[0]*np.exp(-coefs[1]*x))
+    else:  return AceitaMedida(lambda x:coefs[0]*np.power(coefs[1]*x,base))
 
 def regressao_potencia(x, y,func=False) :
     '''Encontra a melhor lei de potência
@@ -150,7 +158,8 @@ def regressao_potencia(x, y,func=False) :
     Return:
         list com Medidas A , n
     '''
-    coefs=regressao_linear(np.log(x),np.log(y)).coef
-    coefs[0]=np.exp(coefs[0])
+    x=Nominais(x) ; y=Nominais(y)
+    coefs=regressao_linear(np.log(x),np.log(y))
+    coefs[0]=exp(coefs[0])
     if not func: return coefs
     else: return AceitaMedida(lambda x:coefs[0]*x**coefs[1])
