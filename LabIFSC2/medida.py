@@ -2,30 +2,30 @@ import numpy as np
 from .unidades import TODAS_UNIDADES, Unidade
 
 def montecarlo(func : callable, *parametros  , 
-               hist : bool=False,probabilidade : list[float] =[0,0]):
-    '''Propagação de erros usando Monte Carlo
+               hist : bool=False,probabilidade : list[float] =False):
+    '''## Propagação de erros usando Monte Carlo
 
   Calcula a média e desvio padrão da densidade de probabilidade de uma 
-  função com variaveis gaussianas, é possível calcular a probabilidade de o 
+  função com variáveis gaussianas, é possível calcular a probabilidade de o 
   resultado estar entre [a,b], como também,  receber os valores calculados 
-  para que possam serem plotados em um histograma,
+  para que possam serem plotados em um histograma
+
   Globals:
     num_gaussianos : Quantidade de números aleatórios usados (Default=10.000)
     pode ser alterado globalmente usando quantidade_numeros_gaussianos(valor)
+  
   Args:
-    func (function) : função para a propagação do erro
-    parametros list[Medida] : parametros da função definada acima
-    hist (bool) : retornar ou não os valores calculados gaussianamente na função
-    probabilidade(list) : uma lista [a,b] em que a é o começo do intervalo e b o fim
+    func (callable): função para a propagação do erro
+    parametros list[Medida]: parâmetros da função definida acima
+    hist (bool): retornar ou não a distribuição de probabilidade
+    probabilidade (list): uma lista [a,b] em que a é o começo do intervalo e b o fim
 
   Returns:
-    Por padrão:
-        Medida(media,desviopadrao)
-    Se (hist=True):
-        Medida(media,desviopadrao) 
-        Numpy Array(valores usados para encontrar a média e o desvio padrão)
-    Se (probabilidade=[a,b])
-        float (probabilidade de o resultado estar entre [a,b])
+    Resultado (Medida):  Medida com \(\mu\) e \(\sigma\)
+       
+    hist (nd.array): Histograma do resultado, caso hist=True
+
+    probabilidade (list[float]): probabilidade de o resultado estar entre [a,b], caso probabilidade=[a,b]
 '''
     #from . import num_gaussianos
 
@@ -34,9 +34,10 @@ def montecarlo(func : callable, *parametros  ,
     if not callable(func): raise TypeError("Func precisa ser um callable")
     for parametro in parametros:
         if not isinstance(parametro,Medida): 
-            raise TypeError("Todos os parametros precisam ser Medidas")          
-    if not isinstance(probabilidade,list) or len(probabilidade) != 2:
-        raise TypeError("Probabilidade é uma lista [a,b] em que a é o inicio e b o fim do intervalo")    
+            raise TypeError("Todos os parametros precisam ser Medidas")
+    if probabilidade:          
+        if not isinstance(probabilidade,list) or len(probabilidade) != 2:
+            raise TypeError("Probabilidade é uma lista [a,b] em que a é o inicio e b o fim do intervalo")    
     if not isinstance(hist,bool): raise TypeError("Histograma precisar ser um booleano")
     #gerando valores
     means_parametros=np.array([parametro.nominal for parametro in parametros])
@@ -46,7 +47,7 @@ def montecarlo(func : callable, *parametros  ,
     y_samples=vectorized_func(*np.transpose(aleatorios))
     mean=np.mean(y_samples)
     std=np.std(y_samples)
-    if probabilidade != [0,0]:
+    if probabilidade:
         a = probabilidade[0]
         b = probabilidade[1]
         condition=np.logical_and(y_samples>=a,y_samples<=b)
@@ -59,7 +60,7 @@ class Medida:
     def __init__(self,nominal,incerteza=0,unidade=""):
         """
         Inicializa uma instância da classe Medida com um valor nominal, incerteza e unidade.
-        Valor númerico se entende qualquer objeto que possa interagir normalmente com floats,
+        Valor numérico se entende qualquer objeto que possa interagir normalmente com floats,
         exemplos : int, float ,np.longdouble , np.float64...
 
         Parâmetros:

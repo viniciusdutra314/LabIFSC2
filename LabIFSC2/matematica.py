@@ -1,26 +1,16 @@
 from .medida import Medida, montecarlo
 import numpy as np
 
-def AceitaMedida(func :callable) -> callable:
+def aceitamedida(func :callable) -> callable:
     '''Possibilita que qualquer função aceite Medidas como argumentos,
     a função é passada por uma simulação monte carlo com as Medidas
     como variáveis gaussianas, é retornada uma Medida como resultado final
     
-    Métodos como probabilidade, hist, continuam acessíveis, exemplos:
+    Args:
+        func: (callable) Função que não aceita medidas
 
-    import numpy as np
-
-    sin=Aceita(np.sin)
-
-    x=Medida(2,0.1)
-
-    sin(x) # (0.90 +- 0.04)
-    
-    sin(x,probabilidade=[0.8,0.9]) # 40%
-
-    valor, histograma=sin(x,hist=True)
-
-    plt.hist(histograma,bins=200)
+    Returns:
+        func_labificada: (callable) função que aceita e retorna Medidas
 
     '''
     
@@ -32,29 +22,29 @@ def AceitaMedida(func :callable) -> callable:
             return func(*args,**kargs)
     return np.vectorize(FuncaoLabificada)
 
-sin=AceitaMedida(np.sin)
-cos=AceitaMedida(np.cos)
-tan=AceitaMedida(np.tan)
-arcsin=AceitaMedida(np.arcsin)
-arccos=AceitaMedida(np.arccos)
-arctan=AceitaMedida(np.arctan)
-log=AceitaMedida(np.log)
+sin=aceitamedida(np.sin)
+cos=aceitamedida(np.cos)
+tan=aceitamedida(np.tan)
+arcsin=aceitamedida(np.arcsin)
+arccos=aceitamedida(np.arccos)
+arctan=aceitamedida(np.arctan)
+log=aceitamedida(np.log)
 ln=log
-log2=AceitaMedida(np.log2)
-log10=AceitaMedida(np.log10)
-sinh=AceitaMedida(np.sinh)
-cosh=AceitaMedida(np.cosh)
-tanh=AceitaMedida(np.tanh)
-arcsinh=AceitaMedida(np.arcsinh)
-arccosh=AceitaMedida(np.arccosh)
-arctanh=AceitaMedida(np.arctanh)
-exp=AceitaMedida(np.exp)
-exp2=AceitaMedida(np.exp2)
-sqrt=AceitaMedida(np.sqrt)
-cbrt=AceitaMedida(np.cbrt)
-power=AceitaMedida(np.power)
+log2=aceitamedida(np.log2)
+log10=aceitamedida(np.log10)
+sinh=aceitamedida(np.sinh)
+cosh=aceitamedida(np.cosh)
+tanh=aceitamedida(np.tanh)
+arcsinh=aceitamedida(np.arcsinh)
+arccosh=aceitamedida(np.arccosh)
+arctanh=aceitamedida(np.arctanh)
+exp=aceitamedida(np.exp)
+exp2=aceitamedida(np.exp2)
+sqrt=aceitamedida(np.sqrt)
+cbrt=aceitamedida(np.cbrt)
+power=aceitamedida(np.power)
     
-__all__ = [ 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 
+__all__ = ['aceitamedida', 'sin', 'cos', 'tan', 'arcsin', 'arccos', 'arctan', 
            'log', 'ln', 'log2', 'log10', 'sinh', 'cosh', 'tanh', 
            'arcsinh', 'arccosh', 'arctanh', 'exp', 'exp2', 'sqrt', 
            'cbrt', 'power','funcoes_matematicas']

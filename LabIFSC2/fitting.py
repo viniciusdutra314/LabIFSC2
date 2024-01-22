@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.polynomial import Polynomial
 from .medida import Medida
-from .matematica import exp,AceitaMedida
+from .matematica import exp,aceitamedida
 from .arrayM import Nominais
 
 class MPolinomio(Polynomial):
@@ -86,7 +86,7 @@ class MPolinomio(Polynomial):
    def fromroots(self,raizes):
      return self.coef_pelas_raizes(raizes) 
    def funcao(self):
-       AceitaMedida(lambda x:np.sum([j for j in range(len(self.coefs)+1)]))
+       aceitamedida(lambda x:np.sum([j for j in range(len(self.coefs)+1)]))
 
 def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
     '''Encontre o melhor polinômio em termos de erro
@@ -101,7 +101,8 @@ def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
             MPolinomio(callable)
     '''
     x=Nominais(x) ; y=Nominais(y)
-
+    from numpy.polynomial import Polynomial
+    Polynomial.fit
     coeficientes, covarianca=np.polyfit(x,y,grau,cov=True)
     erros=np.sqrt(np.diag(covarianca))
     coeficientes_medidas=np.empty(len(coeficientes),dtype=Medida)
@@ -125,19 +126,22 @@ def regressao_linear(x:iter,y:iter,func=False) -> MPolinomio:
 
 def regressao_exponencial(x,y,base=np.exp(1),func=False):
     '''Encontre a melhor exponencial da forma
-    y = a * exp(k*x)
+    \(y = a * e^{kx}\) para os dados x,y
 
-    É possível mudar a base, por exemplo, base=2 ira encontrar
-    a melhor função
+    É possível mudar a base, por exemplo, 
+    base=2 ira encontrar a melhor função
 
-    y=a*2**(kx)
+    \(y=a*2^{kx}\)
 
     Args:
-        x , y iterables (arrays,list,...) com floats ou Medidas
-        base = número de euler, é possível mudar para qualquer base
-    Return:
-        arrays com Medidas a , k
-        if func=True:
+        x (iterable): Medidas ou floats
+        y (iterable): Medidas ou floats
+        base (float): Base da exponencial
+        func (bool): retorna uma função ao invés do fitting
+    
+    Returns:
+        Array (nd.array):  Medidas a , k se func=False
+        Função (callable): retorna y(x) se func=True
         
     '''
     x=Nominais(x) ; y=Nominais(y)
@@ -146,20 +150,24 @@ def regressao_exponencial(x,y,base=np.exp(1),func=False):
     coefs=regressao_linear(x,np.log(y)/np.log(base))
     coefs[0]=exp(coefs[0])
     if not func: return coefs
-    else:  return AceitaMedida(lambda x:coefs[0]*np.power(coefs[1]*x,base))
+    else:  return aceitamedida(lambda x:coefs[0]*np.power(coefs[1]*x,base))
 
 def regressao_potencia(x, y,func=False) :
-    '''Encontra a melhor lei de potência
-       
-       y=A * (x^n)  
-    
+    '''Com um conjunto de dados x,y,
+    esse método encontra a melhor lei de 
+    potência da forma  \(y=A * (x^n)\)
+
     Args:
-        x , y iterables (arrays,list,...) com floats ou Medidas
-    Return:
-        list com Medidas A , n
+        x (iterable): Medidas ou números
+        y (iterable): Medidas ou números
+        func (bool): Retorna uma função ao invés do fitting
+        
+    Returns:
+        Array (nd.array):  Medidas a , k se func=False
+        Função (callable): retorna y(x) se func=True
     '''
     x=Nominais(x) ; y=Nominais(y)
     coefs=regressao_linear(np.log(x),np.log(y))
     coefs[0]=exp(coefs[0])
     if not func: return coefs
-    else: return AceitaMedida(lambda x:coefs[0]*x**coefs[1])
+    else: return aceitamedida(lambda x:coefs[0]*x**coefs[1])
