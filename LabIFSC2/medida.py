@@ -6,31 +6,23 @@ def montecarlo(func : callable, *parametros):
     '''## Propagação de erros usando Monte Carlo
 
   Calcula a média e desvio padrão da densidade de probabilidade de uma 
-  função com variáveis gaussianas, é possível calcular a probabilidade de o 
-  resultado estar entre [a,b], como também,  receber os valores calculados 
-  para que possam serem plotados em um histograma
+  função com variáveis gaussianas, também armazena o histograma
+  inteiro dentro de uma Medida
 
   Globals:
-    num_gaussianos : Quantidade de números aleatórios usados (Default=10.000)
-    pode ser alterado globalmente usando quantidade_numeros_gaussianos(valor)
+    num_montecarlo : Quantidade de números aleatórios usados (Default=10.000)
+    pode ser alterado globalmente usando num_montecarlo(valor)
   
   Args:
     func (callable): função para a propagação do erro
     parametros list[Medida]: parâmetros da função definida acima
-    hist (bool): retornar ou não a distribuição de probabilidade
-    probabilidade (list): uma lista [a,b] em que a é o começo do intervalo e b o fim
 
   Returns:
-    Resultado (Medida):  Medida com \(\mu\) e \(\sigma\)
-       
-    hist (nd.array): Histograma do resultado, caso hist=True
-
-    probabilidade (list[float]): probabilidade de o resultado estar entre [a,b], caso probabilidade=[a,b]
+    Resultado (Medida):  Medida com \(\mu\), \(\sigma\) e histograma
 '''
     #from . import num_gaussianos
 
     N=int(1e4)
-    # importando variaveis e mensagens de erro
     if not callable(func): raise TypeError("Func precisa ser um callable")
     x_samples=np.empty((len(parametros),N))
     for index,parametro in enumerate(parametros):
@@ -222,9 +214,24 @@ class Medida:
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)
     def probabilidade(m,a,b) -> float:
-        histograma=m.histograma
-        condition=np.logical_and(histograma>=a,histograma<=b)
-        chance=np.count_nonzero(condition)/len(histograma)
+        ''' Retorna a probabilidade que a Medida
+        esteja entre [a,b] usando o histograma como
+        referencia
+
+        Args:
+            a (float): Extremo inferior
+            b (float): Extremo superior
+
+        Returns:
+            probabilidade: (float) probabilidade de estar entre [a,b]
+        
+        '''
+
+        if not len(m.histograma):
+            m.histograma=np.random.normal(m.nominal,
+                        m.incerteza,10_000)
+        condition=np.logical_and(m.histograma>=a,m.histograma<=b)
+        chance=np.count_nonzero(condition)/len(m.histograma)
         return chance
 
 

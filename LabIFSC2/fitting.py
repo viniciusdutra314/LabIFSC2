@@ -2,7 +2,7 @@ import numpy as np
 from numpy.polynomial import Polynomial
 from .medida import Medida
 from .matematica import exp,aceitamedida
-from .arrayM import Nominais
+from .arrayM import get_nominais
 
 class MPolinomio(Polynomial):
    '''
@@ -100,7 +100,7 @@ def regressao_polinomial(x:iter,y:iter,grau : int =1,func=False) -> MPolinomio:
         func=True:
             MPolinomio(callable)
     '''
-    x=Nominais(x) ; y=Nominais(y)
+    x=get_nominais(x) ; y=get_nominais(y)
     from numpy.polynomial import Polynomial
     Polynomial.fit
     coeficientes, covarianca=np.polyfit(x,y,grau,cov=True)
@@ -144,7 +144,7 @@ def regressao_exponencial(x,y,base=np.exp(1),func=False):
         Função (callable): retorna y(x) se func=True
         
     '''
-    x=Nominais(x) ; y=Nominais(y)
+    x=get_nominais(x) ; y=get_nominais(y)
     assert np.all(y>0), 'Todos y precisam ser positivos para uma modelagem exponencial'
     assert base>1, 'Bases precisam ser maiores que 1'
     coefs=regressao_linear(x,np.log(y)/np.log(base))
@@ -166,7 +166,7 @@ def regressao_potencia(x, y,func=False) :
         Array (nd.array):  Medidas a , k se func=False
         Função (callable): retorna y(x) se func=True
     '''
-    x=Nominais(x) ; y=Nominais(y)
+    x=get_nominais(x) ; y=get_nominais(y)
     coefs=regressao_linear(np.log(x),np.log(y))
     coefs[0]=exp(coefs[0])
     if not func: return coefs

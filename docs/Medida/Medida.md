@@ -8,9 +8,9 @@ Toda a propagação de erros é implementada usando uma simulação
 [Monte Carlo](../Propagação%20de%20Erros/montecarlo.md), em casos
 de solução analítica simples é implementada a propagação exata
 ```{.py3 title='Operações básicas'}
-    from LabIFSC2.medida import Medida
-    x=Medida(4,0.1)
-    y=Medida(0.4,0.05)
+    import LabIFSC2 as lab
+    x=lab.Medida(4,0.1)
+    y=lab.Medida(0.4,0.05)
     #Operações básicas
     print(x+y)#(4.40 ± 0.10) 
     print(x-y)#(3.60 ± 0.10) 
@@ -21,19 +21,57 @@ de solução analítica simples é implementada a propagação exata
     print(x**2)#(16 ± 1)
     print(3**x)#(81 ± 1)
 ```
-### Atributos
+### Valor nominal e incerteza
 Cada instância da classe Medida possui atributos
 associados a média e o desvio padrão, caso
 não seja especificado unidades, os atributos
-no SI serão iguais aos originais
-```{.py3 title='Atributos de uma medida'}
-    from LabIFSC2.medida import Medida
-    x=Medida(156,2,'cm')
+SI serão iguais aos originais
+```{.py3 title='Valor nominal e incerteza de uma medida'}
+    import LabIFSC2 as lab
+    x=lab.Medida(156,2,'cm')
     print(x.nominal)#156
     print(x.si_nominal)#1.56
     print(x.incerteza)#2
     print(x.si_incerteza)#0.02
 ```
+### Histograma
+Tecnicamente, algumas operações da biblioteca geram variáveis não gaussianas,
+um exemplo seria a divisão entre duas medidas \(z=x/y\), nesse caso, o histograma
+com a distribuição de probabilidade é armazenado em um atributo chamado **histograma**
+```{.py3 title='Histograma de uma medida'}
+    import LabIFSC2 as lab
+    z=lab.Medida(5,0.5)/lab.Medida(43,10)
+    print(z) # (0.12±0.04)
+    print(z.histograma) #array([0.1329215 , 
+    #0.17917796, 0.10256415, ..., 0.11928206])
+```
+Usando a função [hist](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.hist.html) do Matplotlib é possível visualizar esse histograma
+```{.py3 title='Plotando histograma'}
+    import matplotlib.pyplot as plt
+    plt.hist(z.histograma,bins=100)
+    plt.savefig('exemplo de histograma.jpg')
+```
+A distribuição é visivelmente não gaussiana, por isso é 
+necessário armazena-la nesse atributo de forma que os 
+cálculos de propagação de erro sejam precisos
+![Image](exemplo_histograma_medida.jpg)
+### Probabilidade
+Como cada instância da classe Medida possui um atributo de histograma
+é interessante responder a pergunta, qual é a chance de minha Medida
+estar entre \([a,b]\)? A classe Medida possui um método chamado
+probabilidade que recebe um começo \(a\) e um final \(b\) e
+retorna a probabilidade  
+```{.py3 title='Probabilidade de uma Medida'}
+    import LabIFSC2 as lab
+    print(lab.Medida(5,0.1).probabilidade(4.9,5.1)) #0.6878
+    print(lab.Medida(5,0.1).probabilidade(4.8,5.2)) #0.952
+    print(lab.Medida(5,0.1).probabilidade(4.7,5.3)) #0.9973
+
+    z=lab.Medida(5,0.1)**3
+    print(z.probabilidade(110,130)) #0.7291
+```
+:::LabIFSC2.medida.Medida.probabilidade
+
 ### Compatibilidade com o LabIFSC original
 O método tradicional usado no LabIFSC é uma propagação de erros lineares, é usada uma expansão de Taylor com centro em \(\mu\).
 No caso que os erros forem pequenos em comparação a variação da função
