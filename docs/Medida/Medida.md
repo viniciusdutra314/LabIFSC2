@@ -24,7 +24,7 @@ de solução analítica simples é implementada a propagação exata
 ### Atributos
 Cada instância da classe Medida possui atributos
 associados a média e o desvio padrão, caso
-não seja colocado unidades, os atributos
+não seja especificado unidades, os atributos
 no SI serão iguais aos originais
 ```{.py3 title='Atributos de uma medida'}
     from LabIFSC2.medida import Medida

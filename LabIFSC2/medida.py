@@ -1,8 +1,8 @@
 import numpy as np
 from .unidades import TODAS_UNIDADES, Unidade
 
-def montecarlo(func : callable, *parametros  , 
-               hist : bool=False,probabilidade : list[float] =False):
+
+def montecarlo(func : callable, *parametros):
     '''## Propagação de erros usando Monte Carlo
 
   Calcula a média e desvio padrão da densidade de probabilidade de uma 
@@ -32,32 +32,24 @@ def montecarlo(func : callable, *parametros  ,
     N=int(1e4)
     # importando variaveis e mensagens de erro
     if not callable(func): raise TypeError("Func precisa ser um callable")
-    for parametro in parametros:
+    x_samples=np.empty((len(parametros),N))
+    for index,parametro in enumerate(parametros):
         if not isinstance(parametro,Medida): 
             raise TypeError("Todos os parametros precisam ser Medidas")
-    if probabilidade:          
-        if not isinstance(probabilidade,list) or len(probabilidade) != 2:
-            raise TypeError("Probabilidade é uma lista [a,b] em que a é o inicio e b o fim do intervalo")    
-    if not isinstance(hist,bool): raise TypeError("Histograma precisar ser um booleano")
-    #gerando valores
-    means_parametros=np.array([parametro.nominal for parametro in parametros])
-    stds_parametros=np.array([parametro.incerteza for parametro in parametros])
-    aleatorios=np.random.normal(means_parametros,stds_parametros,size=(N,len(parametros)))
-    vectorized_func=np.vectorize(func)
-    y_samples=vectorized_func(*np.transpose(aleatorios))
-    mean=np.mean(y_samples)
-    std=np.std(y_samples)
-    if probabilidade:
-        a = probabilidade[0]
-        b = probabilidade[1]
-        condition=np.logical_and(y_samples>=a,y_samples<=b)
-        chance=np.count_nonzero(condition)/len(y_samples)
-        if hist==False: return chance
-    if hist==True: return Medida(mean,std),y_samples
-    return Medida(mean, std)
+        if not len(parametro.histograma):
+            x_samples[index]=np.random.normal(parametro.nominal,
+                                              parametro.incerteza,size=N)
+        else:
+            x_samples[index]=parametro.histograma
+    vec_func=np.vectorize(func)
+    histograma=vec_func(*x_samples)
+    mean=np.mean(histograma)
+    std=np.std(histograma)
+    return Medida(mean,std,histograma=histograma)
 
 class Medida:
-    def __init__(self,nominal,incerteza=0,unidade=""):
+    def __init__(self,nominal,incerteza=0,
+                 unidade="",histograma=np.array([])):
         """
         Inicializa uma instância da classe Medida com um valor nominal, incerteza e unidade.
         Valor numérico se entende qualquer objeto que possa interagir normalmente com floats,
@@ -78,6 +70,11 @@ class Medida:
         try: float(incerteza) ; self.incerteza=incerteza
         except: raise TypeError("Incerteza inválida, é necessário um objeto que possa ser convertido para float")
 
+        if not isinstance(histograma,np.ndarray):
+            raise TypeError('Histograma deve ser um array numpy')
+        else:
+            self.histograma=histograma
+
         if isinstance(unidade,str) and unidade:
             self.unidade=TODAS_UNIDADES[unidade]
         if isinstance(unidade,Unidade):
@@ -92,32 +89,9 @@ class Medida:
             self.si_nominal=self.nominal
             self.si_incerteza=self.incerteza
     def __str__(self):
-        from numpy import log10
-        from math import floor
-        if self.unidade.nome=="adimensional":simbolo=""
-        else:simbolo=self.unidade.simbolo
-        erro=self.incerteza ; nominal=self.nominal
-        potencia_erro=floor(log10(erro))
-        mantissa=erro*10**(-potencia_erro)
-        erro=round(mantissa) if mantissa<5 else 10
-        erro=erro*10**potencia_erro
-
-        parte_decimal_inteira=str(erro).split(".")
-
-        if len(parte_decimal_inteira)==2:
-            erro_casas_decimais=len(parte_decimal_inteira[1])
-        else:
-            erro_casas_decimais=0
-        potencia_nominal=floor(log10(np.abs(nominal))) if nominal!=0 else 0
-        nominal_str=f"{nominal*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
-        erro_str=f"{erro*(10**-potencia_nominal):.{erro_casas_decimais+1}f}"
-        if potencia_nominal!=0:
-            return f"({nominal_str} ± {erro_str})E{potencia_nominal} {simbolo}"
-        else:
-            return f"({nominal_str} ± {erro_str}) {simbolo}"
+        return f"({self.nominal}±{self.incerteza})"
     def __repr__(self) :
-        if self.nominal or self.incerteza:
-            return f"({self.nominal}±{self.incerteza})"
+        return f"({self.nominal}±{self.incerteza})"
     def __neg__(self):
         return Medida(-self.nominal,self.incerteza)
     def __eq__(self,outro):
@@ -247,7 +221,11 @@ class Medida:
     def _torna_medida(self,objeto):
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)
-
+    def probabilidade(m,a,b) -> float:
+        histograma=m.histograma
+        condition=np.logical_and(histograma>=a,histograma<=b)
+        chance=np.count_nonzero(condition)/len(histograma)
+        return chance
 
 
 def equivalente(medida1 : Medida, medida2 : Medida, sigmas : float ):
