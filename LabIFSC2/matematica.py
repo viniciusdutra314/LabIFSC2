@@ -2,9 +2,8 @@ from .medida import Medida, montecarlo
 import numpy as np
 
 def aceitamedida(func :callable) -> callable:
-    '''Possibilita que qualquer função aceite Medidas como argumentos,
-    a função é passada por uma simulação monte carlo com as Medidas
-    como variáveis gaussianas, é retornada uma Medida como resultado final
+    '''Possibilita que qualquer função aceite e
+    retorne Medidas como argumentos
     
     Args:
         func: (callable) Função que não aceita medidas
@@ -13,14 +12,17 @@ def aceitamedida(func :callable) -> callable:
         func_labificada: (callable) função que aceita e retorna Medidas
 
     '''
-    
-    def FuncaoLabificada(*args,**kargs):
+    def FuncaoLabificada(*args):
+        breakpoint()
         if isinstance(args[0],Medida):
-            result=montecarlo(func,*args,**kargs)
-            return result
+            resultado=np.vectorize(montecarlo)(func,*args)
+            if resultado.size==1:
+                return resultado.item()
+            else:
+                return resultado
         else:
-            return func(*args,**kargs)
-    return np.vectorize(FuncaoLabificada)
+            return func(*args)
+    return FuncaoLabificada
 
 sin=aceitamedida(np.sin)
 cos=aceitamedida(np.cos)
