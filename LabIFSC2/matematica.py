@@ -13,15 +13,11 @@ def aceitamedida(func :callable) -> callable:
 
     '''
     def FuncaoLabificada(*args):
-        breakpoint()
-        if isinstance(args[0],Medida):
             resultado=np.vectorize(montecarlo)(func,*args)
             if resultado.size==1:
                 return resultado.item()
             else:
                 return resultado
-        else:
-            return func(*args)
     return FuncaoLabificada
 
 sin=aceitamedida(np.sin)

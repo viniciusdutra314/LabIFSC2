@@ -39,7 +39,7 @@ class Unidade:
         TODAS_UNIDADES[simbolo]=self
 Unidade("adimensional","adimensional","",[0,0,0,0,0,0,0])
 #Adicione sua unidade nova aqui:
-
+Unidade('kilograma','kg','kg',[0,0,1,0,0,0,0])
 ##carga
 Unidade("Coulomb","C","C",[1,0,0,1,0,0,0])
 Unidade("Carga elementar","e","e",[1,0,0,1,0,0,0],1.602176634e-19)

@@ -73,7 +73,7 @@ def curva_max(arrayMedida : iter,sigma=2):
     return get_nominais(arrayMedida) + sigma*get_incertezas(arrayMedida)
 
 
-def linspace(a,b,n : int,incertezas,unidade=False) -> np.ndarray(Medida):
+def linspace(a,b,n : int,incertezas,unidade=False) -> np.ndarray[Medida]:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,
     mas se ela for um array cada Medida terá a respectiva incerteza.

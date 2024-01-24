@@ -30,7 +30,7 @@ def test_funcoes_matematicas():
     for nominal,incerteza in zip(nominais,incertezas):
         x=lab1.sin(lab1.Medida((nominal,incerteza)))
         y=lab2.sin(lab2.Medida(nominal,incerteza))
-        assert igualdade_medida(x,y.item())
+        assert igualdade_medida(x,y)
         x=lab1.cos(lab1.Medida((nominal,incerteza)))
         y=lab2.cos(lab2.Medida(nominal,incerteza))
-        assert igualdade_medida(x,y.item())
+        assert igualdade_medida(x,y)
