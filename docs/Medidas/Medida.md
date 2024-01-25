@@ -1,7 +1,7 @@
 A classe central do LabIFSC2 é a Medida, tecnicamente ela 
 representa uma variável aleatória gaussiana, portanto,
 é necessário fornecer uma média \(\mu\) e um desvio padrão
-\(\sigma\), além disso, é possível oferecer uma unidade
+\(\sigma\), além disso, é possível oferecer uma [unidade](Unidades.md)
 e realizar conversões de unidade
 ### Propagação de Erros
 Toda a propagação de erros é implementada usando uma simulação
@@ -34,6 +34,14 @@ SI serão iguais aos originais
     print(x.incerteza)#2
     print(x.si_incerteza)#0.02
 ```
+
+### Igualdade entre Medidas
+A igualdade ou diferença entre Medidas só pode ser determinada uma vez que as 
+Medidas tenham dimensões compativeis, caso contrário, será retornado um erro
+pela função [checa_dimensao](Unidades.md). Foi definido que duas Medidas são iguais
+se \(|(\mu_1 - \mu_2)| \le 2(\sigma_1 + \sigma_2\)) e são diferentes caso \(|(\mu_1 - \mu_2)| \le 3(\sigma_1 + \sigma_2\)), o caso que a diferença entre os valores nominais estiverem entre duas e três vezes a soma das incertezas é considerado inconclusivo e é retornado None
+
+
 ### Histograma
 Tecnicamente, algumas operações da biblioteca geram variáveis não gaussianas,
 um exemplo seria a divisão entre duas medidas \(z=x/y\), nesse caso, o histograma
