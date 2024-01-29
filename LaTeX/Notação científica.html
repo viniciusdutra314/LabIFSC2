@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#alterar-potencia" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -229,7 +234,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../Como%20contribuir%3F.html" class="md-tabs__link">
+      <a href="../Como_contribuir%3F.html" class="md-tabs__link">
         
   
     
@@ -443,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Como%20contribuir%3F.html" class="md-nav__link">
+      <a href="../Como_contribuir%3F.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -753,6 +758,17 @@
       
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Notação científica
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="Nota%C3%A7%C3%A3o%20cient%C3%ADfica.html" class="md-nav__link md-nav__link--active">
         
   
@@ -762,6 +778,50 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#alterar-potencia" class="md-nav__link">
+    <span class="md-ellipsis">
+      Alterar potência
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#remover-o-arredondamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remover o arredondamento
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tudo-junto" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tudo junto
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1172,7 +1232,49 @@
 
   <h1>Notação científica</h1>
 
+<p>O LabIFSC2 aceita duas formatações para classe <a href="../Medidas/Medida.html">Medida</a>, uma
+formatação facilmente legível no console e outra para ser usado no LaTeX.</p>
+<p><div class="highlight"><span class="filename">Tipos de formatação</span><pre><span></span><code><span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
+<span class="n">x</span><span class="o">=</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1">#(1.50 ± 0.01)E1 m</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(1.50 \pm 0.01) \times 10^{1} \, \text{m}</span>
+</code></pre></div>
+A segunda representação renderizada em LaTeX é <script type="math/tex">(1.50 \pm 0.01) \times 10^{1} \, \text{m}</script>
+</p>
+<h2 id="alterar-potencia">Alterar potência</h2>
+<p>Por padrão o expoente será escolhido para que a mantissa esteja entre 1 e 10,
+é possível alterar isso acrescentando E{expoente} na formatação.</p>
+<p><div class="highlight"><span class="filename">Mudando a base</span><pre><span></span><code><span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
+<span class="n">x</span><span class="o">=</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mi">456</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="s1">&#39;nm&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(4.560 \pm 0.003) \times 10^{2} \, \text{nm}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(4.560 ± 0.003)E2 nm</span>
 
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex_E0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(456.0 \pm 0.3)\, \text{nm}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">E0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="c1">#(456.0 ± 0.3) nm</span>
+</code></pre></div>
+<script type="math/tex">(4.560 \pm 0.003) \times 10^{2} \, \text{nm} = (456.0 \pm 0.3)\, \text{nm}</script>
+</p>
+<h2 id="remover-o-arredondamento">Remover o arredondamento</h2>
+<p>O arredondamento padrão utilizado é truncar o valor nominal até o primeiro
+algarismo significativo da incerteza, os valores completos estão armazenados nos 
+atributos <em>.nominal</em> , <em>.incerteza</em> e para printar esses valores basta adicionar
+<em>full</em>
+<div class="highlight"><span class="filename">Sem arredondamento</span><pre><span></span><code><span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
+<span class="n">x</span><span class="o">=</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mf">21.53</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(2.2 \pm 0.1) \times 10^{1} \, \text{cm}</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1">#(2.2 ± 0.1)E1 cm</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex_full</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(2.153 \pm 0.1) \times 10^{1} \, \text{cm}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">full</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(2.153 ± 0.1)E1 cm</span>
+</code></pre></div></p>
+<h2 id="tudo-junto">Tudo junto</h2>
+<p>Os formatadores <em>latex,full,E</em> podem ser usados simultaneamente, 
+a ordem é irrelevante 
+<div class="highlight"><span class="filename">Sem arredondamento</span><pre><span></span><code><span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
+<span class="n">x</span><span class="o">=</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mf">21.53</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;cm&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">latex_full_E0</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(21.53 \pm 1.0)\, \text{cm}</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">x</span><span class="si">:</span><span class="s1">E3_full</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span> <span class="c1">#(0.02153 ± 0.001)E3 cm</span>
+</code></pre></div></p>
 
 
 

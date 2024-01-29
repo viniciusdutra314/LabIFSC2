@@ -234,7 +234,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../Como%20contribuir%3F.html" class="md-tabs__link">
+      <a href="../Como_contribuir%3F.html" class="md-tabs__link">
         
   
     
@@ -448,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Como%20contribuir%3F.html" class="md-nav__link">
+      <a href="../Como_contribuir%3F.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1268,7 +1268,7 @@ desvio padrão <script type="math/tex">\sigma</script> da Medida
   <div class="doc doc-contents first">
   
       <h3 id="LabIFSC2.medida.montecarlo--propagacao-de-erros-usando-monte-carlo">Propagação de erros usando Monte Carlo</h3>
-<p>Calcula a média e desvio padrão da densidade de probabilidade de uma
+<p>Calcula a média e desvio padrão da densidade de probabilidade de uma 
 função com variáveis gaussianas, também armazena o histograma
 inteiro dentro de uma Medida</p>
 
@@ -1347,7 +1347,8 @@ pode ser alterado globalmente usando num_montecarlo(valor)</p>
 
           <details class="quote">
             <summary>Source code in <code>LabIFSC2/medida.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 5</span>
+<span class="normal"> 6</span>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
@@ -1381,47 +1382,42 @@ pode ser alterado globalmente usando num_montecarlo(valor)</p>
 <span class="normal">37</span>
 <span class="normal">38</span>
 <span class="normal">39</span>
-<span class="normal">40</span>
-<span class="normal">41</span>
-<span class="normal">42</span>
-<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">montecarlo</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="nb">callable</span><span class="p">,</span> <span class="o">*</span><span class="n">parametros</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;## Propagação de erros usando Monte Carlo</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">montecarlo</span><span class="p">(</span><span class="n">func</span> <span class="p">:</span> <span class="nb">callable</span><span class="p">,</span> <span class="o">*</span><span class="n">parametros</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;## Propagação de erros usando Monte Carlo</span>
 
-<span class="sd">    Calcula a média e desvio padrão da densidade de probabilidade de uma</span>
-<span class="sd">    função com variáveis gaussianas, também armazena o histograma</span>
-<span class="sd">    inteiro dentro de uma Medida</span>
+<span class="sd">  Calcula a média e desvio padrão da densidade de probabilidade de uma </span>
+<span class="sd">  função com variáveis gaussianas, também armazena o histograma</span>
+<span class="sd">  inteiro dentro de uma Medida</span>
 
-<span class="sd">    Globals:</span>
-<span class="sd">      num_montecarlo : Quantidade de números aleatórios usados (Default=10.000)</span>
-<span class="sd">      pode ser alterado globalmente usando num_montecarlo(valor)</span>
+<span class="sd">  Globals:</span>
+<span class="sd">    num_montecarlo : Quantidade de números aleatórios usados (Default=10.000)</span>
+<span class="sd">    pode ser alterado globalmente usando num_montecarlo(valor)</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">      func (callable): função para a propagação do erro</span>
-<span class="sd">      parametros list[Medida]: parâmetros da função definida acima</span>
+<span class="sd">  Args:</span>
+<span class="sd">    func (callable): função para a propagação do erro</span>
+<span class="sd">    parametros list[Medida]: parâmetros da função definida acima</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">      Resultado (Medida):  Medida com \(\mu\), \(\sigma\) e histograma</span>
-<span class="sd">&quot;&quot;&quot;</span>
-    <span class="c1"># from . import num_gaussianos</span>
+<span class="sd">  Returns:</span>
+<span class="sd">    Resultado (Medida):  Medida com \(\mu\), \(\sigma\) e histograma</span>
+<span class="sd">&#39;&#39;&#39;</span>
+    <span class="c1">#from . import num_gaussianos</span>
 
-    <span class="n">N</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Func precisa ser um callable&#39;</span><span class="p">)</span>
-    <span class="n">x_samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">parametros</span><span class="p">),</span> <span class="n">N</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">parametro</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parametros</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parametro</span><span class="p">,</span> <span class="n">Medida</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Todos os parametros precisam ser Medidas&#39;</span><span class="p">)</span>
+    <span class="n">N</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Func precisa ser um callable&quot;</span><span class="p">)</span>
+    <span class="n">x_samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">parametros</span><span class="p">),</span><span class="n">N</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">parametro</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">parametros</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parametro</span><span class="p">,</span><span class="n">Medida</span><span class="p">):</span> 
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Todos os parametros precisam ser Medidas&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">parametro</span><span class="o">.</span><span class="n">histograma</span><span class="p">):</span>
-            <span class="n">x_samples</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
-                <span class="n">parametro</span><span class="o">.</span><span class="n">nominal</span><span class="p">,</span> <span class="n">parametro</span><span class="o">.</span><span class="n">incerteza</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span>
-            <span class="p">)</span>
+            <span class="n">x_samples</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">parametro</span><span class="o">.</span><span class="n">nominal</span><span class="p">,</span>
+                                              <span class="n">parametro</span><span class="o">.</span><span class="n">incerteza</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">x_samples</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">parametro</span><span class="o">.</span><span class="n">histograma</span>
-    <span class="n">vec_func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
-    <span class="n">histograma</span> <span class="o">=</span> <span class="n">vec_func</span><span class="p">(</span><span class="o">*</span><span class="n">x_samples</span><span class="p">)</span>
-    <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">histograma</span><span class="p">)</span>
-    <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">histograma</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">Medida</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">histograma</span><span class="o">=</span><span class="n">histograma</span><span class="p">)</span>
+            <span class="n">x_samples</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">parametro</span><span class="o">.</span><span class="n">histograma</span>
+    <span class="n">vec_func</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="n">histograma</span><span class="o">=</span><span class="n">vec_func</span><span class="p">(</span><span class="o">*</span><span class="n">x_samples</span><span class="p">)</span>
+    <span class="n">mean</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">histograma</span><span class="p">)</span>
+    <span class="n">std</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">histograma</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Medida</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="n">std</span><span class="p">,</span><span class="n">histograma</span><span class="o">=</span><span class="n">histograma</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>

@@ -234,7 +234,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../Como%20contribuir%3F.html" class="md-tabs__link">
+      <a href="../Como_contribuir%3F.html" class="md-tabs__link">
         
   
     
@@ -448,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Como%20contribuir%3F.html" class="md-nav__link">
+      <a href="../Como_contribuir%3F.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -618,15 +618,6 @@
   <a href="#LabIFSC2.arrayM.get_nominais" class="md-nav__link">
     <span class="md-ellipsis">
       get_nominais
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#exemplos" class="md-nav__link">
-    <span class="md-ellipsis">
-      Exemplos
     </span>
   </a>
   
@@ -1288,9 +1279,21 @@ um arrays somente com seus valores nominais</p>
     </tbody>
   </table>
 
+
+
+<p><strong>Examples:</strong></p>
+    <div class="highlight"><pre><span></span><code><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span><span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">lab</span><span class="o">.</span><span class="n">Medida</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lab</span><span class="o">.</span><span class="n">get_nominais</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="go">array([  4.,  35., -97.])</span>
+</code></pre></div>
+
           <details class="quote">
             <summary>Source code in <code>LabIFSC2/arrayM.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
@@ -1311,8 +1314,14 @@ um arrays somente com seus valores nominais</p>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
-<span class="normal">27</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_nominais</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">:</span> <span class="nb">iter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transforma um array/lista (iterável) de medidas  em</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_nominais</span><span class="p">(</span><span class="n">arrayMedidas</span> <span class="p">:</span> <span class="nb">iter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Transforma um array/lista (iterável) de medidas  em</span>
 <span class="sd">    um arrays somente com seus valores nominais</span>
 
 <span class="sd">    Args:</span>
@@ -1320,30 +1329,30 @@ um arrays somente com seus valores nominais</p>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        arrayNominais  : array valores nominais</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="nb">iter</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">)</span>
-    <span class="k">except</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;A entrada precisa ser um iterable de Medidas&#39;</span><span class="p">)</span>
-    <span class="n">tamanho</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">)</span>
-    <span class="n">array_nominais</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">tamanho</span><span class="p">)</span>
 
-    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">valores</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">valores</span><span class="p">,</span> <span class="n">Medida</span><span class="p">):</span>
-            <span class="n">valores</span> <span class="o">=</span> <span class="n">Medida</span><span class="p">(</span><span class="n">valores</span><span class="p">)</span>
-        <span class="n">array_nominais</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">valores</span><span class="o">.</span><span class="n">nominal</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; import LabIFSC2 as lab</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; array = np.array([lab.Medida(4, 0.2),lab.Medida(35, 3), lab.Medida(-97, 1)])</span>
+<span class="sd">        &gt;&gt;&gt; lab.get_nominais(array)</span>
+<span class="sd">        array([  4.,  35., -97.])</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">try</span><span class="p">:</span> <span class="nb">iter</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;A entrada precisa ser um iterable de Medidas&quot;</span><span class="p">)</span>
+    <span class="n">tamanho</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">)</span>
+    <span class="n">array_nominais</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">tamanho</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span><span class="n">valores</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">arrayMedidas</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">valores</span><span class="p">,</span><span class="n">Medida</span><span class="p">):</span>
+            <span class="n">valores</span><span class="o">=</span><span class="n">Medida</span><span class="p">(</span><span class="n">valores</span><span class="p">)</span>
+        <span class="n">array_nominais</span><span class="p">[</span><span class="n">index</span><span class="p">]</span><span class="o">=</span><span class="n">valores</span><span class="o">.</span><span class="n">nominal</span>
     <span class="k">return</span> <span class="n">array_nominais</span>
 </code></pre></div></td></tr></table></div>
           </details>
   </div>
 
-</div><h2 id="exemplos">Exemplos</h2>
-<div class="highlight"><pre><span></span><code>    <span class="kn">import</span> <span class="nn">LabIFSC2</span> <span class="k">as</span> <span class="nn">lab</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-    <span class="c1">#Crie um array numpy com Medidas</span>
-    <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Medida</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="n">Medida</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">Medida</span><span class="p">(</span><span class="o">-</span><span class="mi">97</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
-    <span class="n">nominais_array</span> <span class="o">=</span> <span class="n">lab</span><span class="o">.</span><span class="n">get_nominais</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>  <span class="c1"># ndarray([4,35,-97])</span>
-</code></pre></div>
+</div>
 
 
 

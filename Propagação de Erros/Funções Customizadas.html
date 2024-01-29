@@ -234,7 +234,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../Como%20contribuir%3F.html" class="md-tabs__link">
+      <a href="../Como_contribuir%3F.html" class="md-tabs__link">
         
   
     
@@ -448,7 +448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Como%20contribuir%3F.html" class="md-nav__link">
+      <a href="../Como_contribuir%3F.html" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1296,7 +1296,9 @@ retorne Medidas como argumentos</p>
 
           <details class="quote">
             <summary>Source code in <code>LabIFSC2/matematica.py</code></summary>
-            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 6</span>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
 <span class="normal"> 7</span>
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
@@ -1311,12 +1313,8 @@ retorne Medidas como argumentos</p>
 <span class="normal">18</span>
 <span class="normal">19</span>
 <span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
-<span class="normal">24</span>
-<span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">aceitamedida</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Possibilita que qualquer função aceite e</span>
+<span class="normal">21</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">aceitamedida</span><span class="p">(</span><span class="n">func</span> <span class="p">:</span><span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Possibilita que qualquer função aceite e</span>
 <span class="sd">    retorne Medidas como argumentos</span>
 
 <span class="sd">    Args:</span>
@@ -1325,15 +1323,13 @@ retorne Medidas como argumentos</p>
 <span class="sd">    Returns:</span>
 <span class="sd">        func_labificada: (callable) função que aceita e retorna Medidas</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-
+<span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">def</span> <span class="nf">FuncaoLabificada</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="n">resultado</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">montecarlo</span><span class="p">)(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">resultado</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">resultado</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">resultado</span>
-
+            <span class="n">resultado</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="n">montecarlo</span><span class="p">)(</span><span class="n">func</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">resultado</span><span class="o">.</span><span class="n">size</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">resultado</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">resultado</span>
     <span class="k">return</span> <span class="n">FuncaoLabificada</span>
 </code></pre></div></td></tr></table></div>
           </details>
