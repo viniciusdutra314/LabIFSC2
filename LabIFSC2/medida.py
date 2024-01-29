@@ -83,22 +83,28 @@ class Medida:
             self.si_nominal=self.nominal
             self.si_incerteza=self.incerteza
     def __str__(self):
-         return formatar_medida_console(self.nominal,self.incerteza,self.unidade)
+        return self.__format__('')
     def __repr__(self):
-        return formatar_medida_console(self.nominal,self.incerteza,self.unidade)
+        return self.__format__('')
     def __format__(self,fmt):
-        if 'latex' in fmt:
-            if 'E' in fmt:
-                ordem_de_grandeza=int(fmt.split('E')[-1])
-                if not isinstance(ordem_de_grandeza,int):
-                    raise ValueError('Somente potências inteiras na formatação latex')
-                return formatar_medida_latex(self.nominal,self.incerteza,
-                                             self.unidade,ordem_de_grandeza)
-            return formatar_medida_latex(self.nominal,
-                                         self.incerteza,self.unidade)
+        import re
+        padrao = re.compile(r'E(-?\d+)')
+        correspondencia=re.search(padrao,fmt)
+        if correspondencia:
+            ordem_de_grandeza=int(correspondencia.group(1))
         else:
-            return formatar_medida_console(self.nominal,
-                                           self.incerteza,self.unidade)
+            ordem_de_grandeza=int(np.log10(np.abs(self.nominal)))
+        nominal=self.nominal/(10**ordem_de_grandeza)  
+        incerteza=self.incerteza/(10**ordem_de_grandeza)  
+        if 'full' not in fmt:
+            incerteza=arredondar_incerteza(incerteza)
+            nominal=arredondar_nominal(nominal,float(incerteza))
+        if 'latex' in fmt:
+            return formatar_medida_latex(nominal,incerteza,
+                                         self.unidade,ordem_de_grandeza)
+        else:
+            return formatar_medida_console(nominal,incerteza,
+                                    self.unidade,ordem_de_grandeza)
 
     def __neg__(self):
         return Medida(-self.nominal,self.incerteza)

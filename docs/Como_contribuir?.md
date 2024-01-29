@@ -33,8 +33,7 @@ a essa constante se houver. Sinta-se livre para adicionar constantes matemática
 como \(\phi\) e até mesmo \(\gamma\)
 ## Nova formatação
 Atualmente só existem 2 [formatações](LaTeX/Notação%20científica.md) disponíveis, caso
-queira adicionar uma nova será necessário mudar a função *__format__* da classe Medida e adicionar um novo condicional do parâmetro fmt, algumas funções convenientes estão
-no arquivo *formatacoes.py*
+queira adicionar uma nova será necessário mudar a função *__format__* da classe Medida, algumas funções convenientes estão no arquivo *formatacoes.py*
 
 ## Ambiente de desenvolvimento
 Para o gerenciamento de dependências foi escolhido o [Poetry](https://python-poetry.org/), mesmo que só o Numpy seja uma dependência de uso, existem várias dependências

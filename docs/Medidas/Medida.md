@@ -2,7 +2,8 @@ A classe central do LabIFSC2 é a Medida, tecnicamente ela
 representa uma variável aleatória gaussiana, portanto,
 é necessário fornecer uma média \(\mu\) e um desvio padrão
 \(\sigma\), além disso, é possível oferecer uma [unidade](Unidades.md)
-e realizar conversões de unidade
+e realizar conversões de unidade. A forma como um objeto dessa classe
+é printado obedece convenções de [notação científica](../LaTeX/) que podem ser alteradas
 ### Propagação de Erros
 Toda a propagação de erros é implementada usando uma simulação
 [Monte Carlo](../Propagação%20de%20Erros/montecarlo.md), em casos
