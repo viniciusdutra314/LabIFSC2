@@ -31,6 +31,11 @@ adicionar uma nova basta ir em LabIFSC2/constantes/constantes.py e adicionar sua
 coloque o maior número de casas decimais que puder e também a incerteza associada
 a essa constante se houver. Sinta-se livre para adicionar constantes matemáticas 
 como \(\phi\) e até mesmo \(\gamma\)
+## Nova formatação
+Atualmente só existem 2 [formatações](LaTeX/Notação%20científica.md) disponíveis, caso
+queira adicionar uma nova será necessário mudar a função *__format__* da classe Medida e adicionar um novo condicional do parâmetro fmt, algumas funções convenientes estão
+no arquivo *formatacoes.py*
+
 ## Ambiente de desenvolvimento
 Para o gerenciamento de dependências foi escolhido o [Poetry](https://python-poetry.org/), mesmo que só o Numpy seja uma dependência de uso, existem várias dependências
 de desenvolvimento, para instalar elas basta usar alguns comandos com o poetry

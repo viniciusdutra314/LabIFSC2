@@ -30,5 +30,6 @@ with open(file_dir,'r') as txt:
         unidade=line[110:].strip()
         constantes_dict[name]=[nominal,incerteza,unidade]
 with open(os.path.join(abs_path,'constantes.py'),'w') as python_arquivo:
+    python_arquivo.write('from LabIFSC2 import Medida\n')
     for name, values in constantes_dict.items():
-        python_arquivo.write(f'{name}={values}\n')
+        python_arquivo.write(f'{name}=Medida{values[0],values[1],values[2]}\n')

@@ -1,6 +1,6 @@
 import numpy as np
 from .unidades import TODAS_UNIDADES, Unidade
-
+from .formatacoes import *
 
 def montecarlo(func : callable, *parametros):
     '''## Propagação de erros usando Monte Carlo
@@ -44,8 +44,7 @@ class Medida:
                  unidade="",histograma=np.array([])):
         """
         Inicializa uma instância da classe Medida com um valor nominal, incerteza e unidade.
-        Valor numérico se entende qualquer objeto que possa interagir normalmente com floats,
-        exemplos : int, float ,np.longdouble , np.float64...
+        Valor numérico se entende como qualquer objeto que possa interagir normalmente com floats,
 
         Parâmetros:
             - nominal: Um valor numérico que representa o valor nominal da medida.
@@ -56,24 +55,27 @@ class Medida:
             - TypeError: Se o nominal ou incerteza não puderem ser convertidos para um número.
             - TypeError: A unidade precisa ser uma string
         """
-        try: float(nominal) ; self.nominal=nominal
-        except: raise TypeError("Valor nominal inválido, é necessário um objeto que possa ser convertido para float")
+        if hasattr(nominal,'__float__'): self.nominal=nominal
+        else: raise TypeError("Valor nominal inválido, é necessário um objeto que possa ser convertido para float")
         
-        try: float(incerteza) ; self.incerteza=incerteza
-        except: raise TypeError("Incerteza inválida, é necessário um objeto que possa ser convertido para float")
+        if hasattr(incerteza,'__float__'): self.incerteza=incerteza
+        else: raise TypeError("Incerteza inválida, é necessário um objeto que possa ser convertido para float")
+
+        if incerteza<0:
+            raise ValueError("Incerteza não pode ser negativa")
 
         if not isinstance(histograma,np.ndarray):
             raise TypeError('Histograma deve ser um array numpy')
-        else:
-            self.histograma=histograma
+        else:self.histograma=histograma
 
-        if isinstance(unidade,str) and unidade:
-            self.unidade=TODAS_UNIDADES[unidade]
-        if isinstance(unidade,Unidade):
-            self.unidade=unidade
         if not unidade: 
             self.unidade=TODAS_UNIDADES["adimensional"]
-
+        elif isinstance(unidade,str):
+            if unidade not in TODAS_UNIDADES:
+                raise ValueError(f'Unidade {unidade} não registrada em TODAS_UNIDADES')
+            self.unidade=TODAS_UNIDADES[unidade]
+        else: raise TypeError('Unidade precisar uma string')
+        
         if self.unidade.simbolo!="adimensional":
             self.si_nominal=self.nominal*self.unidade.cte_mult +self.unidade.cte_ad
             self.si_incerteza=self.incerteza*self.unidade.cte_mult
@@ -81,9 +83,23 @@ class Medida:
             self.si_nominal=self.nominal
             self.si_incerteza=self.incerteza
     def __str__(self):
-        return f"({self.nominal}±{self.incerteza})"
-    def __repr__(self) :
-        return f"({self.nominal}±{self.incerteza})"
+         return formatar_medida_console(self.nominal,self.incerteza,self.unidade)
+    def __repr__(self):
+        return formatar_medida_console(self.nominal,self.incerteza,self.unidade)
+    def __format__(self,fmt):
+        if 'latex' in fmt:
+            if 'E' in fmt:
+                ordem_de_grandeza=int(fmt.split('E')[-1])
+                if not isinstance(ordem_de_grandeza,int):
+                    raise ValueError('Somente potências inteiras na formatação latex')
+                return formatar_medida_latex(self.nominal,self.incerteza,
+                                             self.unidade,ordem_de_grandeza)
+            return formatar_medida_latex(self.nominal,
+                                         self.incerteza,self.unidade)
+        else:
+            return formatar_medida_console(self.nominal,
+                                           self.incerteza,self.unidade)
+
     def __neg__(self):
         return Medida(-self.nominal,self.incerteza)
     def __eq__(self,outro):
@@ -94,28 +110,37 @@ class Medida:
         self._checa_dimensao(outro.unidade.simbolo)
         delta_nominal=abs(self.si_nominal - outro.si_nominal)
         delta_incerteza=abs(self.si_incerteza + outro.si_incerteza)
-        if delta_nominal<=2*delta_incerteza:
-            return True
-        if delta_nominal>=3*delta_incerteza:
-            return False
+        if delta_nominal<=2*delta_incerteza: return True
+        elif delta_nominal>=3*delta_incerteza: return False
+        else: return None
     def __gt__(self,outro):
         outro=self._torna_medida(outro)
         self._checa_dimensao(outro.unidade.simbolo)
-        return self.si_nominal > outro.si_nominal
+        if self.__eq__(outro)==False:
+            return self.si_nominal > outro.si_nominal
+        else: return None
     def __ge__(self,outro):
         outro=self._torna_medida(outro)
         self._checa_dimensao(outro.unidade.simbolo)
-        return self.si_nominal >= outro.si_nominal
+        if self.__eq__(outro)==False:
+            return self.si_nominal >= outro.si_nominal
+        else: return None
     def __lt__(self,outro):
         outro=self._torna_medida(outro)
         self._checa_dimensao(outro.unidade.simbolo)
-        return self.si_nominal < outro.si_nominal
+        if self.__eq__(outro)==False:
+            return self.si_nominal < outro.si_nominal
+        else:
+            return None
     def __le__(self,outro):
         outro=self._torna_medida(outro)
         self._checa_dimensao(outro.unidade.simbolo)
-        return self.si_nominal <= outro.si_nominal
+        if self.__eq__(outro)==False:
+            return self.si_nominal <= outro.si_nominal
+        else:
+            return None
     def __add__(self,outro):
-        #Como existe solução análitica da soma entre duas gaussianas
+        #Como existe solução analítica da soma entre duas gaussianas
         #iremos usar esse resultado para otimizar o código
         if isinstance(outro,np.ndarray):
            self_broadcast=np.repeat(self,len(outro))
@@ -190,14 +215,15 @@ class Medida:
         if x<y: return unidade_a
         else: return unidade_b
     def _checa_dimensao(self,outra_unidade : str):
+        '''Verifica se duas Medidas possuem a mesma dimensão'''
         outra_unidade=TODAS_UNIDADES[outra_unidade]
         if not np.array_equal(self.unidade.dimensao,outra_unidade.dimensao):
-            raise ValueError("Unidades com dimensões diferentes")
-    def converte(self,outra_unidade):
-        self._checa_dimensao(outra_unidade)
-        outra_unidade=TODAS_UNIDADES[outra_unidade]
-        cte_mul=self.unidade.cte_mult/outra_unidade.cte_mult
-        return Medida(self.nominal*cte_mul,self.incerteza*cte_mul,unidade=outra_unidade.simbolo)
+            raise ValueError("Medidas com dimensões diferentes")
+    def converte(self,nova_unidade):
+        self._checa_dimensao(nova_unidade)
+        nova_unidade=TODAS_UNIDADES[nova_unidade]
+        cte_mul=self.unidade.cte_mult/nova_unidade.cte_mult
+        return Medida(self.nominal*cte_mul,self.incerteza*cte_mul,unidade=nova_unidade.simbolo)
     def _torna_medida(self,objeto):
         if isinstance(objeto,Medida): return objeto
         else: return Medida(objeto)

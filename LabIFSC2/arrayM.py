@@ -2,14 +2,23 @@ import numpy as np
 from .medida import Medida
 
 def get_nominais(arrayMedidas : iter) -> np.ndarray:
-    '''Transforma um array/lista (iterável) de medidas  em
+    '''
+    Transforma um array/lista (iterável) de medidas  em
     um arrays somente com seus valores nominais
     
     Args:
         arrayMedidas: array com medidas
 
     Returns:
-        arrayNominais  : array valores nominais    
+        arrayNominais  : array valores nominais
+
+  
+    Examples:
+        >>> import LabIFSC2 as lab
+        >>> import numpy as np
+        >>> array = np.array([lab.Medida(4, 0.2),lab.Medida(35, 3), lab.Medida(-97, 1)])
+        >>> lab.get_nominais(array)
+        array([  4.,  35., -97.])
     '''
     try: iter(arrayMedidas)
     except: raise TypeError("A entrada precisa ser um iterable de Medidas")
@@ -31,8 +40,16 @@ def get_incertezas(arrayMedidas : iter) -> np.ndarray:
         arrayMedidas: array com medidas
 
     Returns:
-        arrayIncertezas  : array com incertezas'''
+        arrayIncertezas  : array com incertezas
 
+    Examples:
+        >>> import LabIFSC2 as lab
+        >>> import numpy as np
+        >>> array = np.array([lab.Medida(4, 0.2),lab.Medida(35, 3), lab.Medida(-97, 1)])
+        >>> lab.get_incertezas(array)
+        array([0.2, 3. , 1. ])
+'''
+    
     try: iter(arrayMedidas)
     except: raise TypeError("A entrada precisa ser um iterable de Medidas")
 
@@ -88,6 +105,21 @@ def linspace(a,b,n : int,incertezas,unidade=False) -> np.ndarray[Medida]:
     
     Returns:
         arrayM : array de Medidas
+
+    Examples:
+        >>> import LabIFSC2 as lab
+        >>> import numpy as np
+        >>> a=1 ; b=5 ; N=3
+        >>> tempo=lab.linspace(a,b,N,0.1,'s')
+        >>> tempo 
+        array([(1.0±0.1)s, (3.0±0.1)s, (5.0±0.1)s], dtype=object)
+        >>> tempo**2 
+        (1.0±0.2)s... (4.0±0.4)s ... (25±1)s]    
+    
+    Esse é um exemplo com poucos pontos para que
+    seja possível observar uma diferença significativa
+    entre as Medidas
+        
     """
     n=int(n)
     nominais=np.linspace(a,b,n)
