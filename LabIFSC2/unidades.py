@@ -21,7 +21,7 @@ class Unidade:
         self.cte_ad=cte_ad ; self.cte_mult=cte_mult
         global TODAS_UNIDADES
         TODAS_UNIDADES[simbolo]=self
-Unidade("adimensional","adimensional","",[0,0,0,0,0,0,0])
+Unidade("adimensional","","",[0,0,0,0,0,0,0])
 #Adicione sua unidade nova aqui:
 Unidade('kilograma','kg','kg',[0,0,1,0,0,0,0])
 ##carga

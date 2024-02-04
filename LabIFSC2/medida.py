@@ -69,14 +69,14 @@ class Medida:
         else:self.histograma=histograma
 
         if not unidade: 
-            self.unidade=TODAS_UNIDADES["adimensional"]
+            self.unidade=TODAS_UNIDADES[""]
         elif isinstance(unidade,str):
             if unidade not in TODAS_UNIDADES:
                 raise ValueError(f'Unidade {unidade} não registrada em TODAS_UNIDADES')
             self.unidade=TODAS_UNIDADES[unidade]
         else: raise TypeError('Unidade precisar uma string')
         
-        if self.unidade.simbolo!="adimensional":
+        if self.unidade.simbolo:
             self.si_nominal=self.nominal*self.unidade.cte_mult +self.unidade.cte_ad
             self.si_incerteza=self.incerteza*self.unidade.cte_mult
         else:
@@ -85,7 +85,10 @@ class Medida:
     def __str__(self):
         return self.__format__('')
     def __repr__(self):
-        return self.__format__('')
+        nominal=self.nominal
+        incerteza=self.incerteza
+        unidade=self.unidade.simbolo
+        return f"Medida({nominal=},{incerteza=},{unidade=})"
     def __format__(self,fmt):
         import re
         padrao = re.compile(r'E(-?\d+)')
@@ -94,11 +97,15 @@ class Medida:
             ordem_de_grandeza=int(correspondencia.group(1))
         else:
             ordem_de_grandeza=int(np.log10(np.abs(self.nominal)))
-        nominal=self.nominal/(10**ordem_de_grandeza)  
-        incerteza=self.incerteza/(10**ordem_de_grandeza)  
-        if 'full' not in fmt:
+        nominal=self.nominal/(10**ordem_de_grandeza)
+        incerteza=self.incerteza/(10**ordem_de_grandeza) 
+        if 'full' not in fmt and incerteza:
             incerteza=arredondar_incerteza(incerteza)
             nominal=arredondar_nominal(nominal,float(incerteza))
+        if not incerteza:
+            nominal=float(nominal)
+            if nominal==int(nominal): nominal=str(int(nominal))
+            
         if 'latex' in fmt:
             return formatar_medida_latex(nominal,incerteza,
                                          self.unidade,ordem_de_grandeza)

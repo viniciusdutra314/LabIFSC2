@@ -56,14 +56,29 @@ def arredondar_nominal(nominal : float,incerteza:float) -> str:
 def formatar_medida_console(nominal,incerteza,unidade,
                             ordem_de_grandeza):
     if ordem_de_grandeza:
-        return f'({nominal} ± {incerteza})E{ordem_de_grandeza} {unidade.simbolo}'
+        if incerteza:
+            template='({} ± {})E{} {}'
+            return template.format(nominal,incerteza,
+                                ordem_de_grandeza,unidade.simbolo).rstrip()
+        else:
+            template='({})E{} {}'
+            return template.format(nominal,ordem_de_grandeza,
+                                   unidade.simbolo).rstrip()
     else:
-        return f'({nominal} ± {incerteza}) {unidade.simbolo}'
+        if incerteza:
+            template='({} ± {}) {}'
+            return template.format(nominal,incerteza,unidade.simbolo).rstrip()
+        else:
+            template='({}) {}'
+            return template.format(nominal,unidade.simbolo).rstrip()
 
 
 def formatar_medida_latex(nominal,incerteza,
                           unidade,ordem_de_grandeza):
     if ordem_de_grandeza:
-        return rf"({nominal} \pm {incerteza}) \times 10^{{{ordem_de_grandeza}}} \, \text{{{unidade.simbolo}}}"
+        template=r"({} \pm {}) \times 10^{} \, \text{{{}}}"
+        return template.format(nominal,incerteza,
+                               ordem_de_grandeza,unidade.simbolo).rstrip()
     else:
-        return rf'({nominal} \pm {incerteza})\, \text{{{unidade.simbolo}}}'
+        template=r"({} \pm {})\, \text{{{}}}"
+        return template.format(nominal,incerteza,unidade.simbolo).rstrip()
