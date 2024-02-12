@@ -1,5 +1,5 @@
 O LabIFSC2 aceita duas formatações para classe [Medida](../Medidas/Medida.md), uma
-formatação facilmente legível no console e outra para ser usado no LaTeX.
+formatação facilmente legível e outra para ser usado no LaTeX.
 
 ```{.py3 title='Tipos de formatação'}
 import LabIFSC2 as lab
@@ -8,6 +8,17 @@ print(x) #(1.50 ± 0.01)E1 m
 print(f'{x:latex}') #(1.50 \pm 0.01) \times 10^{1} \, \text{m}
 ```
 A segunda representação renderizada em LaTeX é \((1.50 \pm 0.01) \times 10^{1} \, \text{m}\)
+
+## No console
+Caso esteja rodando o código em um console python você notará que caso
+não utilize a função print, a Medida será apresentada de forma diferente, 
+essa formatação é chamada __repr__ e mostra os valores exatos guardados no objeto
+```{.py3 title='Representação console'}
+import LabIFSC2 as lab
+lado=lab.Medida(5,0.1,'cm')
+lado**2
+Medida(nominal=25.011305665057893,incerteza=1.010621684513492,unidade='cm2')
+```
 
 ## Alterar potência
 Por padrão o expoente será escolhido para que a mantissa esteja entre 1 e 10,

@@ -1,9 +1,9 @@
 import numpy as np
 from .medida import Medida
 
+
 def get_nominais(arrayMedidas : iter) -> np.ndarray:
-    '''
-    Transforma um array/lista (iterável) de medidas  em
+    '''*get_nominais* Transforma um array/lista (iterável) de medidas  em
     um arrays somente com seus valores nominais
     
     Args:
@@ -33,7 +33,7 @@ def get_nominais(arrayMedidas : iter) -> np.ndarray:
 
 
 def get_incertezas(arrayMedidas : iter) -> np.ndarray:
-    '''Transforma um array/lista (iterável) de medidas  em
+    '''*get_incertezas* Transforma um array/lista (iterável) de medidas  em
     um arrays somente com suas incertezas
     
     Args:
@@ -71,8 +71,12 @@ def curva_min(arrayMedida : iter,sigma=2):
        curva_min=lab.get_nominais(arrayM) - sigmas*lab.get_incertezas(arrayM)
     
     Args: 
-        arrayMedida : iterable (array,lista,...) com Medidas
-        sigma: confiança estatística 
+        arrayMedida (iter): iterável com Medidas
+        sigma (float | int): confiança estatística 
+
+    Returns:
+        arrayCurva (np.ndarray): array com a curva de Medidas
+
     '''
     return get_nominais(arrayMedida) -sigma*get_incertezas(arrayMedida)
 
@@ -86,25 +90,29 @@ def curva_max(arrayMedida : iter,sigma=2):
     Args: 
         arrayM : iterable (array,lista,...) com Medidas
         sigma (default=2), relacionada com a confiança estatística 
+
+    Returns:
+        arrayCurva (np.ndarray): array com a curva de Medidas
     '''
     return get_nominais(arrayMedida) + sigma*get_incertezas(arrayMedida)
 
 
-def linspace(a,b,n : int,incertezas,unidade=False) -> np.ndarray[Medida]:
+def linspace(a:float,b:float,n : int,
+             incertezas :float,unidade : str =False) -> np.ndarray[Medida]:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,
     mas se ela for um array cada Medida terá a respectiva incerteza.
     A unidade será a mesma e é opcional
     
     Args:
-        a : Menor nominal
-        b : Maior nominal
-        n : (int) Número de Medidas
-        incertezas : (float | iterable) incerteza ou array de incertezas
-        unidade : (str) unidade das medidas
+        a (float): Menor nominal
+        b (float): Maior nominal
+        n (int): Número de Medidas
+        incertezas (float | iterable): incerteza ou array de incertezas
+        unidade (str): unidade das medidas
     
     Returns:
-        arrayM : array de Medidas
+        arrayM (np.ndarray[Medida]): array de Medidas
 
     Examples:
         >>> import LabIFSC2 as lab
@@ -129,3 +137,39 @@ def linspace(a,b,n : int,incertezas,unidade=False) -> np.ndarray[Medida]:
         raise ValueError('Número de incertezas incompatível com número de nominais')
     else:
         return np.array([Medida(i,j,unidade) for i,j in zip(nominais,incertezas)])
+
+def medida_from_array(array:iter,unidade='',incerteza =0) -> Medida:
+    ''' 
+    Converte um iteravel de medições em um único objeto da
+    classe Medida
+    
+    Args:
+        array (iter):  array com medições 
+        unidade (str):  unidade das medições 
+        incerteza (float): incerteza associada a cada medição 
+
+    Returns:
+        medida (Medida):  medida 
+
+    Examples:
+        Suponha que você tenha realizado varias medições e queria
+        converter elas em somente uma Medida, por exemplo, você mediu
+        várias vezes o diamêtro de um fio irregular
+
+        >>> diametro=medida_from_array([1.73,1.76,1.77,1.77,1.83],'mm')
+        >>> diametro
+        Medida(nominal=1.7719999999999998,incerteza=0.03249615361854387,unidade='mm')
+        
+        Caso a incerteza de cada medição for maior do que o desvio padrão, 
+        o erro será considero a incerteza do experimento
+
+        >>> diametro=medida_from_array([1.73,1.76,1.77,1.77,1.83],'mm',incerteza=0.05)
+        >>> diametro
+        Medida(nominal=1.7719999999999998,incerteza=0.05,unidade='mm')
+    '''
+    media=np.average(array) 
+    desvio_padrao=np.std(array)
+    if incerteza>desvio_padrao:
+        desvio_padrao=incerteza
+    return Medida(media,desvio_padrao,unidade)
+

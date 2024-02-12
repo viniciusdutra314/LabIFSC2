@@ -70,11 +70,10 @@ class Medida:
 
         if not unidade: 
             self.unidade=TODAS_UNIDADES[""]
-        elif isinstance(unidade,str):
+        if isinstance(unidade,str):
             if unidade not in TODAS_UNIDADES:
                 raise ValueError(f'Unidade {unidade} não registrada em TODAS_UNIDADES')
             self.unidade=TODAS_UNIDADES[unidade]
-        else: raise TypeError('Unidade precisar uma string')
         
         if self.unidade.simbolo:
             self.si_nominal=self.nominal*self.unidade.cte_mult +self.unidade.cte_ad
@@ -165,7 +164,7 @@ class Medida:
         unidade=self._unidade_mais_proxima(outro.unidade,media)
         media=media*unidade.cte_mult + unidade.cte_ad
         desvio_padrao=desvio_padrao*unidade.cte_mult
-        return Medida(media,desvio_padrao,unidade)
+        return Medida(media,desvio_padrao,unidade.simbolo)
     def __radd__(self,outro):
         return self.__add__(outro)
     def __sub__(self,outro):

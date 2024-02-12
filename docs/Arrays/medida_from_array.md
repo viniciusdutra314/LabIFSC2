@@ -1,0 +1,1 @@
+:::LabIFSC2.arrayM.medida_from_array
