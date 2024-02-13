@@ -1,5 +1,7 @@
-from .medida import Medida, montecarlo
 import numpy as np
+
+from .medida import Medida, montecarlo
+
 
 def aceitamedida(func :callable) -> callable:
     '''Possibilita que qualquer função aceite e

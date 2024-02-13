@@ -6,6 +6,7 @@ pelo submódulo
 
 import os
 from subprocess import run
+
 file_name='codata2018_constantes.txt'
 abs_path=os.path.dirname(__file__)
 file_dir=os.path.join(abs_path,file_name)

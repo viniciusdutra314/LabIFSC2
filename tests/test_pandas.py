@@ -1,6 +1,8 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from LabIFSC2 import *
+
 theta=np.array([Medida(x,0.01) for x in np.linspace(0,3,10)])
 senos=sin(theta)
 df=pd.DataFrame(data={'angulos':theta, 'senos':senos})

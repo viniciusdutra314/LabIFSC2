@@ -1,6 +1,8 @@
 import numpy as np
-from .unidades import TODAS_UNIDADES, Unidade
+
 from .formatacoes import *
+from .sistema_de_unidades import TODAS_UNIDADES, Unidade
+
 
 def montecarlo(func : callable, *parametros):
     '''## Propagação de erros usando Monte Carlo
@@ -74,7 +76,9 @@ class Medida:
             if unidade not in TODAS_UNIDADES:
                 raise ValueError(f'Unidade {unidade} não registrada em TODAS_UNIDADES')
             self.unidade=TODAS_UNIDADES[unidade]
-        
+        if isinstance(unidade,Unidade):
+            self.unidade=unidade
+            
         if self.unidade.simbolo:
             self.si_nominal=self.nominal*self.unidade.cte_mult +self.unidade.cte_ad
             self.si_incerteza=self.incerteza*self.unidade.cte_mult

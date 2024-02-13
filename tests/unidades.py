@@ -1,5 +1,8 @@
-from LabIFSC2 import *
 import pytest
+
+from LabIFSC2 import *
+
+
 def test_distancias():
     x=Medida(5.32,0.2,"m")
     assert str(x.converte("cm")) == "(5.3 ± 0.2)E2 cm"

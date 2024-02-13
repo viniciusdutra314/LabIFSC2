@@ -1,6 +1,9 @@
 import re
+
 import numpy as np
-from .unidades import Unidade
+
+from .lista_de_unidades import Unidade
+
 
 def arredondar_incerteza(incerteza:float) -> str:
     ''' Transforma um float de incerteza em

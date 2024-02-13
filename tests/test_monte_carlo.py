@@ -1,8 +1,12 @@
-from LabIFSC2 import *
-import math ;  from math import isclose
-from random import random, randint 
+import math
+from math import isclose
+from random import randint, random
+
 import numpy as np
 import pytest
+
+from LabIFSC2 import *
+
 
 def test_operacoes_basicas():
    for _ in range(100):

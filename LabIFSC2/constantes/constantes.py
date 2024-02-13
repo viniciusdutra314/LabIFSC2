@@ -10,6 +10,7 @@ encontrar a constante
 '''
 
 from LabIFSC2 import Medida
+
 alpha_particle_electron_mass_ratio=Medida(7294.29954142, 2.4e-07, '')
 alpha_particle_mass=Medida(6.6446573357e-27, 2e-36, 'kg')
 alpha_particle_mass_energy_equivalent=Medida(5.9719201914e-10, 1.8e-19, 'J')

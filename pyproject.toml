@@ -11,9 +11,9 @@ python = "^3.10"
 numpy = "^1.26"
 
 [tool.taskipy.tasks]
-lint = "isort . && blue --check --diff .  "
+lint = "isort ."
 pre_testes = "task lint"
-testes="pytest -s -x -vv --cov=LABIFSC2"
+testes="pytest --tb=no"
 docs="mkdocs serve"
 
 [tool.isort]
@@ -23,7 +23,6 @@ multi_line_output=0
 
 [tool.poetry.group.dev.dependencies]
 matplotlib = "^3.8"
-blue = "^0.9"
 isort = "^5.13"
 pandas = "^2.2"
 labifsc = "^0.1.13"

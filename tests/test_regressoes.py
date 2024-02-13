@@ -1,6 +1,9 @@
-from LabIFSC2 import *
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+
+from LabIFSC2 import *
+
+
 def test_linear_coef():
     x=np.arange(0,30)
     for _ in range(10):

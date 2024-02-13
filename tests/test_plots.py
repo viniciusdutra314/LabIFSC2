@@ -1,7 +1,9 @@
-from LabIFSC2 import Medida,get_nominais,curva_max,curva_min
-from LabIFSC2 import exp,sin
-import numpy as np  
 import matplotlib.pyplot as plt
+import numpy as np
+
+from LabIFSC2 import Medida, curva_max, curva_min, exp, get_nominais, sin
+
+
 def test_plot_gravidade():
     t=np.linspace(1,10,100)
     g=Medida(9.5,0.5)

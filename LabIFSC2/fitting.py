@@ -1,8 +1,10 @@
 import numpy as np
 from numpy.polynomial import Polynomial
-from .medida import Medida
-from .matematica import exp,aceitamedida
+
 from .arrayM import get_nominais
+from .matematica import aceitamedida, exp
+from .medida import Medida
+
 
 class MPolinomio(Polynomial):
    '''

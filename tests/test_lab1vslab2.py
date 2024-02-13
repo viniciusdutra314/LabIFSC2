@@ -1,6 +1,9 @@
 import LabIFSC as lab1
-import LabIFSC2 as lab2
 import numpy as np
+
+import LabIFSC2 as lab2
+
+
 def igualdade_medida(Medidalab1,Medidalab2):
     Medidalab1=lab2.Medida(Medidalab1.nominal,Medidalab1.incerteza)
     Medidalab2=lab2.Medida(Medidalab2.nominal,Medidalab2.incerteza)

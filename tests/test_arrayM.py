@@ -1,7 +1,9 @@
-from LabIFSC2 import (Medida,get_nominais,
-            get_incertezas,curva_max,curva_min,linspace)
-from LabIFSC2 import exp,sin
-import numpy as np  
+import numpy as np
+
+from LabIFSC2 import (Medida, curva_max, curva_min, exp, get_incertezas,
+                      get_nominais, linspace, sin,)
+
+
 def test_nominal_lista():
     x=[Medida(1,0.1),Medida(6132,4),Medida(-34,3),Medida(-5313.351)]
     nominal=get_nominais(x)

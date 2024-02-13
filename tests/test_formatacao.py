@@ -1,4 +1,5 @@
 import LabIFSC2 as lab
+
 x=lab.Medida(15,0.1,'m')
 def test_padraolatex():
     assert str(x)=="(1.50 ± 0.01)E1 m"

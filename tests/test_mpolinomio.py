@@ -1,5 +1,8 @@
-from LabIFSC2 import *
 import numpy as np
+
+from LabIFSC2 import *
+
+
 def test_coef_raizes():
     r1=Medida(1,0.1) ; r2=Medida(-4,0.2)
     r3=Medida(6,1) ; r4=Medida(25,2)
