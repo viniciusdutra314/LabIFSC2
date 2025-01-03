@@ -3,10 +3,10 @@ from .arrayM import (curva_max, curva_min, get_incertezas, get_nominais,
 from .fitting import (MPolinomio, regressao_exponencial, regressao_linear,
                       regressao_polinomial, regressao_potencia,)
 from .formatacoes import *
+from .lista_de_unidades import *
 from .matematica import *
 from .medida import Medida, equivalente, montecarlo
 from .sistema_de_unidades import TODAS_UNIDADES, Unidade
-from .lista_de_unidades import *
 
 __all__=["Medida","montecarlo","equivalente"]+funcoes_matematicas+[
         "MPolinomio","regressao_polinomial","regressao_linear","regressao_exponencial","regressao_potencia"

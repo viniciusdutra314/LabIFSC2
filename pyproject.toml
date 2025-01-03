@@ -7,8 +7,9 @@ license = "GNU General Public License v3.0"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-numpy = "^1.26"
+python = "^3.12"
+numpy = "^2"
+pint = "^0.24.4"
 
 [tool.taskipy.tasks]
 lint = "isort ."
@@ -26,12 +27,9 @@ matplotlib = "^3.8"
 isort = "^5.13"
 pandas = "^2.2"
 labifsc = "^0.1.13"
-pytest = "^7.4.4"
-pyarrow = "^14.0.2"
 scipy = "^1.12.0"
-memory-profiler = "^0.61.0"
 taskipy = "^1.12.2"
-pytest-cov = "^4.1.0"
+pytest = "^8.3.4"
 
 
 [tool.poetry.group.docs.dependencies]

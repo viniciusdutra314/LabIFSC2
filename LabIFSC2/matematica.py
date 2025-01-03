@@ -1,9 +1,13 @@
+from collections.abc import Callable
+from numbers import Number
+
 import numpy as np
 
 from .medida import Medida, montecarlo
 
 
-def aceitamedida(func :callable) -> callable:
+
+def aceitamedida(func :Callable[[Number,...],Number]) -> Callable[[Medida,...],Medida]:
     '''Possibilita que qualquer função aceite e
     retorne Medidas como argumentos
     
