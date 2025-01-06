@@ -1,4 +1,4 @@
-::: LabIFSC2.fitting.regressao_exponencial
+::: LabIFSC2.regressões.regressao_exponencial
 
 
 Por incrível que pareça, é possível transformar uma exponencial em uma reta. Temos a relação \(y=ae^{kx}\), considerando somente números positivos, podemos aplicar a função \(log\) em ambos os lados, obtendo \(log(y)=log(a)+kx\), se fizermos um gráfico de \(log(y)\) por \(x\), será uma reta!

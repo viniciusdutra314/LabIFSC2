@@ -1,4 +1,4 @@
-::: LabIFSC2.fitting.regressao_linear
+::: LabIFSC2.regressões.regressao_linear
 
 
 É um caso especial da [Regressão Polinomial](polinomial.md) (grau=1).

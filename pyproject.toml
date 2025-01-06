@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.12"
 numpy = "^2"
-pint = "^0.24.4"
+pint = "^0.24"
 
 [tool.taskipy.tasks]
 lint = "isort ."
@@ -33,11 +33,11 @@ pytest = "^8.3.4"
 
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.3"
 mkdocs-material = "^9.5.4"
 pymdown-extensions = "^10.7"
 python-markdown-math = "^0.8"
-mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+mkdocstrings = "^0.27.0"
+mkdocstrings-python = "^1.13.0"
 
 [build-system]
 requires = ["poetry-core"]

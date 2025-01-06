@@ -1,4 +1,4 @@
-:::LabIFSC2.arrayM.curva_min
+:::LabIFSC2.operacoes_em_arrays.curva_min
 
 
 As funções `curva_min` e `curva_max` são usadas na criação de gráficos com propagação de erro em curvas, elas recebem um array de Medidas e retornam um array com a curva máximo/mínima,abaixo consta um gráfico de uma queda livre usando Matplotlib e gravidade com valor \((9.5 \pm 0.5)ms^{-2}\) . 

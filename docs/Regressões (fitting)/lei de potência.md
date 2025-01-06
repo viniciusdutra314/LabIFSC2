@@ -1,4 +1,4 @@
-::: LabIFSC2.fitting.regressao_potencia
+::: LabIFSC2.regressões.regressao_potencia
 
 
 Leis de potência são relações da forma \(y=Ax^n\)

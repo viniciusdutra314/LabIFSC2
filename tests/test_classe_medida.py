@@ -41,7 +41,6 @@ def test_comparacoes():
         with pytest.raises(TypeError):
             comparacao(x,y)
     
-
 def test_igualdades():
     x=lab.Medida(1,0.1,'')
     y=lab.Medida(0.9,0.01,'')

@@ -2,7 +2,6 @@ import re
 
 import numpy as np
 
-from .lista_de_unidades import Unidade
 
 
 def arredondar_incerteza(incerteza:float) -> str:

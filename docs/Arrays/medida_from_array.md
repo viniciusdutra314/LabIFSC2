@@ -1,1 +1,1 @@
-:::LabIFSC2.arrayM.medida_from_array
+:::LabIFSC2.operacoes_em_arrays.medida_from_array

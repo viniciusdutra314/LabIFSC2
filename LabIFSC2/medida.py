@@ -6,13 +6,12 @@ from functools import total_ordering
 
 import numpy as np
 from .strong_typing import obrigar_tipos
-from .formatacoes import *
-from .sistema_de_unidades import TODAS_UNIDADES, Unidade
+from .formatações import *
 from enum import Enum
 
 
-def montecarlo(func : Callable[[Number,...],Number], 
-               *parametros : [Number,...]) -> 'Medida':
+def montecarlo(func : Callable, 
+               *parametros : [Number,...],N:int=100_000) -> 'Medida':
     '''## Propagação de erros usando Monte Carlo
   Calcula a média e desvio padrão da densidade de probabilidade de uma 
   função com variáveis gaussianas, também armazena o histograma
@@ -34,23 +33,20 @@ def montecarlo(func : Callable[[Number,...],Number],
         for uma instância de Medida   
 
 '''
-    #from . import num_gaussianos
-
-    N=int(1e4)
-    if not callable(func): raise TypeError("Func precisa ser um callable (função)")
     x_samples=np.empty((len(parametros),N))
     for index,parametro in enumerate(parametros):
-        if not isinstance(parametro,Medida): 
-            raise TypeError("Todos os parametros precisam ser Medidas")      
-        if not len(parametro._histograma):
+        if not (len(parametro._histograma)):
             x_samples[index]=np.random.normal(parametro.nominal,
                                               parametro.incerteza,size=N)
         else:
             x_samples[index]=parametro._histograma
     histograma=np.vectorize(func)(*x_samples)
     mean=np.mean(histograma)
-    std=np.std(histograma,mean)
-    return Medida(mean,std,histograma=histograma)
+    std=np.std(histograma,mean=mean)
+    resultado=Medida(mean,std,'')
+    resultado._histograma=histograma
+    resultado._gaussiana=False
+    return resultado
 
 class Medida:
     @obrigar_tipos(in_class_function=True)
@@ -73,44 +69,44 @@ class Medida:
         self._nominal=nominal
         self._incerteza=incerteza
         self._unidade=unidade
-    
-    def _error_for_changing_attributes(self):
+
+        self._gaussiana=True
+        self._histograma=np.array([])
+
+
+    def _erro_por_mudar_atributo(self):
         raise PermissionError("Para garantir a integridade da Medida realizada \
 o LabIFSC2 não permite a alteração direta de nominal, incerteza, unidade (somente leitura).\
 Caso precise de uma nova Medida, crie outra com o \
 construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
-    def nominal(self) -> Number: 
-        return self._nominal
+    def nominal(self) -> Number: return self._nominal
     
     @nominal.setter
-    def nominal(self, value):self._error_for_changing_attributes()
+    def nominal(self, value):self._erro_por_mudar_atributo()
     
     @nominal.deleter
-    def nominal(self): self._error_for_changing_attributes()
+    def nominal(self): self._erro_por_mudar_atributo()
 
     @property
-    def incerteza(self) -> Number: 
-        return self._incerteza
+    def incerteza(self) -> Number: return self._incerteza
     
     @incerteza.setter
-    def incerteza(self, value): self._error_for_changing_attributes()
+    def incerteza(self, value): self._erro_por_mudar_atributo()
     
     @incerteza.deleter
-    def incerteza(self): self._error_for_changing_attributes()
+    def incerteza(self): self._erro_por_mudar_atributo()
 
     @property
     def unidade(self) -> str: 
         return self._unidade
     
     @unidade.setter
-    def unidade(self, value):
-        self._error_for_changing_attributes()
+    def unidade(self, value): self._erro_por_mudar_atributo()
     
     @unidade.deleter
-    def unidade(self):
-        self._error_for_changing_attributes()
+    def unidade(self): self._erro_por_mudar_atributo()
 
     def __eq__(self,outro):
         raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
@@ -118,73 +114,80 @@ diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função 
 chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
 não use !=,==,<=,<,>,>= diretamente com Medidas")
     __neq__=__lt__=__le__=__gt__=__ge__=__eq__
-    
-    
-    def __neg__(self):
-        return Medida(-self.nominal,self.incerteza)
-    
-    def __add__(self,outro):
-        #Como existe solução analítica da soma entre duas gaussianas
-        #iremos usar esse resultado para otimizar o código
-        if isinstance(outro,np.ndarray):
-           self_broadcast=np.repeat(self,len(outro))
-           return self_broadcast + outro
-        outro=self._torna_medida(outro)
-        self._checa_dimensao(outro.unidade.simbolo)
-        media=self.si_nominal+outro.si_nominal
-        desvio_padrao=np.sqrt(self.si_incerteza**2 + outro.si_incerteza**2)
-        unidade=self._unidade_mais_proxima(outro.unidade,media)
-        media=media*unidade.cte_mult + unidade.cte_ad
-        desvio_padrao=desvio_padrao*unidade.cte_mult
-        return Medida(media,desvio_padrao,unidade.simbolo)
+        
 
+    def __add__(self,outro) -> 'Medida':
+        if self is outro: return 2*self
+
+        elif (self._gaussiana and outro._gaussiana):
+            #Como existe solução analítica da soma entre duas gaussianas
+            #iremos usar esse resultado para otimizar o código
+            media=self.nominal+outro.nominal
+            desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
+            return Medida(media,desvio_padrao,self.unidade)
+        else:
+            return montecarlo(lambda x,y: x+y,self,outro)
 
     
-    def __sub__(self,outro):
-        if isinstance(outro,np.ndarray):
-           self_broadcast=np.repeat(self,len(outro))
-           return self_broadcast - outro
-        outro=self._torna_medida(outro)
-        media=self.nominal-outro.nominal
-        desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
-        return Medida(media,desvio_padrao)
+    def __sub__(self,outro)-> 'Medida':
+        if self is outro: return Medida(0,0,self.unidade)
+
+        elif (self._gaussiana and outro._gaussiana):
+            #Como existe solução analítica da subtração entre duas gaussianas
+            #iremos usar esse resultado para otimizar o código
+            media=self.nominal-outro.nominal
+            desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
+            return Medida(media,desvio_padrao,self.unidade)
+        else:
+            return montecarlo(lambda x,y: x+y,self,outro)
+    
+    
+
+    def __mul__(self,outro)-> 'Medida':
+        if self is outro: return montecarlo(lambda x: x**2,self)
+        elif isinstance(outro,Medida):
+            return montecarlo(lambda x,y: x*y,self,outro)
+        elif isinstance(outro,Number):
+            resultado=Medida(self.nominal*outro,abs(self.incerteza*outro),self.unidade)
+            resultado._histograma=self._histograma*outro
+            return resultado
+    
+    def __truediv__(self, outro) -> 'Medida':
+        if self is outro: return Medida(1,0,self.unidade)
+        elif isinstance(outro,Number):
+            resultado=Medida(self.nominal/outro,(self.incerteza/abs(outro)),self.unidade)
+            resultado._histograma=self._histograma/outro
+            return resultado
+        elif isinstance(outro,Medida):
+            return montecarlo(lambda x,y: x/y,self,outro)
+
+    def __pow__(self,outro) -> 'Medida':
+        if isinstance(outro,Number):
+           return montecarlo(lambda x: np.pow(x,outro),self)
+        elif isinstance(outro,Medida):
+            return montecarlo(lambda x,y: x**y,self,outro)
+
+
     __radd__=__add__
     __rsub__=__sub__
-    def __mul__(self,outro):
-        if not isinstance(outro,Medida) and not isinstance(outro,np.ndarray):
-            constante=outro
-            return Medida(self.nominal*constante,(self.incerteza*abs(constante)))
-        elif isinstance(outro,np.ndarray):
-           self_broadcast=np.repeat(self,len(outro))
-           return self_broadcast * outro
-        else:
-            return montecarlo(lambda x,y: x*y,self,outro)
+    __rmul__=__mul__
+    __rtruediv__=__truediv__
+    __rpow__=__pow__
 
-    def __truediv__(self, outro):
-        if not isinstance(outro,Medida) and not isinstance(outro,np.ndarray):
-            constante=outro
-            return Medida(self.nominal/constante,(self.incerteza/abs(constante)))
-        elif isinstance(outro,np.ndarray):
-           self_broadcast=np.repeat(self,len(outro))
-           return self_broadcast / outro
-        else:
-            return montecarlo(lambda x,y: x/y,self,outro)
-    def __rtruediv__(self, outro):
-        outro=self._torna_medida(outro)
-        return montecarlo(lambda x,y: y/x,self,outro)
-    def __pow__(self,outro):
-        if isinstance(outro,np.ndarray):
-           self_broadcast=np.repeat(self,len(outro))
-           return self_broadcast ** outro
-        outro=self._torna_medida(outro)
-        return montecarlo(np.power,self,outro)
-    def __rpow__(self,outro):
-        outro=self._torna_medida(outro)
-        return montecarlo(np.power,outro,self)
-    def __abs__(self):
-        return Medida(abs(self.nominal),self.incerteza)
-
+    def __abs__(self) -> 'Medida':
+        return Medida(abs(self.nominal),self.incerteza,self.unidade)
     
+    def __neg__(self) -> 'Medida': 
+        resultado=Medida(-self.nominal,self.incerteza,self.unidade)
+        resultado._histograma=-self._histograma
+        return resultado
+        
+    def __pos__(self) -> 'Medida': 
+        resultado=Medida(self.nominal,self.incerteza,self.unidade)
+        resultado._histograma=self._histograma
+        return resultado
+    
+
     def probabilidade(self,a:Number,b:Number) -> Number:
         ''' Retorna a probabilidade que a Medida
         esteja entre [a,b] usando o histograma como

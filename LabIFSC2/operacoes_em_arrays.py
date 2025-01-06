@@ -1,18 +1,21 @@
 import numpy as np
-
 from .medida import Medida
+from numbers import Number
+from .strong_typing import obrigar_tipos
 
-
-def get_nominais(arrayMedidas : iter) -> np.ndarray:
-    '''*get_nominais* Transforma um array/lista (iterável) de medidas  em
+@obrigar_tipos()
+def get_nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
+    '''*get_nominais* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com seus valores nominais
     
     Args:
-        arrayMedidas: array com medidas
+        arrayMedidas (Sequence | np.ndarray): array com medidas
 
     Returns:
-        arrayNominais  : array valores nominais
+        arrayNominais (Sequence | np.ndarray): array valores nominais
 
+    Raises:
+        ValueError: Se algum valor não for uma Medida
   
     Examples:
         >>> import LabIFSC2 as lab
@@ -21,27 +24,23 @@ def get_nominais(arrayMedidas : iter) -> np.ndarray:
         >>> lab.get_nominais(array)
         array([  4.,  35., -97.])
     '''
-    try: iter(arrayMedidas)
-    except: raise TypeError("A entrada precisa ser um iterable de Medidas")
     tamanho=len(arrayMedidas)
-    array_nominais=np.zeros(tamanho)
+    array_nominais=np.empty(tamanho,dtype=Number)
     
     for index,valores in enumerate(arrayMedidas):
-        if not isinstance(valores,Medida):
-            valores=Medida(valores)
         array_nominais[index]=valores.nominal
     return array_nominais
 
-
-def get_incertezas(arrayMedidas : iter) -> np.ndarray:
-    '''*get_incertezas* Transforma um array/lista (iterável) de medidas  em
+@obrigar_tipos()
+def get_incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
+    '''*get_incertezas* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com suas incertezas
     
     Args:
-        arrayMedidas: array com medidas
+        arrayMedidas (Sequence[Medida]): array com medidas
 
     Returns:
-        arrayIncertezas  : array com incertezas
+        arrayIncertezas(np.ndarray[Medida])  : array com incertezas
 
     Examples:
         >>> import LabIFSC2 as lab
@@ -51,29 +50,25 @@ def get_incertezas(arrayMedidas : iter) -> np.ndarray:
         array([0.2, 3. , 1. ])
 '''
     
-    try: iter(arrayMedidas)
-    except: raise TypeError("A entrada precisa ser um iterable de Medidas")
-
     tamanho=len(arrayMedidas)
-    array_incertezas=np.zeros(tamanho)
-
-    for index,medida in enumerate(arrayMedidas):
-        if not isinstance(medida,Medida):
-            raise TypeError("Todos os valores precisam ser Medidas")
-        else:
-            array_incertezas[index]=medida.incerteza
+    array_incertezas=np.empty(tamanho)
+    
+    for index,valores in enumerate(arrayMedidas):
+        if not isinstance(valores,Medida):
+            raise ValueError("Todos os valores precisam ser Medidas")
+        array_incertezas[index]=valores.incerteza
     return array_incertezas
 
-
-def curva_min(arrayMedida : iter,sigma=2):
+@obrigar_tipos()
+def curva_min(arrayMedida : np.ndarray[Medida],sigma:Number=2) -> np.ndarray[Number]:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, com quantidade de sigmas usados personalizável
 
        curva_min=lab.get_nominais(arrayM) - sigmas*lab.get_incertezas(arrayM)
     
     Args: 
-        arrayMedida (iter): iterável com Medidas
-        sigma (float | int): confiança estatística 
+        arrayMedida (Sequence): iterável com Medidas
+        sigma (Number): confiança estatística 
 
     Returns:
         arrayCurva (np.ndarray): array com a curva de Medidas
@@ -81,7 +76,8 @@ def curva_min(arrayMedida : iter,sigma=2):
     '''
     return get_nominais(arrayMedida) -sigma*get_incertezas(arrayMedida)
 
-def curva_max(arrayMedida : iter,sigma=2):
+@obrigar_tipos()
+def curva_max(arrayMedida : np.ndarray[Medida],sigma:Number=2)-> np.ndarray[Number]:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, quantidade de sigmas usados personalizável
 
@@ -89,28 +85,29 @@ def curva_max(arrayMedida : iter,sigma=2):
 
     
     Args: 
-        arrayM : iterable (array,lista,...) com Medidas
-        sigma (default=2), relacionada com a confiança estatística 
+        arrayM (Sequence[Medida]) (array,lista,...) com Medidas
+        sigma (Number, default=2) relacionada com a confiança estatística 
 
     Returns:
-        arrayCurva (np.ndarray): array com a curva de Medidas
+        arrayCurva (np.ndarray[Medida]): array com a curva de Medidas
     '''
     return get_nominais(arrayMedida) + sigma*get_incertezas(arrayMedida)
 
 
-def linspace(a:float,b:float,n : int,
-             incertezas :float,unidade : str =False) -> np.ndarray[Medida]:
+@obrigar_tipos()
+def linspace(a:Number,b:Number,n : int,
+             incertezas : Number ,unidade : str) -> np.ndarray[Medida]:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,
     mas se ela for um array cada Medida terá a respectiva incerteza.
     A unidade será a mesma e é opcional
     
     Args:
-        a (float): Menor nominal
-        b (float): Maior nominal
-        n (int): Número de Medidas
-        incertezas (float | iterable): incerteza ou array de incertezas
-        unidade (str): unidade das medidas
+        `a` (Number): Menor nominal
+        `b` (Number): Maior nominal
+        `n` (int): Número de Medidas
+        `incertezas` (Number | Sequence[Number]): incerteza ou array de incertezas
+        `unidade` (str): unidade das medidas
     
     Returns:
         arrayM (np.ndarray[Medida]): array de Medidas
@@ -130,24 +127,22 @@ def linspace(a:float,b:float,n : int,
     entre as Medidas
         
     """
-    n=int(n)
-    nominais=np.linspace(a,b,n)
-    if not hasattr(incertezas,'__iter__'):
-        return np.array([Medida(i,incertezas,unidade) for i in nominais])
-    if len(incertezas)!=len(nominais):
-        raise ValueError('Número de incertezas incompatível com número de nominais')
-    else:
-        return np.array([Medida(i,j,unidade) for i,j in zip(nominais,incertezas)])
+    if a>b: raise ValueError("a é maior do que b")
 
-def medida_from_array(array:iter,unidade='',incerteza =0) -> Medida:
+    nominais=np.linspace(a,b,n)
+    return np.array([Medida(i,incertezas,unidade) for i in nominais])
+        
+@obrigar_tipos()
+def medida_from_array(medições:np.ndarray[Number],
+                      incerteza_experimental:Number,unidade:str) -> Medida:
     ''' 
-    Converte um iteravel de medições em um único objeto da
+    Converte uma sequência de medições em um único objeto da
     classe Medida
     
     Args:
-        array (iter):  array com medições 
-        unidade (str):  unidade das medições 
-        incerteza (float): incerteza associada a cada medição 
+        medições (Sequence[Number]):  medições  
+        incerteza (Number): incerteza associada a cada medição 
+        unidade (str):  unidade das medições        
 
     Returns:
         medida (Medida):  medida 
@@ -168,9 +163,9 @@ def medida_from_array(array:iter,unidade='',incerteza =0) -> Medida:
         >>> diametro
         Medida(nominal=1.7719999999999998,incerteza=0.05,unidade='mm')
     '''
-    media=np.average(array) 
-    desvio_padrao=np.std(array)
-    if incerteza>desvio_padrao:
-        desvio_padrao=incerteza
+    media=np.average(medições) 
+    desvio_padrao=np.std(medições,mean=media)
+    if incerteza_experimental>desvio_padrao:
+        desvio_padrao=incerteza_experimental
     return Medida(media,desvio_padrao,unidade)
 
