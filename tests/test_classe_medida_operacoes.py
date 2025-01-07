@@ -19,7 +19,10 @@ def test_soma():
 
     assert (x-x).nominal==0 and (x-x).incerteza==0
     assert (y-y).nominal==0 and (y-y).incerteza==0
-
+    z=lab.Medida(5,0.01,'')*lab.Medida(5,0.01,'')
+    w=lab.Medida(5,0.01,'')
+    assert np.isclose((z+w).nominal,30,1e-4)
+    assert np.isclose((z-w).nominal,20,1e-4)
 
 def test_multiplicacao_medidas():
     x=lab.Medida(0,0.1,'')
@@ -29,7 +32,7 @@ def test_multiplicacao_medidas():
     assert np.any(nao_correlacionado._histograma>0) and np.any(nao_correlacionado._histograma<0)
     assert not (correlacionado._gaussiana and nao_correlacionado._gaussiana)
     w=lab.Medida(0,0.1,'')
-    assert lab.comparar_medidas(w*x,nao_correlacionado)==lab.Comparacao.IGUAIS
+    assert lab.comparar_medidas(w*x,nao_correlacionado)==lab.Comparacao.EQUIVALENTES
 
 def test_multiplicacao_cte():
     x=lab.Medida(5,0.1,'')
@@ -52,9 +55,11 @@ def test_mudanca_de_sinal():
     assert y.nominal==5 and y.incerteza==0.1
     w=y*y
     z=+w
-    assert np.array_equal(z._histograma,w._histograma)
+    for i in range(len(z._histograma)):
+        assert z._histograma[i]==w._histograma[i]
     z=-w
-    assert np.array_equal(z._histograma,-w._histograma)
+    for i in range(len(z._histograma)):
+        assert z._histograma[i]==-w._histograma[i]
 
 def test_divisao():
     x=lab.Medida(-3,0.1,'')
@@ -67,7 +72,7 @@ def test_divisao():
     y=lab.Medida(-3,0.1,'')
     assert (x/y).incerteza!=0
 
-    assert np.isclose((5/x).nominal,1)
+    assert np.isclose((10/x).nominal,2,1e-3)
 
     divisao=(y/x).nominal
     divisao_inversa=(x/y).nominal

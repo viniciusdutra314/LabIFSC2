@@ -8,42 +8,23 @@ import numpy as np
 from .strong_typing import obrigar_tipos
 from .formatações import *
 from enum import Enum
-
+from . import ureg
+from pint import Quantity
 
 def montecarlo(func : Callable, 
-               *parametros : [Number,...],N:int=100_000) -> 'Medida':
-    '''## Propagação de erros usando Monte Carlo
-  Calcula a média e desvio padrão da densidade de probabilidade de uma 
-  função com variáveis gaussianas, também armazena o histograma
-  inteiro dentro de uma Medida
-
-  Globals:
-    num_montecarlo : Quantidade de números aleatórios usados (Default=10.000)
-    pode ser alterado globalmente usando num_montecarlo(valor)
-
-  Args:
-    func (callable): função para a propagação do erro
-    parametros list[Medida]: parâmetros da função definida acima
-  
-  Returns:
-    Resultado (Medida):  Medida com \(\mu\), \(\sigma\) e histograma
-  
-  Raises:
-        TypeError: Se `func` não for callable ou se algum dos `parametros` não 
-        for uma instância de Medida   
-
-'''
-    x_samples=np.empty((len(parametros),N))
+               *parametros : Number,N:int=100_000) -> 'Medida':
+    x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
         if not (len(parametro._histograma)):
             x_samples[index]=np.random.normal(parametro.nominal,
-                                              parametro.incerteza,size=N)
+                                              parametro.incerteza,size=N)*parametro._nominal.units
         else:
             x_samples[index]=parametro._histograma
-    histograma=np.vectorize(func)(*x_samples)
+  
+    histograma=func(*x_samples)
     mean=np.mean(histograma)
     std=np.std(histograma,mean=mean)
-    resultado=Medida(mean,std,'')
+    resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
     resultado._histograma=histograma
     resultado._gaussiana=False
     return resultado
@@ -66,12 +47,11 @@ class Medida:
             - TypeError: A unidade precisa ser uma string
         """
         if incerteza<0: raise ValueError("Incerteza não pode ser negativa")
-        self._nominal=nominal
-        self._incerteza=incerteza
-        self._unidade=unidade
-
+        self._nominal= ureg.Quantity(nominal,unidade).to_reduced_units()
+        self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
         self._gaussiana=True
         self._histograma=np.array([])
+        self._nominal.ito_reduced_units
 
 
     def _erro_por_mudar_atributo(self):
@@ -81,7 +61,7 @@ Caso precise de uma nova Medida, crie outra com o \
 construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
-    def nominal(self) -> Number: return self._nominal
+    def nominal(self) -> Number: return self._nominal.magnitude
     
     @nominal.setter
     def nominal(self, value):self._erro_por_mudar_atributo()
@@ -90,7 +70,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     def nominal(self): self._erro_por_mudar_atributo()
 
     @property
-    def incerteza(self) -> Number: return self._incerteza
+    def incerteza(self) -> Number: return self._incerteza.magnitude
     
     @incerteza.setter
     def incerteza(self, value): self._erro_por_mudar_atributo()
@@ -100,13 +80,18 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
     def unidade(self) -> str: 
-        return self._unidade
+        return str(self._nominal.units)
     
     @unidade.setter
     def unidade(self, value): self._erro_por_mudar_atributo()
     
     @unidade.deleter
     def unidade(self): self._erro_por_mudar_atributo()
+
+    def converter_para_si(self):
+        self._nominal.ito_base_units()
+        self._incerteza.ito_base_units()
+        self._histograma.ito_base_units()
 
     def __eq__(self,outro):
         raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
@@ -116,33 +101,56 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
     __neq__=__lt__=__le__=__gt__=__ge__=__eq__
         
 
+    def __str__(self) -> str:
+        incerteza_magnitude=int(np.floor(np.log10(self.incerteza)))
+        incerteza_arredonda=round(self.incerteza,-incerteza_magnitude+1)
+        incerteza_str = f"{incerteza_arredonda:.1e}"
+        significant_digit_position = incerteza_str.find('e')
+        significant_digits = int(incerteza_str[significant_digit_position + 1:])
+        
+        # Truncate nominal to the same number of significant digits
+        nominal_truncated = round(self.nominal, -significant_digits)
+        incerteza_truncated = round(self.incerteza, -significant_digits)
+        # Get the pretty unit string
+        unidade_bonita = f"{self._nominal:~P}".split()
+        if len(unidade_bonita) == 1: unidade_bonita=''
+        if len(unidade_bonita) == 2: unidade_bonita=unidade_bonita[1]
+
+        return f"({nominal_truncated}±{incerteza_truncated}) {unidade_bonita}"
+    
+    def __repr__(self) -> str:
+        return f"Medida({self.nominal=},{self.incerteza=},'{self.unidade=}')"
+
+    def converter_para(self,unidade:str):
+        self._nominal.ito(unidade)
+        self._incerteza.ito(unidade)
+
+    def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
+        if self._nominal.is_compatible_with(outro._nominal):
+            if self is outro: 
+                return 2*self if positivo else Medida(0,0,self.unidade)
+
+            elif (self._gaussiana and outro._gaussiana):
+                #Como existe solução analítica da soma/subtração entre duas gaussianas
+                #iremos usar esse resultado para otimizar o código
+                if positivo: media=self._nominal+outro._nominal
+                else: media=self._nominal-outro._nominal
+                desvio_padrao=(self._incerteza**2 + outro._incerteza**2)**(1/2)
+                desvio_padrao.ito(media.units)
+                return Medida(media.magnitude,desvio_padrao.magnitude,
+                              str(media.units))
+            else:
+                if positivo: return montecarlo(lambda x,y: x+y,self,outro)
+                else : return montecarlo(lambda x,y: x-y,self,outro)
+        else:
+            raise ValueError(f"A soma/subtração entre {self._nominal.dimensionality} e \
+{outro._nominal.dimensionality} não é possível")
+
     def __add__(self,outro) -> 'Medida':
-        if self is outro: return 2*self
-
-        elif (self._gaussiana and outro._gaussiana):
-            #Como existe solução analítica da soma entre duas gaussianas
-            #iremos usar esse resultado para otimizar o código
-            media=self.nominal+outro.nominal
-            desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
-            return Medida(media,desvio_padrao,self.unidade)
-        else:
-            return montecarlo(lambda x,y: x+y,self,outro)
-
-    
+        return self._adicao_subtracao(outro,True)
     def __sub__(self,outro)-> 'Medida':
-        if self is outro: return Medida(0,0,self.unidade)
-
-        elif (self._gaussiana and outro._gaussiana):
-            #Como existe solução analítica da subtração entre duas gaussianas
-            #iremos usar esse resultado para otimizar o código
-            media=self.nominal-outro.nominal
-            desvio_padrao=np.sqrt(self.incerteza**2 + outro.incerteza**2)
-            return Medida(media,desvio_padrao,self.unidade)
-        else:
-            return montecarlo(lambda x,y: x+y,self,outro)
+        return self._adicao_subtracao(outro,False)
     
-    
-
     def __mul__(self,outro)-> 'Medida':
         if self is outro: return montecarlo(lambda x: x**2,self)
         elif isinstance(outro,Medida):
@@ -160,7 +168,12 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             return resultado
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x/y,self,outro)
-
+        
+    def __rtruediv__(self,outro) -> 'Medida':
+        if isinstance(outro,Number):
+            return montecarlo(lambda x: outro/x,self)
+        raise ValueError(f"Operação entre {type(self)} e {type(outro)} não suportada")
+    
     def __pow__(self,outro) -> 'Medida':
         if isinstance(outro,Number):
            return montecarlo(lambda x: np.pow(x,outro),self)
@@ -171,7 +184,6 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
     __radd__=__add__
     __rsub__=__sub__
     __rmul__=__mul__
-    __rtruediv__=__truediv__
     __rpow__=__pow__
 
     def __abs__(self) -> 'Medida':
@@ -215,7 +227,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
 
 
 class Comparacao(Enum):
-    IGUAIS = "iguais"
+    EQUIVALENTES = "iguais"
     DIFERENTES = "diferentes"
     INCONCLUSIVO = "inconclusivo"
 
@@ -246,18 +258,17 @@ def comparar_medidas(medida1: Medida, medida2: Medida,
         ValueError: Se o sigma para serem consideradas iguais for maior que o sigma para serem diferentes.
     """
                      
-    diferenca_nominal=abs(medida1.nominal-medida2.nominal)
-    soma_incertezas=medida1.incerteza+medida2.incerteza
+    diferenca_nominal=abs(medida1._nominal-medida2._nominal)
+    soma_incertezas=medida1._incerteza+medida2._incerteza
     sigma_igual=sigmas_customizados[0]
-    sigmal_diferente=sigmas_customizados[1]
-    if sigma_igual>sigmal_diferente:
+    sigma_diferente=sigmas_customizados[1]
+    if sigma_igual>sigma_diferente:
         raise ValueError("Sigma para serem consideradas iguais é maior que o sigma \
 para serem diferentes")
     
-    
     if diferenca_nominal<sigma_igual*soma_incertezas:
-        return Comparacao.IGUAIS
-    elif diferenca_nominal>sigmal_diferente*sigmal_diferente:
+        return Comparacao.EQUIVALENTES
+    elif diferenca_nominal>sigma_diferente*soma_incertezas:
         return Comparacao.DIFERENTES
     else:
         return Comparacao.INCONCLUSIVO

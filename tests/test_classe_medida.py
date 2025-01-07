@@ -46,12 +46,12 @@ def test_igualdades():
     y=lab.Medida(0.9,0.01,'')
     z=lab.Medida(50,1,'')
     w=lab.Medida(45,1,'')
-    assert lab.comparar_medidas(x,y)==lab.Comparacao.IGUAIS
+    assert lab.comparar_medidas(x,y)==lab.Comparacao.EQUIVALENTES
     assert lab.comparar_medidas(x,z)==lab.Comparacao.DIFERENTES
     assert lab.comparar_medidas(z,w)==lab.Comparacao.INCONCLUSIVO
 
     assert lab.comparar_medidas(x,y,sigmas_customizados=[0.1,0.2])==lab.Comparacao.DIFERENTES
-    assert lab.comparar_medidas(x,z,sigmas_customizados=[100,105])==lab.Comparacao.IGUAIS
+    assert lab.comparar_medidas(x,z,sigmas_customizados=[100,105])==lab.Comparacao.EQUIVALENTES
 
     with pytest.raises(ValueError):
         lab.comparar_medidas(x,y,sigmas_customizados=[5,1]) 
