@@ -9,6 +9,7 @@ from .strong_typing import obrigar_tipos
 from .formatações import *
 from enum import Enum
 from . import ureg
+from statistics import NormalDist
 from pint import Quantity
 
 def montecarlo(func : Callable, 
@@ -198,9 +199,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         resultado=Medida(self.nominal,self.incerteza,self.unidade)
         resultado._histograma=self._histograma
         return resultado
-    
 
-    def probabilidade(self,a:Number,b:Number) -> Number:
+    def probabilidade_de_estar_entre(self,a:Number,b:Number,unidade:str) -> Number:
         ''' Retorna a probabilidade que a Medida
         esteja entre [a,b] usando o histograma como
         referencia
@@ -217,12 +217,49 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         '''
 
         if a>b: raise ValueError("a deve ser menor que b")
+        if not self._nominal.is_compatible_with(unidade):
+                raise ValueError(f"Unidade {unidade} não é compatível com a unidade da medida")
 
-        if not len(self._histograma):
-            self._histograma=np.random.normal(self.nominal,
-                        self.incerteza,10_000) #hard coded 
-            
-        return np.mean((self._histograma >= a) & (self._histograma <= b))
+        if self._gaussiana:
+            #estamos resolvendo de maneira análitica
+            mu=self._nominal.to(unidade).magnitude
+            sigma=self._incerteza.to(unidade).magnitude
+            gaussiana=NormalDist(mu,sigma)
+            return gaussiana.cdf(b)-gaussiana.cdf(a)
+        else:
+            a=ureg.Quantity(a,unidade)
+            b=ureg.Quantity(b,unidade)
+            return np.mean((self._histograma >= a) & (self._histograma <= b))
+    
+    def intervalo_de_confianca(self,p:float) -> tuple[Number,Number]:
+        ''' Retorna o intervalo de confiança para a Medida
+        com base no histograma
+
+        Args:
+            `p` (float): Probabilidade de estar dentro do intervalo
+
+        Returns:- p) < 1e-2
+            `intervalo`: (tuple) intervalo de confiança
+        
+        Raises:
+            ValueError: Se `p` não estiver entre 0 e 1
+        '''
+        
+        if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
+        self._histograma.sort()
+        num_elements=len(self._histograma)
+        selected_elements=int(np.floor(p*num_elements))
+        all_possible_intervals=[(self._histograma[x],self._histograma[x+selected_elements]) 
+                         for x in range(num_elements-selected_elements)]
+        if all_possible_intervals:
+            shortest_interval=min(all_possible_intervals, key=lambda x: (x[1]-x[0]).magnitude)
+        else: #caso em que p=1
+            return (self._histograma[0],self._histograma[-1])
+        return tuple([x.magnitude for x in shortest_interval])
+
+
+
+
 
 
 

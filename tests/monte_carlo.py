@@ -55,10 +55,10 @@ def test_probabilidade(): #68-95-99.7 rule
   for _ in range(10):
       media, sigma=random(),random() #gaussianas aleatorias
       a=Medida(media,sigma)
-      assert isclose(montecarlo(lambda x:x, a).probabilidade(media-sigma,media+sigma),0.68,abs_tol=0.04)
-      assert isclose(montecarlo(lambda x:x, a).probabilidade(media-2*sigma,media+2*sigma),0.95,abs_tol=0.02)
-      assert isclose(montecarlo(lambda x:x, a).probabilidade(media-3*sigma,media+3*sigma),0.997,abs_tol=0.01)
-      assert montecarlo(lambda x:x, Medida(1,0.1)).probabilidade(media-100000*sigma,media+100000*sigma)==1
+      assert isclose(montecarlo(lambda x:x, a).probabilidade_de_estar_entre(media-sigma,media+sigma),0.68,abs_tol=0.04)
+      assert isclose(montecarlo(lambda x:x, a).probabilidade_de_estar_entre(media-2*sigma,media+2*sigma),0.95,abs_tol=0.02)
+      assert isclose(montecarlo(lambda x:x, a).probabilidade_de_estar_entre(media-3*sigma,media+3*sigma),0.997,abs_tol=0.01)
+      assert montecarlo(lambda x:x, Medida(1,0.1)).probabilidade_de_estar_entre(media-100000*sigma,media+100000*sigma)==1
 
 def test_exponencias_hiperbolicas():
     for _ in range(100):
