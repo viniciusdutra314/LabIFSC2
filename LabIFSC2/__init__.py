@@ -8,4 +8,4 @@ from .regressões import (MPolinomio, regressao_exponencial, regressao_linear,
 from .formatações import *
 from .matematica import *
 from .medida import Medida, comparar_medidas, montecarlo,Comparacao
-pi=3.14159265358979323846
+from .constantes import *
