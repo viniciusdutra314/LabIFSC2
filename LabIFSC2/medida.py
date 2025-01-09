@@ -246,16 +246,28 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         '''
         
         if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
-        self._histograma.sort()
-        num_elements=len(self._histograma)
-        selected_elements=int(np.floor(p*num_elements))
-        all_possible_intervals=[(self._histograma[x],self._histograma[x+selected_elements]) 
-                         for x in range(num_elements-selected_elements)]
-        if all_possible_intervals:
-            shortest_interval=min(all_possible_intervals, key=lambda x: (x[1]-x[0]).magnitude)
-        else: #caso em que p=1
-            return (self._histograma[0],self._histograma[-1])
-        return tuple([x.magnitude for x in shortest_interval])
+
+        elif p==1: return (min(self._histograma),max(self._histograma))
+
+        elif self._gaussiana:
+            #estamos resolvendo de maneira analítica
+            mu=self._nominal.magnitude
+            sigma=self._incerteza.magnitude
+            gaussiana=NormalDist(mu,sigma)
+            limite_inferior=gaussiana.inv_cdf((1-p)/2)
+            limite_superior=gaussiana.inv_cdf((1+p)/2)
+            return (limite_inferior,limite_superior)
+        else:
+            self._histograma.sort()
+            num_elements = len(self._histograma)
+            selected_elements = int(np.floor(p * num_elements))
+            magnitudes = np.array([item.magnitude for item in self._histograma])
+            intervals = magnitudes[selected_elements:] - magnitudes[:-selected_elements]
+
+            shortest_interval_index = np.argmin(intervals)
+            shortest_interval = (self._histograma[shortest_interval_index],
+                                self._histograma[shortest_interval_index + selected_elements])
+            return shortest_interval
 
 
 
