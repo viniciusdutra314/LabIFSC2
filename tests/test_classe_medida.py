@@ -1,6 +1,5 @@
 import LabIFSC2 as lab
 import pytest
-import numpy as np
 
 def test_inicializacao():
     with pytest.raises(ValueError):

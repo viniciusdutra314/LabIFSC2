@@ -13,7 +13,7 @@ from statistics import NormalDist
 from pint import Quantity
 
 def montecarlo(func : Callable, 
-               *parametros : Number,N:int=100_000) -> 'Medida':
+               *parametros : 'Medida',N:int=100_000) -> 'Medida':
     x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
         if not (len(parametro._histograma)):
