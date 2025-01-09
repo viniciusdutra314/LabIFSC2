@@ -1,6 +1,6 @@
 from collections.abc import Callable
 from numbers import Number
-from typing import Callable
+from typing import Callable,Sequence
 from functools import total_ordering
 
 
@@ -92,7 +92,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     def converter_para_si(self):
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
-        self._histograma.ito_base_units()
+        self._histograma=np.array([x.ito_base_units() for x in self._histograma])
 
     def __eq__(self,outro):
         raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
@@ -127,6 +127,9 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         self._incerteza.ito(unidade)
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
+        if not isinstance(outro,Medida):
+            raise TypeError("Uma Medida só pode ser somada/subtraída com outra Medida")
+
         if self._nominal.is_compatible_with(outro._nominal):
             if self is outro: 
                 return 2*self if positivo else Medida(0,0,self.unidade)

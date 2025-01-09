@@ -2,7 +2,7 @@ import numpy as np
 from numpy.polynomial import Polynomial
 
 from .strong_typing import obrigar_tipos
-from .operacoes_em_arrays import get_nominais
+from .operacoes_em_arrays import nominais
 from .matematica import aceitamedida, exp
 from .medida import Medida
 
@@ -66,8 +66,8 @@ def regressao_polinomial(x:np.ndarray,y:np.ndarray,
         func=True:
             MPolinomio(callable)
     '''
-    if isinstance(x[0],Medida): x=get_nominais(x) 
-    if isinstance(y[0],Medida): y=get_nominais(y)
+    if isinstance(x[0],Medida): x=nominais(x) 
+    if isinstance(y[0],Medida): y=nominais(y)
 
     coeficientes,lstsq=np.polynomial.Polynomial.fit(x,y,grau,full=True)
     breakpoint()
@@ -110,7 +110,7 @@ def regressao_exponencial(x,y,base=np.exp(1),func=False):
         Função (callable): retorna y(x) se func=True
         
     '''
-    x=get_nominais(x) ; y=get_nominais(y)
+    x=nominais(x) ; y=nominais(y)
     assert np.all(y>0), 'Todos y precisam ser positivos para uma modelagem exponencial'
     assert base>1, 'Bases precisam ser maiores que 1'
     coefs=regressao_linear(x,np.log(y)/np.log(base))
@@ -132,7 +132,7 @@ def regressao_potencia(x, y,func=False) :
         Array (nd.array):  Medidas a , k se func=False
         Função (callable): retorna y(x) se func=True
     '''
-    x=get_nominais(x) ; y=get_nominais(y)
+    x=nominais(x) ; y=nominais(y)
     coefs=regressao_linear(np.log(x),np.log(y))
     coefs[0]=exp(coefs[0])
     if not func: return coefs

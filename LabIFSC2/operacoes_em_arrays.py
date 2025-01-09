@@ -4,7 +4,7 @@ from numbers import Number
 from .strong_typing import obrigar_tipos
 
 @obrigar_tipos()
-def get_nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
+def nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[float]:
     '''*get_nominais* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com seus valores nominais
     
@@ -25,14 +25,14 @@ def get_nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
         array([  4.,  35., -97.])
     '''
     tamanho=len(arrayMedidas)
-    array_nominais=np.empty(tamanho,dtype=Number)
+    array_nominais=np.empty(tamanho,dtype=float)
     
     for index,valores in enumerate(arrayMedidas):
         array_nominais[index]=valores.nominal
     return array_nominais
 
 @obrigar_tipos()
-def get_incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
+def incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
     '''*get_incertezas* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com suas incertezas
     
@@ -51,7 +51,7 @@ def get_incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
 '''
     
     tamanho=len(arrayMedidas)
-    array_incertezas=np.empty(tamanho)
+    array_incertezas=np.empty(tamanho,dtype=Number)
     
     for index,valores in enumerate(arrayMedidas):
         if not isinstance(valores,Medida):
@@ -60,7 +60,7 @@ def get_incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
     return array_incertezas
 
 @obrigar_tipos()
-def curva_min(arrayMedida : np.ndarray[Medida],sigma:Number=2) -> np.ndarray[Number]:
+def curva_min(arrayMedida : np.ndarray[Medida],sigma:Number=2) -> np.ndarray[float]:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, com quantidade de sigmas usados personalizável
 
@@ -74,10 +74,10 @@ def curva_min(arrayMedida : np.ndarray[Medida],sigma:Number=2) -> np.ndarray[Num
         arrayCurva (np.ndarray): array com a curva de Medidas
 
     '''
-    return get_nominais(arrayMedida) -sigma*get_incertezas(arrayMedida)
+    return (nominais(arrayMedida) -sigma*incertezas(arrayMedida)).astype(float)
 
 @obrigar_tipos()
-def curva_max(arrayMedida : np.ndarray[Medida],sigma:Number=2)-> np.ndarray[Number]:
+def curva_max(arrayMedida : np.ndarray[Medida],sigma:Number=2)-> np.ndarray[float]:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, quantidade de sigmas usados personalizável
 
@@ -91,7 +91,7 @@ def curva_max(arrayMedida : np.ndarray[Medida],sigma:Number=2)-> np.ndarray[Numb
     Returns:
         arrayCurva (np.ndarray[Medida]): array com a curva de Medidas
     '''
-    return get_nominais(arrayMedida) + sigma*get_incertezas(arrayMedida)
+    return (nominais(arrayMedida) + sigma*incertezas(arrayMedida)).astype(float)
 
 
 @obrigar_tipos()
@@ -163,9 +163,28 @@ def medida_from_array(medições:np.ndarray[Number],
         >>> diametro
         Medida(nominal=1.7719999999999998,incerteza=0.05,unidade='mm')
     '''
-    media=np.average(medições) 
-    desvio_padrao=np.std(medições,mean=media)
-    if incerteza_experimental>desvio_padrao:
-        desvio_padrao=incerteza_experimental
-    return Medida(media,desvio_padrao,unidade)
 
+def arrayM(nominais,incerteza,unidade:str) ->np.ndarray:
+    '''Converte um array de números em um array de Medidas
+    
+    Args:
+        nominais (Sequence[Number]):  valores nominais
+        incerteza (Number): incerteza associada a cada medição 
+        unidade (str):  unidade das medições        
+
+    Returns:
+        arrayM (np.ndarray[Medida]):  array de Medidas
+
+    '''
+    if isinstance(incerteza,Number):
+        return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais])
+    else:
+        return np.array([Medida(nominal,incerteza,unidade) for nominal,incerteza in zip(nominais,incerteza)])
+
+def converter_array(arrayM:np.ndarray,unidade:str)->np.ndarray:
+    for medida in arrayM: medida.converter_para(unidade)
+    return None
+
+def converter_array_si(arrayM:np.ndarray)->np.ndarray:
+    for medida in arrayM: medida.converter_para_si()
+    return None

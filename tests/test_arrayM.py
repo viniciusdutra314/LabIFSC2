@@ -1,14 +1,14 @@
 import numpy as np
 
-from LabIFSC2 import (Medida, curva_max, curva_min, exp, get_incertezas,
-                      get_nominais, linspace, sin,)
+from LabIFSC2 import (Medida, curva_max, curva_min, exp, incertezas,
+                      nominais, linspace, sin,)
 
 
 
 def test_nominal():
     x=np.array([Medida(13431,351,''),Medida(0.006132,4,''),
                 Medida(-34,3,''),Medida(-5313.351,3,'')])
-    nominal=get_nominais(x)
+    nominal=nominais(x)
     assert nominal[0]==13431
     assert nominal[1]==0.006132
     assert nominal[2]==-34
@@ -18,7 +18,7 @@ def test_nominal():
 def test_incerteza_array():
     x=np.array([Medida(-351,3.5,''),Medida(0.006132,4.003,''),
                 Medida(-34,310,''),Medida(-5313.351,0,'')])
-    incerteza=get_incertezas(x)
+    incerteza=incertezas(x)
     assert incerteza[0]==3.5
     assert incerteza[1]==4.003
     assert incerteza[2]==310
@@ -37,5 +37,5 @@ def test_curvamax():
 def test_linspace():
     a=1 ; b=20 ; N=20
     x=linspace(a,b,N,0.1,'')
-    assert np.all(get_nominais(x)==np.linspace(a,b,N))
-    assert np.all(get_incertezas(x)==0.1)
+    assert np.all(nominais(x)==np.linspace(a,b,N))
+    assert np.all(incertezas(x)==0.1)
