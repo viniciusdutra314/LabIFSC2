@@ -8,4 +8,4 @@ from .regressões import (MPolinomio, regressao_exponencial, regressao_linear,
 from .formatações import *
 from .matematica import *
 from .medida import Medida, comparar_medidas, montecarlo,Comparacao
-from .constantes import *
+from .constantes import constantes

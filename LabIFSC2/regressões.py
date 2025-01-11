@@ -5,6 +5,7 @@ from .strong_typing import obrigar_tipos
 from .operacoes_em_arrays import nominais
 from .matematica import aceitamedida, exp
 from .medida import Medida
+from .operacoes_em_arrays import arrayM
 
 from collections.abc import Sequence
 from numbers import Number
@@ -16,69 +17,39 @@ class MPolinomio():
         self._coeficientes=[]
         for index,coef in enumerate(coeficientes):
             if not (isinstance(coef,Number) or isinstance(coef,Medida)):
-                raise ValueError('Todos os coeficientes precisam ser números')
+                raise ValueError('Todos os coeficientes precisam ser números/Medidas')
             self._coeficientes.append(coef)
             setattr(self,string.ascii_lowercase[index],coef)
         self._grau=len(coeficientes)-1
-        self._callable=lambda x:sum(coef*x**(self._grau-i) for i,coef in enumerate(self._coeficientes))
-    
-    @obrigar_tipos(in_class_function=True)
+
     def __call__(self,x:Number):
-        resultado=0
-        for i,coef in enumerate(self._coeficientes):
-            resultado+=coef*x**(self._grau-i)
-        return resultado
+       avaliar=lambda x:sum(coef*x**(self._grau-i) for i,coef in enumerate(self._coeficientes))
+       if isinstance(x,Number):
+           return avaliar(x)
+       else:
+        return np.vectorize(avaliar)(x) 
+    
     def __iter__(self):
         return iter(self._coeficientes)
-
     def __str__(self):
-        superscript_map = {
-            '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
-            '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'
-        }
-        grau_deixar_bonito=lambda degree: ''.join(superscript_map[digit] for digit in str(degree))
-        termos = []
-        for i, coef in enumerate(self._coeficientes):
-            if coef:
-                grau = self._grau - i
-                if coef ==1 and grau!=0: 
-                    coef=''
-                
-                if grau == 0:
-                    termos.append(f"{coef}")
-                elif grau == 1:
-                    termos.append(f"{coef}x")
-                else:
-                    termos.append(f"{coef}x{grau_deixar_bonito(grau)}")
-        return " + ".join(termos)
+        return f"MPolinomio(coefs={self._coeficientes},grau={self._grau})"
 
-@obrigar_tipos()
-def regressao_polinomial(x:np.ndarray,y:np.ndarray,
+    def __repr__(self):
+        return self.__str__()
+
+def regressao_polinomial(x_dados:np.ndarray,y_dados:np.ndarray,
                          grau:int) -> MPolinomio:
-    '''Encontre o melhor polinômio em termos de erro
-        quadrático para os seus dados
-    Args:
-        x , y  : iterables (arrays,list,...) com floats ou Medidas
+    if len(x_dados)!=len(y_dados):
+        raise ValueError("x_dados e y_dados não tem o mesmo tamanho") 
+    if isinstance(x_dados[0],Medida):
+        x_dados=nominais(x_dados)
+    if isinstance(y_dados[0],Medida):
+        y_dados=nominais(y_dados)
+    p, cov = np.polyfit(x_dados, y_dados, grau, cov=True)
+    medidas_coeficientes = [Medida(valor, np.sqrt(cov[i, i]),'') for i, valor in enumerate(p)]
+    return MPolinomio(medidas_coeficientes)
 
-        grau : int , grau do polinômio
-    Return : 
-        Array com coeficientes
-        func=True:
-            MPolinomio(callable)
-    '''
-    if isinstance(x[0],Medida): x=nominais(x) 
-    if isinstance(y[0],Medida): y=nominais(y)
-
-    coeficientes,lstsq=np.polynomial.Polynomial.fit(x,y,grau,full=True)
-    breakpoint()
-    covarianca=2
-    erros=np.sqrt(np.diag(covarianca))
-    coeficientes_medidas=np.empty(len(coeficientes),dtype=Medida)
-    for j in range(len(coeficientes)):
-        coeficientes_medidas[j]=Medida(coeficientes[j],erros[j])
-    return MPolinomio(coeficientes_medidas)
-
-def regressao_linear(x:iter,y:iter,func=False) -> MPolinomio:
+def regressao_linear(x:np.ndarray,y:np.ndarray) -> MPolinomio:
     '''Encontre a melhor reta (minímos quadrados)
     
     y = a * x + b
@@ -88,7 +59,7 @@ def regressao_linear(x:iter,y:iter,func=False) -> MPolinomio:
     Return : 
         Array com Coeficientes
     '''
-    return regressao_polinomial(x,y,1,func)
+    return regressao_polinomial(x,y,1)
 
 def regressao_exponencial(x,y,base=np.exp(1),func=False):
     '''Encontre a melhor exponencial da forma

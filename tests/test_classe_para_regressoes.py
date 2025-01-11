@@ -20,11 +20,11 @@ def test_call():
 def test_str():
     coeficientes = [1, 2, 3]
     polinomio = lab.MPolinomio(coeficientes)
-    assert str(polinomio) == "x² + 2x + 3"
-    polinomio = lab.MPolinomio([1, 2, 0,5,1])
-    assert str(polinomio) == "x⁴ + 2x³ + 5x + 1"
+    assert str(polinomio) == "MPolinomio(coefs=[1, 2, 3],grau=2)"
+    polinomio = lab.MPolinomio([1, -2, 0,5,1])
+    assert str(polinomio) == "MPolinomio(coefs=[1, -2, 0, 5, 1],grau=4)"
     polinomio = lab.MPolinomio([-1.3, 3])
-    assert str(polinomio) == "-1.3x + 3"
+    assert str(polinomio) == "MPolinomio(coefs=[-1.3, 3],grau=1)"
 
 def test_unpacking():
     coeficientes = [1, 2, 3]
@@ -58,8 +58,6 @@ def test_call_type_error():
         polinomio("not a number")
     with pytest.raises(TypeError):
         polinomio(None)
-    with pytest.raises(TypeError):
-        polinomio([1, 2])
     with pytest.raises(TypeError):
         polinomio({1: 2})
 

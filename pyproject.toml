@@ -5,9 +5,10 @@ description = ""
 authors = ["viniciusdutra314 <dutravinisousa2@usp.br>"]
 license = "GNU General Public License v3.0"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.9"
 numpy = "^2"
 pint = "^0.24"
 

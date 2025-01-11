@@ -26,8 +26,9 @@ def test_soma():
 
 def test_multiplicacao_medidas():
     x=lab.Medida(0,0.1,'')
+    y=lab.Medida(0,0.1,'')
     correlacionado=x*x
-    nao_correlacionado=lab.montecarlo(lambda a,b: a*b,x,x)
+    nao_correlacionado=lab.montecarlo(lambda a,b: a*b,x,y)
     assert not (np.any(correlacionado)<0)
     assert np.any(nao_correlacionado._histograma>0) and np.any(nao_correlacionado._histograma<0)
     assert not (correlacionado._gaussiana and nao_correlacionado._gaussiana)

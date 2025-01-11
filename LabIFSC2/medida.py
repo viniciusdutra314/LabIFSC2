@@ -16,12 +16,7 @@ def montecarlo(func : Callable,
                *parametros : 'Medida',N:int=100_000) -> 'Medida':
     x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
-        if not (len(parametro._histograma)):
-            x_samples[index]=np.random.normal(parametro.nominal,
-                                              parametro.incerteza,size=N)*parametro._nominal.units
-        else:
-            x_samples[index]=parametro._histograma
-  
+        x_samples[index]=parametro.histograma
     histograma=func(*x_samples)
     mean=np.mean(histograma)
     std=np.std(histograma,mean=mean)
@@ -89,6 +84,18 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     @unidade.deleter
     def unidade(self): self._erro_por_mudar_atributo()
 
+    @property
+    def histograma(self) -> np.ndarray:
+        if not (len(self._histograma)>0):
+            self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
+        return self._histograma
+    
+    @histograma.setter
+    def histograma(self,value): self._erro_por_mudar_atributo()
+    @histograma.deleter
+    def histograma(self,value): self._erro_por_mudar_atributo() 
+
+
     def converter_para_si(self):
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
@@ -120,6 +127,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         return f"({nominal_truncated}±{incerteza_truncated}) {unidade_bonita}"
     
     def __repr__(self) -> str:
+        return self.__str__()
         return f"Medida({self.nominal=},{self.incerteza=},'{self.unidade=}')"
 
     def converter_para(self,unidade:str):
