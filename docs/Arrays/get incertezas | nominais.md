@@ -1,4 +1,4 @@
 
-:::LabIFSC2.operacoes_em_arrays.get_incertezas
-:::LabIFSC2.operacoes_em_arrays.get_nominais
+:::LabIFSC2.operacoes_em_arrays.incertezas
+:::LabIFSC2.operacoes_em_arrays.nominais
 

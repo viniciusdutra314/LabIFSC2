@@ -79,7 +79,7 @@ retorna a probabilidade
     z=lab.Medida(5,0.1)**3
     print(z.probabilidade(110,130)) #0.7291
 ```
-:::LabIFSC2.medida.Medida.probabilidade
+:::LabIFSC2.medida.Medida.probabilidade_de_estar_entre
 
 ### Compatibilidade com o LabIFSC original
 O método tradicional usado no LabIFSC é uma propagação de erros lineares, é usada uma expansão de Taylor com centro em \(\mu\).
@@ -87,4 +87,3 @@ No caso que os erros forem pequenos em comparação a variação da função
 tanto o LabIFSC quanto o LabIFSC2 chegaram em resultados equivalentes,
 testes unitários exatamente sobre isso podem ser encontrados
 no [repositório](https://github.com/viniciusdutra314/LabIFSC2/blob/main/tests/test_lab1vslab2.py), eis um exemplo:
-:::tests.test_lab1vslab2.test_funcoes_matematicas
