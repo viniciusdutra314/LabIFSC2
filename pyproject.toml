@@ -9,7 +9,7 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.9"
-numpy = "^2"
+numpy = "2.*"
 pint = "^0.24"
 
 [tool.taskipy.tasks]
@@ -24,15 +24,13 @@ line_length = 79
 multi_line_output=0
 
 [tool.poetry.group.dev.dependencies]
-matplotlib = "^3.8"
-isort = "^5.13"
-pandas = "^2.2"
-labifsc = "^0.1.13"
-scipy = "^1.12.0"
-taskipy = "^1.12.2"
-pytest = "^8.3.4"
-ipykernel = "^6.29.5"
-uncertainties = "^3.2.2"
+matplotlib = "3.*"
+isort = "5.*"
+pandas = "2.*"
+labifsc = "0.1.13"
+taskipy = "1.*"
+pytest = "8.*"
+uncertainties = "3.*"
 
 
 [tool.poetry.group.docs.dependencies]

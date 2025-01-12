@@ -86,7 +86,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
     def histograma(self) -> np.ndarray:
-        if not (len(self._histograma)>0):
+        if len(self._histograma)==0:
             self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
         return self._histograma
     
@@ -99,8 +99,13 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     def converter_para_si(self):
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
-        self._histograma=np.array([x.ito_base_units() for x in self._histograma])
-
+        if len(self._histograma): self._histograma.ito_base_units()
+    
+    def converter_para(self,unidade:str):
+        self._nominal.ito(unidade)
+        self._incerteza.ito(unidade)
+        if len(self._histograma): self._histograma.ito(unidade)
+        
     def __eq__(self,outro):
         raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
 diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
@@ -130,9 +135,6 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         return self.__str__()
         return f"Medida({self.nominal=},{self.incerteza=},'{self.unidade=}')"
 
-    def converter_para(self,unidade:str):
-        self._nominal.ito(unidade)
-        self._incerteza.ito(unidade)
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not isinstance(outro,Medida):

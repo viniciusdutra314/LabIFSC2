@@ -7,7 +7,7 @@ from .medida import Medida, montecarlo
 
 
 
-def aceitamedida(func :Callable[[Number,...],Number]) -> Callable[[Medida,...],Medida]:
+def aceitamedida(func :Callable, num_args :int=1) -> Callable:
     '''Possibilita que qualquer função aceite e
     retorne Medidas como argumentos
     
@@ -18,20 +18,29 @@ def aceitamedida(func :Callable[[Number,...],Number]) -> Callable[[Medida,...],M
         func_labificada: (callable) função que aceita e retorna Medidas
 
     '''
-    def FuncaoLabificada(*args):
-            args_transformados=[]
-            for arg in args:
-                if isinstance(arg,Medida):
-                    args_transformados.append(arg)
-                else:
-                    args_transformados.append(Medida(arg,0,''))
 
-            resultado=np.vectorize(montecarlo)(func,*args_transformados)
-            if resultado.size==1:
-                return resultado.item()
-            else:
-                return resultado
-    return FuncaoLabificada
+    def FuncaoLabificada(*args):
+        args_transformados = [arg if isinstance(arg, Medida) else Medida(arg, 0, '') for arg in args]
+        
+        if all(not isinstance(arg, Medida) for arg in args): return func(*args)
+        else: return montecarlo(func, *args_transformados)
+        
+            
+    return np.frompyfunc(FuncaoLabificada,num_args,1)
+
+'''
+Essas são as funções que o LabIFSC2 já implementa para aceitar Medidas,
+caso queira adicionar mais funções, basta seguir o padrão abaixo.
+
+Perceba que é possível dar um apelido para a função, por exemplo,
+seno=sin, dessa forma, ambos são equivalentes.
+
+Além de aceitar Medidas o decorador aceitamedida também vetoriza a função,
+ou seja, se você passar um array de Medidas, ele irá retornar um array de Medidas.
+Isso é feito usando a função np.frompyfunc que precisa saber o número de argumentos que
+a função recebe, por isso, o argumento num_args é necessário.
+
+'''
 
 sin=aceitamedida(np.sin)
 seno=sin
@@ -76,6 +85,6 @@ exp=aceitamedida(np.exp)
 exp2=aceitamedida(np.exp2)
 sqrt=aceitamedida(np.sqrt)
 cbrt=aceitamedida(np.cbrt)
-power=aceitamedida(np.power)
+power=aceitamedida(np.power,2)
 pow=power
     

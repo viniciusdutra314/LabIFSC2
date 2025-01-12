@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from numbers import Number
 import string
 
-class MPolinomio():
+class MPolinomio:
     @obrigar_tipos(in_class_function=True)
     def __init__(self,coeficientes:Sequence[Number | Medida]):
         self._coeficientes=[]
@@ -31,20 +31,37 @@ class MPolinomio():
     
     def __iter__(self):
         return iter(self._coeficientes)
-    def __str__(self):
+    def __repr__(self):
         return f"MPolinomio(coefs={self._coeficientes},grau={self._grau})"
 
+
+
+class MExponencial:
+    '''Classe para modelar uma função exponencial
+    y = a * base^(kx)
+    '''
+    def __init__(self,a:Medida,k:Medida,base:Number):
+        self.a=a
+        self.base=base
+        self.k=k
+        self._valores=[a,k,base]
+    def __call__(self,x):
+        return self.a*np.power(self.base,self.k*x)
     def __repr__(self):
-        return self.__str__()
+        return f'MExponencial(a={self.a},k={self.k},base={self.base})'
+    def __iter__(self):
+        return iter(self._valores)
+    
 
 def regressao_polinomial(x_dados:np.ndarray,y_dados:np.ndarray,
                          grau:int) -> MPolinomio:
     if len(x_dados)!=len(y_dados):
-        raise ValueError("x_dados e y_dados não tem o mesmo tamanho") 
-    if isinstance(x_dados[0],Medida):
-        x_dados=nominais(x_dados)
-    if isinstance(y_dados[0],Medida):
-        y_dados=nominais(y_dados)
+        raise ValueError("x_dados e y_dados não tem o mesmo tamanho")
+    if len(x_dados)<=grau+1:
+        raise ValueError("Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
+
+    if isinstance(x_dados[0],Medida): x_dados=nominais(x_dados)
+    if isinstance(y_dados[0],Medida): y_dados=nominais(y_dados)
     p, cov = np.polyfit(x_dados, y_dados, grau, cov=True)
     medidas_coeficientes = [Medida(valor, np.sqrt(cov[i, i]),'') for i, valor in enumerate(p)]
     return MPolinomio(medidas_coeficientes)
@@ -81,13 +98,18 @@ def regressao_exponencial(x,y,base=np.exp(1),func=False):
         Função (callable): retorna y(x) se func=True
         
     '''
-    x=nominais(x) ; y=nominais(y)
-    assert np.all(y>0), 'Todos y precisam ser positivos para uma modelagem exponencial'
-    assert base>1, 'Bases precisam ser maiores que 1'
+    if isinstance(y,Medida): 
+        if not np.all(y.nominal>0):
+            raise ValueError('Todos y precisam ser positivos para uma modelagem exponencial')
+    else:
+        if not np.all(y>0):
+            raise ValueError('Todos y precisam ser positivos para uma modelagem exponencial')    
+
+    if base<1: raise ValueError('Base precisa ser maior que 1')
+    
     coefs=regressao_linear(x,np.log(y)/np.log(base))
     coefs[0]=exp(coefs[0])
-    if not func: return coefs
-    else:  return aceitamedida(lambda x:coefs[0]*np.power(coefs[1]*x,base))
+    
 
 def regressao_potencia(x, y,func=False) :
     '''Com um conjunto de dados x,y,
