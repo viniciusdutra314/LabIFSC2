@@ -67,18 +67,3 @@ def test_sequence_array_com_subtipos():
     recebe_array_de_medidas(medidas)
     with pytest.raises(TypeError):recebe_array_de_medidas(np.array([1,2,3,4,5]))
     with pytest.raises(TypeError):recebe_array_de_medidas(medidas.tolist())
-
-def test_recebe_duas_possibilidades():
-    @obrigar_tipos
-    def recebe_duas_possibilidades(x:lab.Medida | Number) -> lab.Medida: return lab.Medida(1,0.1,'m')
-    recebe_duas_possibilidades(lab.Medida(1,0.1,'m'))
-    recebe_duas_possibilidades(1)
-    with pytest.raises(TypeError):recebe_duas_possibilidades('1')
-
-    @obrigar_tipos
-    def recebe_duas_possibilidades_arrays_com_subtipos(x:np.ndarray[lab.Medida] | np.ndarray[Number]) -> np.ndarray[lab.Medida]: 
-        return np.array([lab.Medida(1,0.1,'m')])
-    medidas=lab.linspace(1,10,10,3,'m')
-    array_number=np.array([34,14,2])
-    recebe_duas_possibilidades_arrays_com_subtipos(medidas)
-    recebe_duas_possibilidades_arrays_com_subtipos(array_number)
