@@ -5,12 +5,16 @@ from functools import total_ordering
 
 
 import numpy as np
-from .strong_typing import obrigar_tipos
-from .formatações import *
+from ._tipagem_forte import obrigar_tipos
+from ._formatações import *
 from enum import Enum
-from . import ureg
 from statistics import NormalDist
 from pint import Quantity
+
+from pint import UnitRegistry
+
+ureg = UnitRegistry()
+
 
 def montecarlo(func : Callable, 
                *parametros : 'Medida',N:int=100_000) -> 'Medida':
@@ -26,7 +30,8 @@ def montecarlo(func : Callable,
     return resultado
 
 class Medida:
-    @obrigar_tipos(in_class_function=True)
+
+    @obrigar_tipos
     def __init__(self,nominal:Number,incerteza : Number,
                  unidade : str ):
         """
@@ -213,6 +218,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         resultado._histograma=self._histograma
         return resultado
 
+    @obrigar_tipos
     def probabilidade_de_estar_entre(self,a:Number,b:Number,unidade:str) -> Number:
         ''' Retorna a probabilidade que a Medida
         esteja entre [a,b] usando o histograma como
@@ -244,7 +250,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             b=ureg.Quantity(b,unidade)
             return np.mean((self._histograma >= a) & (self._histograma <= b))
     
-    def intervalo_de_confianca(self,p:float) -> tuple[Number,Number]:
+    @obrigar_tipos
+    def intervalo_de_confianca(self,p:float) -> tuple[Number]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 
@@ -260,7 +267,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         
         if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
 
-        elif p==1: return (min(self._histograma),max(self._histograma))
+        elif p==1: return (min(self._histograma.magnitude),max(self._histograma.magnitude))
 
         elif self._gaussiana:
             #estamos resolvendo de maneira analítica
@@ -278,8 +285,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             intervals = magnitudes[selected_elements:] - magnitudes[:-selected_elements]
 
             shortest_interval_index = np.argmin(intervals)
-            shortest_interval = (self._histograma[shortest_interval_index],
-                                self._histograma[shortest_interval_index + selected_elements])
+            shortest_interval = (self._histograma[shortest_interval_index].magnitude,
+                                self._histograma[shortest_interval_index + selected_elements].magnitude)
             return shortest_interval
 
 
@@ -293,7 +300,7 @@ class Comparacao(Enum):
     DIFERENTES = "diferentes"
     INCONCLUSIVO = "inconclusivo"
 
-@obrigar_tipos()
+@obrigar_tipos
 def comparar_medidas(medida1: Medida, medida2: Medida, 
     sigmas_customizados: list[Number] = [2, 3]) -> Comparacao:
     """

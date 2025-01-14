@@ -15,7 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"] # versões que recebem suporte
+        python-version: ["3.10", "3.11", "3.12", "3.13"] # versões que recebem suporte oficial do Python 
+        #e tem algumas funcionalidades do módulo typing que eu preciso
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -31,7 +32,7 @@ jobs:
         run: pip install poetry
     
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --without docs
 
       - name: Testing code with pytest
         run: poetry run pytest -v

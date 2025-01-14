@@ -61,12 +61,12 @@ def test_conversao_interna_histograma():
     y=lab.Medida(1,0.01,'cm')
     z=x*y
     z.converter_para('cm²')
-    assert z.histograma.units==lab.ureg.cm**2
+    assert z.histograma.units==lab._medida.ureg.cm**2
     z.converter_para_si()
-    assert z.histograma.units==lab.ureg.m**2
+    assert z.histograma.units==lab._medida.ureg.m**2
 
     x.converter_para('cm')
-    assert x.histograma.units==lab.ureg.cm
+    assert x.histograma.units==lab._medida.ureg.cm
     assert len(x.histograma)==100_000
     y.converter_para_si()
-    assert y.histograma.units==lab.ureg.m
+    assert y.histograma.units==lab._medida.ureg.m

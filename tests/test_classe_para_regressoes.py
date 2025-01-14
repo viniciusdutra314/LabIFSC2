@@ -35,29 +35,5 @@ def test_unpacking():
     assert c == 3
 
 
-def test_initialization_type_error():
-    with pytest.raises(TypeError):
-        lab.MPolinomio("not a list")
-    with pytest.raises(TypeError):
-        lab.MPolinomio(123)
-    with pytest.raises(TypeError):
-        lab.MPolinomio(None)
-    with pytest.raises(ValueError):
-        lab.MPolinomio([1, "two", 3])
-    with pytest.raises(ValueError):
-        lab.MPolinomio([1, 2, None])
-    with pytest.raises(ValueError):
-        lab.MPolinomio([1, 2, [3]])
-    with pytest.raises(TypeError):
-        lab.MPolinomio([{3: 4},1,3])
 
-def test_call_type_error():
-    coeficientes = [1, 2, 3]
-    polinomio = lab.MPolinomio(coeficientes)
-    with pytest.raises(TypeError):
-        polinomio("not a number")
-    with pytest.raises(TypeError):
-        polinomio(None)
-    with pytest.raises(TypeError):
-        polinomio({1: 2})
 

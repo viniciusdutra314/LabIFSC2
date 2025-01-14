@@ -1,19 +1,18 @@
 import numpy as np
 from numpy.polynomial import Polynomial
 
-from .strong_typing import obrigar_tipos
-from .operacoes_em_arrays import nominais
-from .matematica import aceitamedida, exp
-from .medida import Medida
-from .operacoes_em_arrays import arrayM
+from ._tipagem_forte import obrigar_tipos
+from ._operacoes_em_arrays import nominais
+from ._matematica import aceitamedida, exp
+from ._medida import Medida
+from ._operacoes_em_arrays import arrayM
 
 from collections.abc import Sequence
 from numbers import Number
 import string
 
 class MPolinomio:
-    @obrigar_tipos(in_class_function=True)
-    def __init__(self,coeficientes:Sequence[Number | Medida]):
+    def __init__(self,coeficientes):
         self._coeficientes=[]
         for index,coef in enumerate(coeficientes):
             if not (isinstance(coef,Number) or isinstance(coef,Medida)):

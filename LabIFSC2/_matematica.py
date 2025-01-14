@@ -1,12 +1,12 @@
 from collections.abc import Callable
 from numbers import Number
-
+from ._tipagem_forte import obrigar_tipos
 import numpy as np
 
-from .medida import Medida, montecarlo
+from ._medida import Medida, montecarlo
 
 
-
+@obrigar_tipos
 def aceitamedida(func :Callable, num_args :int=1) -> Callable:
     '''Possibilita que qualquer função aceite e
     retorne Medidas como argumentos
@@ -40,7 +40,11 @@ ou seja, se você passar um array de Medidas, ele irá retornar um array de Medi
 Isso é feito usando a função np.frompyfunc que precisa saber o número de argumentos que
 a função recebe, por isso, o argumento num_args é necessário.
 
+Após ter criado a sua função, adicione ela no import _matematetica no __init__.py,
+eu não fiz um from ._matematica import * para não sujar o namespace do LabIFSC2. 
+
 '''
+
 
 sin=aceitamedida(np.sin)
 seno=sin
@@ -88,3 +92,5 @@ cbrt=aceitamedida(np.cbrt)
 power=aceitamedida(np.power,2)
 pow=power
     
+
+
