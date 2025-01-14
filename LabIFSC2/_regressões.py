@@ -1,32 +1,28 @@
+import string
+from collections.abc import Sequence
+from numbers import Number
+
 import numpy as np
 from numpy.polynomial import Polynomial
 
-from ._tipagem_forte import obrigar_tipos
-from ._operacoes_em_arrays import nominais
 from ._matematica import aceitamedida, exp
 from ._medida import Medida
-from ._operacoes_em_arrays import arrayM
+from ._operacoes_em_arrays import arrayM, nominais
+from ._tipagem_forte import obrigar_tipos
 
-from collections.abc import Sequence
-from numbers import Number
-import string
 
 class MPolinomio:
-    def __init__(self,coeficientes):
+    @obrigar_tipos
+    def __init__(self,coeficientes:np.ndarray[Medida] | np.ndarray[Number]):
         self._coeficientes=[]
         for index,coef in enumerate(coeficientes):
-            if not (isinstance(coef,Number) or isinstance(coef,Medida)):
-                raise ValueError('Todos os coeficientes precisam ser números/Medidas')
             self._coeficientes.append(coef)
             setattr(self,string.ascii_lowercase[index],coef)
         self._grau=len(coeficientes)-1
 
-    def __call__(self,x:Number):
+    def __call__(self,x:Number|Medida)->Medida|np.ndarray[Medida]:
        avaliar=lambda x:sum(coef*x**(self._grau-i) for i,coef in enumerate(self._coeficientes))
-       if isinstance(x,Number):
-           return avaliar(x)
-       else:
-        return np.vectorize(avaliar)(x) 
+       return np.frompyfunc(avaliar,1,1)(x)
     
     def __iter__(self):
         return iter(self._coeficientes)
@@ -61,7 +57,7 @@ def regressao_polinomial(x_dados:np.ndarray,y_dados:np.ndarray,
 
     if isinstance(x_dados[0],Medida): x_dados=nominais(x_dados)
     if isinstance(y_dados[0],Medida): y_dados=nominais(y_dados)
-    p, cov = np.polyfit(x_dados, y_dados, grau, cov=True)
+    p, cov = np.polyfit(x_dados.astype(float), y_dados.astype(float), grau, cov=True)
     medidas_coeficientes = [Medida(valor, np.sqrt(cov[i, i]),'') for i, valor in enumerate(p)]
     return MPolinomio(medidas_coeficientes)
 

@@ -1,5 +1,7 @@
-import LabIFSC2 as lab
 import pytest
+
+import LabIFSC2 as lab
+
 
 def test_inicializacao():
     with pytest.raises(ValueError):

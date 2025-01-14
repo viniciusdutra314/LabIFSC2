@@ -1,8 +1,10 @@
 import LabIFSC as lab1
-import LabIFSC2 as lab2
-from LabIFSC2 import Medida, regressao_polinomial, MPolinomio
 import numpy as np
-import pytest 
+import pytest
+
+import LabIFSC2 as lab2
+from LabIFSC2 import Medida, MPolinomio, regressao_polinomial
+
 
 def test_regressao_linear():
 

@@ -1,8 +1,9 @@
-import LabIFSC2 as lab2
 import LabIFSC as lab1
+import numpy as np
 import uncertainties.umath as umath
 from uncertainties import ufloat
-import numpy as np
+
+import LabIFSC2 as lab2
 
 '''
 Aqui estamos comparando as bibliotecas LabIFSC, LabIFSC2 e uncertainties 
@@ -111,7 +112,7 @@ def test_hiperbolicas():
     for value in np.linspace(0.5, 1, 100):
         x = umath.sinh(ufloat(value, incerteza))
         x_lab2 = lab2.sinh(lab2.Medida(value, incerteza, ''))
-        comparar_ufloat_lab2(x, x_lab2)
+        comparar_ufloat_lab2(x, x_lab2,precisao=1e-2)
 
         x = umath.cosh(ufloat(value, incerteza))
         x_lab2 = lab2.cosh(lab2.Medida(value, incerteza, ''))

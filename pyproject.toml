@@ -23,22 +23,23 @@ profile = "black"
 line_length = 79
 multi_line_output=0
 
-[tool.poetry.group.dev.dependencies]
-matplotlib = "3.*"
-isort = "5.*"
-pandas = "2.*"
-labifsc = "0.1.13"
-taskipy = "1.*"
-pytest = "8.*"
-uncertainties = "3.*"
-
-
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5.4"
 pymdown-extensions = "^10.7"
 python-markdown-math = "^0.8"
 mkdocstrings = "^0.27.0"
 mkdocstrings-python = "^1.13.0"
+
+
+[tool.poetry.group.test.dependencies]
+labifsc = "^0.1.13"
+uncertainties = "^3.2.2"
+pytest = "^8.3.4"
+pytest-cov = "^6.0.0"
+
+
+[tool.poetry.group.linter.dependencies]
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core"]

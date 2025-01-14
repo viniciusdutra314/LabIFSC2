@@ -1,6 +1,7 @@
-import LabIFSC2 as lab
 import numpy as np
 import pytest
+
+import LabIFSC2 as lab
 
 
 def test_probabilidade_analitico():

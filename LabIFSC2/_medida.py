@@ -1,17 +1,14 @@
 from collections.abc import Callable
+from enum import Enum
 from numbers import Number
-from typing import Callable,Sequence
-from functools import total_ordering
-
+from statistics import NormalDist
+from typing import Callable
 
 import numpy as np
-from ._tipagem_forte import obrigar_tipos
-from ._formatações import *
-from enum import Enum
-from statistics import NormalDist
-from pint import Quantity
+from pint import Quantity, UnitRegistry
 
-from pint import UnitRegistry
+from ._formatações import *
+from ._tipagem_forte import obrigar_tipos
 
 ureg = UnitRegistry()
 

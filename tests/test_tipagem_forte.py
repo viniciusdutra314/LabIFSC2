@@ -1,11 +1,14 @@
-from LabIFSC2._tipagem_forte import obrigar_tipos
-import LabIFSC2 as lab
-import numpy as np
 from collections.abc import Sequence
-from numbers import Number
-from fractions import Fraction
 from decimal import Decimal
+from fractions import Fraction
+from numbers import Number
+
+import numpy as np
 import pytest
+
+import LabIFSC2 as lab
+from LabIFSC2._tipagem_forte import obrigar_tipos
+
 
 def test_obrigar_tipos():
     @obrigar_tipos
@@ -67,3 +70,45 @@ def test_sequence_array_com_subtipos():
     recebe_array_de_medidas(medidas)
     with pytest.raises(TypeError):recebe_array_de_medidas(np.array([1,2,3,4,5]))
     with pytest.raises(TypeError):recebe_array_de_medidas(medidas.tolist())
+
+def test_union_types():
+
+    @obrigar_tipos
+    def multiplicacao_union(x: Number | lab.Medida, y: Number | lab.Medida) -> Number | lab.Medida:
+        return x * y
+
+    # Valid cases
+    multiplicacao_union(1, 2)
+    multiplicacao_union(Fraction(1, 2), 2)
+    multiplicacao_union(Decimal('0.5'), 1)
+    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    multiplicacao_union(medidas[0], medidas[1])
+    multiplicacao_union(1, medidas[0])
+
+    # Invalid cases
+    with pytest.raises(TypeError): multiplicacao_union(1, '2')
+    with pytest.raises(TypeError): multiplicacao_union('1', 2)
+    with pytest.raises(TypeError): multiplicacao_union(medidas[0], '2')
+    with pytest.raises(TypeError): multiplicacao_union('1', medidas[0])
+
+def test_union_composed_types():
+    @obrigar_tipos
+    def mult_arrays_union(x: np.ndarray[Number] | np.ndarray[lab.Medida], 
+                          y: np.ndarray[Number] | np.ndarray[lab.Medida]) -> np.ndarray[Number] | np.ndarray[lab.Medida]:
+        return x * y
+
+    x = np.array([1, 2, 3])
+    y = np.array([4, 5, 6])
+    mult_arrays_union(x, y)
+    
+    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    mult_arrays_union(medidas, medidas)
+    mult_arrays_union(3*medidas, medidas)
+    
+    with pytest.raises(TypeError): mult_arrays_union(1, 2)
+    with pytest.raises(TypeError): mult_arrays_union(x, 2)
+    with pytest.raises(TypeError): mult_arrays_union(medidas, '2')
+    with pytest.raises(TypeError): mult_arrays_union('1', medidas)
+    with pytest.raises(TypeError): mult_arrays_union(np.array(['a', 'b', 'c']), y)
+    with pytest.raises(TypeError): mult_arrays_union(x, np.array(['d', 'e', 'f']))
+    with pytest.raises(TypeError): mult_arrays_union(np.array(['a', 'b', 'c']), np.array(['d', 'e', 'f']))

@@ -1,6 +1,8 @@
-import numpy as np 
+import numpy as np
+import pytest
+
 import LabIFSC2 as lab
-import pytest 
+
 
 def test_funcoes_customizadas():
     x=lab.Medida(0,0.01,'')

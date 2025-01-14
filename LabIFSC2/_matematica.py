@@ -1,9 +1,10 @@
 from collections.abc import Callable
 from numbers import Number
-from ._tipagem_forte import obrigar_tipos
+
 import numpy as np
 
 from ._medida import Medida, montecarlo
+from ._tipagem_forte import obrigar_tipos
 
 
 @obrigar_tipos

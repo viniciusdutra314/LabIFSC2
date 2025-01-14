@@ -1,8 +1,11 @@
-import numpy as np
-from ._medida import Medida
-from numbers import Number
-from ._tipagem_forte import obrigar_tipos
 from collections.abc import Sequence
+from numbers import Number
+
+import numpy as np
+
+from ._medida import Medida
+from ._tipagem_forte import obrigar_tipos
+
 
 @obrigar_tipos
 def nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
@@ -25,12 +28,7 @@ def nominais(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
         >>> lab.get_nominais(array)
         array([  4.,  35., -97.])
     '''
-    tamanho=len(arrayMedidas)
-    array_nominais=np.empty(tamanho)
-    
-    for index,valores in enumerate(arrayMedidas):
-        array_nominais[index]=valores.nominal
-    return array_nominais
+    return np.array([medida.nominal for medida in arrayMedidas],dtype=Number)
 
 @obrigar_tipos
 def incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
@@ -50,15 +48,7 @@ def incertezas(arrayMedidas : np.ndarray[Medida]) -> np.ndarray[Number]:
         >>> lab.get_incertezas(array)
         array([0.2, 3. , 1. ])
 '''
-    
-    tamanho=len(arrayMedidas)
-    array_incertezas=np.empty(tamanho)
-    
-    for index,valores in enumerate(arrayMedidas):
-        if not isinstance(valores,Medida):
-            raise ValueError("Todos os valores precisam ser Medidas")
-        array_incertezas[index]=valores.incerteza
-    return array_incertezas
+    return np.array([medida.incerteza for medida in arrayMedidas],dtype=Number)
 
 @obrigar_tipos
 def curva_min(arrayMedida : np.ndarray[Medida],sigma:Number=2) -> np.ndarray[Number]:
@@ -129,9 +119,7 @@ def linspace(a:Number,b:Number,n : int,
         
     """
     if a>b: raise ValueError("a é maior do que b")
-
-    nominais=np.linspace(a,b,n)
-    return np.array([Medida(i,incertezas,unidade) for i in nominais])
+    return np.array([Medida(i,incertezas,unidade) for i in np.linspace(a,b,n)])
         
 @obrigar_tipos
 def medida_from_array(medições: np.ndarray[Number],
@@ -177,17 +165,14 @@ def arrayM(nominais:np.ndarray[Number],incerteza:Number,unidade:str) ->np.ndarra
         arrayM (np.ndarray[Medida]):  array de Medidas
 
     '''
-    if isinstance(incerteza,Number):
-        return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais])
-    else:
-        return np.array([Medida(nominal,incerteza,unidade) for nominal,incerteza in zip(nominais,incerteza)])
+    return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais])
 
 @obrigar_tipos
-def converter_array(arrayM:np.ndarray[Medida],unidade:str)->np.ndarray[Medida]:
+def converter_array(arrayM:np.ndarray[Medida],unidade:str)->None:
     for medida in arrayM: medida.converter_para(unidade)
     return None
 
 @obrigar_tipos
-def converter_array_si(arrayM:np.ndarray[Medida])->np.ndarray[Medida]:
+def converter_array_si(arrayM:np.ndarray[Medida])->None:
     for medida in arrayM: medida.converter_para_si()
     return None

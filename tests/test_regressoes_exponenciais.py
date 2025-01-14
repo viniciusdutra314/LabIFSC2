@@ -1,6 +1,8 @@
-import LabIFSC2 as lab
-import pytest 
 import numpy as np
+import pytest
+
+import LabIFSC2 as lab
+
 
 def test_MExponencial_valores():
     a,k,base=1,3,np.exp(1)

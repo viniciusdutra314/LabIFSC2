@@ -1,7 +1,9 @@
-import LabIFSC2 as lab
 import numpy as np
-import pytest
 import pint
+import pytest
+
+import LabIFSC2 as lab
+
 
 def test_dimensoes_incompativeis():
     x=lab.Medida(10,1,"m")
