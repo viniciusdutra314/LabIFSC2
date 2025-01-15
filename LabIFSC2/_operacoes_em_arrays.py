@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from numbers import Number
 
 import numpy as np
@@ -165,7 +164,7 @@ def arrayM(nominais:np.ndarray[Number],incerteza:Number,unidade:str) ->np.ndarra
         arrayM (np.ndarray[Medida]):  array de Medidas
 
     '''
-    return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais])
+    return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais],dtype=Medida)
 
 @obrigar_tipos
 def converter_array(arrayM:np.ndarray[Medida],unidade:str)->None:

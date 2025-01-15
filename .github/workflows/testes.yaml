@@ -36,4 +36,9 @@ jobs:
         run: poetry install --without docs
 
       - name: Testing code with pytest
-        run: poetry run pytest -vv -x 
+        run: poetry run task testes
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

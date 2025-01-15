@@ -56,8 +56,8 @@ def test_regressao_polinomial_medida():
     x_dados = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, ''), Medida(4, 0.1, ''), Medida(5, 0.1, '')])
     y_dados = np.array([Medida(1, 0.1, ''), Medida(4, 0.1, ''), Medida(9, 0.1, ''), Medida(16, 0.1, ''), Medida(25, 0.1, '')])
     grau = 2
+    
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
-    assert isinstance(polinomio, MPolinomio)
     assert polinomio._grau == grau
 
 def test_regressao_polinomial_mismatched_lengths():

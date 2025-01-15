@@ -14,8 +14,7 @@ pint = "^0.24"
 
 [tool.taskipy.tasks]
 lint = "isort ."
-pre_testes = "task lint"
-testes="pytest --tb=no"
+testes={ cmd="pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml"}
 docs="mkdocs serve"
 
 [tool.isort]
@@ -40,6 +39,12 @@ pytest-cov = "^6.0.0"
 
 [tool.poetry.group.linter.dependencies]
 isort = "^5.13.2"
+
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.3"
+taskipy = "^1.14.1"
 
 [build-system]
 requires = ["poetry-core"]

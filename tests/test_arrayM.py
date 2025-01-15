@@ -1,7 +1,7 @@
 import numpy as np
 
-from LabIFSC2 import (Medida, curva_max, curva_min, exp, incertezas, linspace,
-                      nominais, sin,converter_array,converter_array_si)
+from LabIFSC2 import (Medida, converter_array, converter_array_si, curva_max,
+                      curva_min, exp, incertezas, linspace, nominais, sin,)
 
 
 def test_nominal():

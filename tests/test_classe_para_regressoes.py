@@ -1,7 +1,8 @@
+import numpy as np
 import pytest
 
 import LabIFSC2 as lab
-import numpy as np
+
 
 def test_initialization():
     coeficientes = np.array([1, 2, 3])

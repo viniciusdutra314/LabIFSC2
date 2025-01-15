@@ -192,7 +192,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
     
     def __pow__(self,outro) -> 'Medida':
         if isinstance(outro,Number):
-           return montecarlo(lambda x: np.pow(x,outro),self)
+            return montecarlo(lambda x: np.pow(x,outro),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
 
