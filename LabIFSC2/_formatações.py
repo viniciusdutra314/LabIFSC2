@@ -3,7 +3,6 @@ import re
 import numpy as np
 
 
-
 def arredondar_incerteza(incerteza:float) -> str:
     ''' Transforma um float de incerteza em
     uma string formatada com 1 algarismo 

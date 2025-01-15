@@ -8,6 +8,7 @@
      se esqueça de por favor referenciar a fonte que você usou para 
      encontrar a constante (toda essa tabela é baseada na CODATA2022)'''
 from LabIFSC2 import Medida
+
 alpha_particle_electron_mass_ratio=Medida(7294.29954171, 1.7e-07, '')
 alpha_particle_mass=Medida(6.644657345e-27, 2.1e-36, 'kg')
 alpha_particle_mass_energy_equivalent=Medida(5.9719201997e-10, 1.9e-19, 'J')

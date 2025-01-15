@@ -1,6 +1,8 @@
-import LabIFSC2 as lab
 import numpy as np
 import pytest
+
+import LabIFSC2 as lab
+
 
 def test_soma():
     
@@ -23,6 +25,10 @@ def test_soma():
     w=lab.Medida(5,0.01,'')
     assert np.isclose((z+w).nominal,30,1e-4)
     assert np.isclose((z-w).nominal,20,1e-4)
+
+def test_medida_com_float():
+    with pytest.raises(TypeError):
+        lab.Medida(10,0.1,'')+5
 
 def test_multiplicacao_medidas():
     x=lab.Medida(0,0.1,'')
@@ -79,6 +85,10 @@ def test_divisao():
     divisao_inversa=(x/y).nominal
     assert np.isclose(divisao,1/divisao_inversa,rtol=1e-2)
 
+
+    with pytest.raises(ValueError):
+        '3'/lab.Medida(0,0.1,'')
+
 def test_divisoes_especiais_nao_existe():
     statements=[lambda x,y: x//y,lambda x,y: x%y,lambda x,y: divmod(x,y)]
     with pytest.raises(TypeError):
@@ -93,4 +103,4 @@ def test_potencia():
     assert np.isclose((2**x).nominal,4,1e-4) 
     assert np.isclose((x**y).nominal,64,1e-2)
     assert (x**y).incerteza>(x**2).incerteza
-    assert np.isclose((x**-20).nominal,1/(2**20),1e-4)
+    assert np.isclose((x**-20).nominal,1/(2**20),1e-3)

@@ -1,8 +1,7 @@
 import numpy as np
 
-from LabIFSC2 import (Medida, curva_max, curva_min, exp, incertezas,
-                      nominais, linspace, sin,)
-
+from LabIFSC2 import (Medida, converter_array, converter_array_si, curva_max,
+                      curva_min, exp, incertezas, linspace, nominais, sin,)
 
 
 def test_nominal():
@@ -39,3 +38,17 @@ def test_linspace():
     x=linspace(a,b,N,0.1,'')
     assert np.all(nominais(x)==np.linspace(a,b,N))
     assert np.all(incertezas(x)==0.1)
+
+def test_converter_array():
+    x=linspace(5,10,10,0.01,'mm')
+    converter_array(x,'cm')
+    esperado=np.linspace(0.5,1,10)
+    for index in range(len(x)):
+        assert np.isclose(x[index].nominal,esperado[index])
+
+def test_converter_array_si():
+    x=linspace(10,50,10,0.01,'cm')
+    converter_array_si(x)
+    esperado=np.linspace(0.1,0.5,10)
+    for index in range(len(x)):
+        assert np.isclose(x[index].nominal,esperado[index])

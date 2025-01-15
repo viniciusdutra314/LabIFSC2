@@ -4,9 +4,9 @@ e transforma o arquivo .txt em variáveis python acessíveis
 pelo submódulo
 '''
 
+import io
 import os
 import urllib.request
-import io
 
 file_name='codata_constantes.txt'
 abs_path=os.path.dirname(__file__)

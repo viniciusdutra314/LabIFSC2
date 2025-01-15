@@ -1,16 +1,17 @@
 from collections.abc import Callable
+from enum import Enum
 from numbers import Number
-from typing import Callable,Sequence
-from functools import total_ordering
-
+from statistics import NormalDist
+from typing import Callable
 
 import numpy as np
-from .strong_typing import obrigar_tipos
-from .formatações import *
-from enum import Enum
-from . import ureg
-from statistics import NormalDist
-from pint import Quantity
+from pint import Quantity, UnitRegistry
+
+from ._formatações import *
+from ._tipagem_forte import obrigar_tipos
+
+ureg = UnitRegistry()
+
 
 def montecarlo(func : Callable, 
                *parametros : 'Medida',N:int=100_000) -> 'Medida':
@@ -26,7 +27,8 @@ def montecarlo(func : Callable,
     return resultado
 
 class Medida:
-    @obrigar_tipos(in_class_function=True)
+
+    @obrigar_tipos
     def __init__(self,nominal:Number,incerteza : Number,
                  unidade : str ):
         """
@@ -86,7 +88,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
     def histograma(self) -> np.ndarray:
-        if not (len(self._histograma)>0):
+        if len(self._histograma)==0:
             self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
         return self._histograma
     
@@ -99,8 +101,13 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     def converter_para_si(self):
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
-        self._histograma=np.array([x.ito_base_units() for x in self._histograma])
-
+        if len(self._histograma): self._histograma.ito_base_units()
+    
+    def converter_para(self,unidade:str):
+        self._nominal.ito(unidade)
+        self._incerteza.ito(unidade)
+        if len(self._histograma): self._histograma.ito(unidade)
+        
     def __eq__(self,outro):
         raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
 diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
@@ -130,9 +137,6 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         return self.__str__()
         return f"Medida({self.nominal=},{self.incerteza=},'{self.unidade=}')"
 
-    def converter_para(self,unidade:str):
-        self._nominal.ito(unidade)
-        self._incerteza.ito(unidade)
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not isinstance(outro,Medida):
@@ -188,7 +192,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
     
     def __pow__(self,outro) -> 'Medida':
         if isinstance(outro,Number):
-           return montecarlo(lambda x: np.pow(x,outro),self)
+            return montecarlo(lambda x: np.pow(x,outro),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
 
@@ -211,6 +215,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         resultado._histograma=self._histograma
         return resultado
 
+    @obrigar_tipos
     def probabilidade_de_estar_entre(self,a:Number,b:Number,unidade:str) -> Number:
         ''' Retorna a probabilidade que a Medida
         esteja entre [a,b] usando o histograma como
@@ -242,7 +247,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             b=ureg.Quantity(b,unidade)
             return np.mean((self._histograma >= a) & (self._histograma <= b))
     
-    def intervalo_de_confianca(self,p:float) -> tuple[Number,Number]:
+    @obrigar_tipos
+    def intervalo_de_confianca(self,p:float) -> tuple[Number]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 
@@ -258,7 +264,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         
         if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
 
-        elif p==1: return (min(self._histograma),max(self._histograma))
+        elif p==1: return (min(self._histograma.magnitude),max(self._histograma.magnitude))
 
         elif self._gaussiana:
             #estamos resolvendo de maneira analítica
@@ -276,8 +282,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             intervals = magnitudes[selected_elements:] - magnitudes[:-selected_elements]
 
             shortest_interval_index = np.argmin(intervals)
-            shortest_interval = (self._histograma[shortest_interval_index],
-                                self._histograma[shortest_interval_index + selected_elements])
+            shortest_interval = (self._histograma[shortest_interval_index].magnitude,
+                                self._histograma[shortest_interval_index + selected_elements].magnitude)
             return shortest_interval
 
 
@@ -291,7 +297,7 @@ class Comparacao(Enum):
     DIFERENTES = "diferentes"
     INCONCLUSIVO = "inconclusivo"
 
-@obrigar_tipos()
+@obrigar_tipos
 def comparar_medidas(medida1: Medida, medida2: Medida, 
     sigmas_customizados: list[Number] = [2, 3]) -> Comparacao:
     """
