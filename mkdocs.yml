@@ -1,10 +1,46 @@
 site_name: LabIFSC2
+nav:
+  - Sobre: index.md
+  - Instalação: instalacao.md
+  - Introdução: introducao.md
+  - LabIFSC vs LabIFSC2: labifsc.md
+  - Constantes da Natureza: Constantes/constantes da natureza.md
+  - Arrays: arrays.md
+  - Regressões (Fitting): Regressões (fitting)/linear.md
 
+
+
+repo_url: https://github.com/viniciusdutra314/LabIFSC2
 theme:
-   material
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tabs.link
+    - content.code.annotation
+    - content.code.copy
+  palette:
+    - scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline 
+        name: Switch to dark mode
+      primary: teal
+      accent: purple 
+    - scheme: slate 
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode    
+      primary: teal
+      accent: lime
+
 use_directory_urls: false
 plugins:
   - search
+  - mkdocstrings
 extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 markdown_extensions:

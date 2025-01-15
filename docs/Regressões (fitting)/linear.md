@@ -1,3 +1,6 @@
+::: LabIFSC2.regressões.regressao_linear
+
+
 É um caso especial da [Regressão Polinomial](polinomial.md) (grau=1).
 
 
@@ -8,7 +11,7 @@ Regressão linear usando o método dos [mínimos quadrados](https://www.research
 os coeficientes são ordenados com **grau crescente (\(b+ax\) e não \(ax+b\))**
 
 
-```{.py3 title="Exemplo"}
+```{.py3 title="LabIFSC2.medida"}
     x_dados=np.array([1, 2, 3, 4])
     y_dados=np.array([2.1 , 3.9 , 5.8 , 8.03])
     b,a = regressao_linear(x_dados,y_dados) 

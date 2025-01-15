@@ -1,4 +1,8 @@
 # LabIFSC2
+<img src=https://img.shields.io/pypi/pyversions/LabIFSC2>
+<img src=https://img.shields.io/github/license/viniciusdutra314/LabIFSC2 
+>
+
 (**EM DESENVOLVIMENTO**)
 
 Cálculos científicos
