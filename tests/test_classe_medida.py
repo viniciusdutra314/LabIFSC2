@@ -45,6 +45,8 @@ def test_comparacoes():
     for comparacao in comparacoes:
         with pytest.raises(TypeError):
             comparacao(x,y)
+    assert x==x 
+    assert not x!=x
     
 def test_igualdades():
     x=lab.Medida(1,0.1,'')

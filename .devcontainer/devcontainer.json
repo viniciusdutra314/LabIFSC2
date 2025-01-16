@@ -11,7 +11,8 @@
 				"njpwerner.autodocstring",
 				"matangover.mypy",
 				"streetsidesoftware.code-spell-checker-portuguese-brazilian",
-				"yzhang.markdown-all-in-one"
+				"yzhang.markdown-all-in-one",
+				"ritwickdey.LiveServer"
 			]
             }
 		}

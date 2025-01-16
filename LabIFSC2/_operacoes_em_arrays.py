@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from numbers import Real
 from typing import Any
 
@@ -8,7 +9,7 @@ from ._tipagem_forte import obrigar_tipos
 
 
 @obrigar_tipos
-def nominais(arrayMedidas : np.ndarray[Medida,Any]) -> np.ndarray[float,Any]:
+def nominais(arrayMedidas : np.ndarray) -> np.ndarray:
     '''*get_nominais* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com seus valores nominais
     
@@ -28,10 +29,13 @@ def nominais(arrayMedidas : np.ndarray[Medida,Any]) -> np.ndarray[float,Any]:
         >>> lab.get_nominais(array)
         array([  4.,  35., -97.])
     '''
+    if not (isinstance(arrayMedidas[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
+    
     return np.array([medida.nominal for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
-def incertezas(arrayMedidas : np.ndarray[Medida,Any]) -> np.ndarray[float,Any]:
+def incertezas(arrayMedidas : np.ndarray) -> np.ndarray:
     '''*get_incertezas* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com suas incertezas
     
@@ -48,10 +52,12 @@ def incertezas(arrayMedidas : np.ndarray[Medida,Any]) -> np.ndarray[float,Any]:
         >>> lab.get_incertezas(array)
         array([0.2, 3. , 1. ])
 '''
+    if not (isinstance(arrayMedidas[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
     return np.array([medida.incerteza for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
-def curva_min(arrayMedida : np.ndarray[Medida,Any],sigma:float | int =2) -> np.ndarray[float,Any]:
+def curva_min(arrayMedidas : np.ndarray,sigma: float | int =2) -> np.ndarray:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, com quantidade de sigmas usados personalizável
 
@@ -65,11 +71,13 @@ def curva_min(arrayMedida : np.ndarray[Medida,Any],sigma:float | int =2) -> np.n
         arrayCurva (np.ndarray): array com a curva de Medidas
 
     '''
-    result:np.ndarray[float,Any]=nominais(arrayMedida) -sigma*incertezas(arrayMedida)
+    if not (isinstance(arrayMedidas[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
+    result:np.ndarray[float,Any]=nominais(arrayMedidas) -sigma*incertezas(arrayMedidas)
     return result
 
 @obrigar_tipos
-def curva_max(arrayMedida : np.ndarray[Medida,Any],sigma:float | int=2)-> np.ndarray[float,Any]:
+def curva_max(arrayMedidas : np.ndarray,sigma:float | int=2)-> np.ndarray:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, quantidade de sigmas usados personalizável
 
@@ -83,13 +91,15 @@ def curva_max(arrayMedida : np.ndarray[Medida,Any],sigma:float | int=2)-> np.nda
     Returns:
         arrayCurva (np.ndarray[Medida]): array com a curva de Medidas
     '''
-    result:np.ndarray[float,Any]=nominais(arrayMedida) +sigma*incertezas(arrayMedida)
+    if not (isinstance(arrayMedidas[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
+    result:np.ndarray[float,Any]=nominais(arrayMedidas) +sigma*incertezas(arrayMedidas)
     return result
 
 
 @obrigar_tipos
 def linspace(a:Real,b:Real,n : int,
-             incertezas : Real ,unidade : str) -> np.ndarray[Medida,Any]:
+             incertezas : Real ,unidade : str) -> np.ndarray:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,
     mas se ela for um array cada Medida terá a respectiva incerteza.
@@ -124,7 +134,7 @@ def linspace(a:Real,b:Real,n : int,
         
 
 @obrigar_tipos
-def arrayM(nominais:np.ndarray[Real,Any],incerteza:Real,unidade:str) ->np.ndarray[Medida,Any]:
+def arrayM(nominais:np.ndarray | Sequence ,incerteza:Real,unidade:str) ->np.ndarray:
     '''Converte um array de números em um array de Medidas
     
     Args:
@@ -136,14 +146,23 @@ def arrayM(nominais:np.ndarray[Real,Any],incerteza:Real,unidade:str) ->np.ndarra
         arrayM (np.ndarray[Medida]):  array de Medidas
 
     '''
+    if not (isinstance(nominais[0],Real)):
+        raise TypeError('Os valores do array não são números reais')
+
     return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais],dtype=Medida)
 
 @obrigar_tipos
-def converter_array(arrayM:np.ndarray[Medida,Any],unidade:str)->None:
+def converter_array(arrayM:np.ndarray,unidade:str)->None:
+    if not (isinstance(arrayM[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
+    
     for medida in arrayM: medida.converter_para(unidade)
     return None
 
 @obrigar_tipos
-def converter_array_si(arrayM:np.ndarray[Medida,Any])->None:
+def converter_array_si(arrayM:np.ndarray)->None:
+    if not (isinstance(arrayM[0],Medida)):
+        raise TypeError('Os valores do array não são Medidas')
+    
     for medida in arrayM: medida.converter_para_si()
     return None

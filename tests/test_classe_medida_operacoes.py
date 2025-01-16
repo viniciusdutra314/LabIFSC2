@@ -57,7 +57,10 @@ def test_mudanca_de_sinal():
     assert y.nominal==-5 and y.incerteza==0.1
     y=abs(y)
     assert y.nominal==5 and y.incerteza==0.1
-    w=y*y
+    w=abs(x/y)
+    assert np.isclose(w.nominal,1,rtol=1e-3)
+    
+    
     z=+w
     for i in range(len(z._histograma)):
         assert z._histograma[i]==w._histograma[i]

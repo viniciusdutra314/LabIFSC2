@@ -14,7 +14,10 @@ from ._tipagem_forte import obrigar_tipos
 
 class MPolinomio:
     @obrigar_tipos
-    def __init__(self:'MPolinomio',coeficientes:np.ndarray[Medida,Any]):
+    def __init__(self,coeficientes:np.ndarray):
+        if not (isinstance(coeficientes[0],Medida)):
+            raise TypeError('Os valores do array não são Medidas')
+    
         self._coeficientes:list[Medida]=[]
         for index,coef in enumerate(coeficientes):
             self._coeficientes.append(coef)
@@ -22,9 +25,9 @@ class MPolinomio:
         self._grau=len(coeficientes)-1
     
     @obrigar_tipos
-    def __call__(self,x:Medida | np.ndarray[Medida,Any]) -> Medida | np.ndarray[Medida,Any]:
+    def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
         avaliar=lambda x:sum(coef*x**(self._grau-i) for i,coef in enumerate(self._coeficientes))
-        resultado: Medida | np.ndarray[Medida,Any]=np.frompyfunc(avaliar,1,1)(x)
+        resultado: Medida | np.ndarray=np.frompyfunc(avaliar,1,1)(x)
         return resultado
     
     def __iter__(self) -> Iterator[Medida]:
@@ -45,8 +48,8 @@ class MExponencial:
         self.k=k
         self._valores=(a,k,base)
 
-    def __call__(self,x:Medida | np.ndarray[Medida,Any]) -> Medida | np.ndarray[Medida,Any]:
-        resultado:  Medida | np.ndarray[Medida,Any]=power(float(self.base),x*self.k)
+    def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
+        resultado:  Medida | np.ndarray=power(float(self.base),x*self.k)
         return resultado
     
     def __repr__(self)->str:
@@ -64,8 +67,8 @@ class MLeiDePotencia:
         self.n = n
         self._valores = (a, n)
 
-    def __call__(self, x:Medida | np.ndarray[Medida,Any]) -> Medida | np.ndarray[Medida,Any]:
-        resultado : Medida | np.ndarray[Medida,Any]=self.a *power(x, self.n)
+    def __call__(self, x:Medida | np.ndarray) -> Medida | np.ndarray:
+        resultado : Medida | np.ndarray=self.a *power(x, self.n)
         return resultado
     
     def __repr__(self)->str:
@@ -75,44 +78,45 @@ class MLeiDePotencia:
         return iter(self._valores)
     
 @obrigar_tipos
-def regressao_polinomial(x_dados:np.ndarray[Medida,Any],y_dados:np.ndarray[Medida,Any],grau:int) -> MPolinomio:
-    if len(x_dados)!=len(y_dados):
+def regressao_polinomial(x_medidas:np.ndarray,y_medidas:np.ndarray,grau:int) -> MPolinomio:
+    if len(x_medidas)!=len(y_medidas):
         raise ValueError("x_dados e y_dados não tem o mesmo tamanho")
-    if len(x_dados)<=grau+1:
+    if len(x_medidas)<=grau+1:
         raise ValueError("Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
-
-    x_dados=nominais(x_dados)
-    y_dados=nominais(y_dados)
-    p, cov = np.polyfit(x_dados.astype(float), y_dados.astype(float), grau, cov=True)
+    if not (isinstance(x_medidas[0],Medida) and isinstance(y_medidas[0],Medida)):
+        raise TypeError('x_medidas e y_medidas precisam ser np.ndarray de medidas')
+    x_medidas=nominais(x_medidas)
+    y_medidas=nominais(y_medidas)
+    p, cov = np.polyfit(x_medidas.astype(float), y_medidas.astype(float), grau, cov=True)
     medidas_coeficientes = np.array([Medida(valor, np.sqrt(cov[i, i]),'') for i, valor in enumerate(p)],dtype=Medida)
     return MPolinomio(medidas_coeficientes)
 
 @obrigar_tipos
-def regressao_linear(x:np.ndarray[Medida,Any],
-                     y:np.ndarray[Medida,Any]) -> MPolinomio:
-    reta:MPolinomio=regressao_polinomial(x,y,1)
+def regressao_linear(x_medidas:np.ndarray,
+                     y_medidas:np.ndarray) -> MPolinomio:
+    reta:MPolinomio=regressao_polinomial(x_medidas,y_medidas,1)
     return reta
 
 @obrigar_tipos
-def regressao_exponencial(x:np.ndarray[Medida,Any],y:np.ndarray[Medida,Any],base:Real=np.exp(1)) -> MExponencial:
+def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
+                          base:Real=np.exp(1)) -> MExponencial:
  
-    if not np.all(nominais(y)>0):
+    if not np.all(nominais(y_medidas)>0):
             raise ValueError('Todos y precisam ser positivos para uma modelagem exponencial') 
 
     if base<1: raise ValueError('Base precisa ser maior que 1')
     
-    polinomio=regressao_linear(x,log(y)/log(base))
+    polinomio=regressao_linear(x_medidas,log(y_medidas)/log(base))
     k=polinomio.a
     a=exp(polinomio.b)
     return MExponencial(a,k,base)
 
 @obrigar_tipos
-def regressao_potencia(x:np.ndarray[Medida,Any], y:np.ndarray[Medida,Any]) -> MLeiDePotencia:
+def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
 
-    if not np.all(nominais(y)>0) and np.all(nominais(x)>0):
+    if not np.all(nominais(y_medidas)>0) and np.all(nominais(x_medidas)>0):
             raise ValueError('Todos x e y precisam ser positivos para uma modelagem exponencial')
-
-    polinomio=regressao_linear(log(x),log(y))
+    polinomio=regressao_linear(log(x_medidas),log(y_medidas))
     a=exp(polinomio.b)
     n=polinomio.a
     return MLeiDePotencia(a,n)

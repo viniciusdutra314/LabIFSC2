@@ -239,7 +239,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     __rpow__=__pow__
 
     def __abs__(self:'Medida') -> 'Medida':
-        resultado=Medida(-self.nominal,self.incerteza,self.unidade)
+        resultado=Medida(abs(self.nominal),self.incerteza,self.unidade)
         if self._histograma is not None:
             resultado._histograma=abs(self._histograma)
         return resultado

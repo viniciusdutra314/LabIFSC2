@@ -23,10 +23,6 @@ def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
         if not match:
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) deve ser de um dos tipos {get_args_result} \
                             e não {type(arg)}")
-    elif (isinstance(get_origin_result,np.ndarray)): #np.ndarray[Medida,Any], só para o mypy não reclamar
-        if not (isinstance(arg,np.ndarray) and issubclass(arg.dtype.type,get_args_result[0])):
-            raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
-                            e não {type(arg)}")
     
     elif (get_args_result and get_origin_result is not None): #tipos compostos np.ndarray[Number]
         #Como vamos usar sempre np.ndarray, precisamos só checar um elemento

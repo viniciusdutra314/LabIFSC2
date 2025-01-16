@@ -41,8 +41,8 @@ def test_regressao_polinominal():
     assert np.isclose(b_predito.nominal,b,rtol=1e-1)
 
 def test_regressao_polinomial_basic():
-    x_dados = np.array([1, 2, 3, 4, 5])
-    y_dados = np.array([1, 4, 9, 16, 25])
+    x_dados = lab2.arrayM([1, 2, 3, 4, 5],0,'')
+    y_dados = lab2.arrayM([1, 4, 9, 16, 25],0,'')
     grau = 2
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
     assert isinstance(polinomio, MPolinomio)
@@ -70,6 +70,12 @@ def test_regressao_polinomial_insufficient_data():
     with pytest.raises(ValueError):
         regressao_polinomial(x_dados, y_dados, grau)
 
+def test_regressao_polinominal_tipos_errados():
+    x_dados = np.array([1, 2,3,4])
+    y_dados = np.array([1, 4,7,6])
+    grau = 1
+    with pytest.raises(TypeError):
+        test_regressao_linear(x_dados,y_dados,grau)
 def test_MPolinomio_call():
     # Coeficientes do polinômio: 2x^2 + 3x + 4
     coeficientes = np.array([Medida(2, 0.001, ''), Medida(3, 0.001, ''), Medida(4, 0.001, '')])
