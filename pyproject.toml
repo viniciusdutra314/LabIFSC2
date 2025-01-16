@@ -12,15 +12,6 @@ python = "^3.10"
 numpy = "2.*"
 pint = "^0.24"
 
-[tool.taskipy.tasks]
-lint = "isort ."
-testes={ cmd="pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html"}
-docs="mkdocs serve"
-
-[tool.isort]
-profile = "black"
-line_length = 79
-multi_line_output=0
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5.4"
@@ -39,13 +30,18 @@ scipy = "^1.15.1"
 
 
 [tool.poetry.group.linter.dependencies]
-isort = "^5.13.2"
-
-
-
-[tool.poetry.group.dev.dependencies]
-pylint = "^3.3.3"
 taskipy = "^1.14.1"
+isort = "^5.13.2"
+mypy = "^1.14.1"
+
+[tool.mypy]
+strict = true
+disallow_any_generics = false
+exclude = 'tests/.*'
+
+[tool.taskipy.tasks]
+testes={ cmd="isort . && pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html "}
+docs="mkdocs serve"
 
 [build-system]
 requires = ["poetry-core"]

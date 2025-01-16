@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from numbers import Number
+from typing import Any
 
 import numpy as np
 
@@ -9,7 +10,7 @@ from ._tipagem_forte import obrigar_tipos
 
 @obrigar_tipos
 def aceitamedida(func :Callable, num_args :int=1) -> Callable:
-    def FuncaoLabificada(*args):
+    def FuncaoLabificada(*args:Any) -> Any:
         args_transformados = [arg if isinstance(arg, Medida) else Medida(arg, 0, '') for arg in args]
         
         if all(not isinstance(arg, Medida) for arg in args): return func(*args)

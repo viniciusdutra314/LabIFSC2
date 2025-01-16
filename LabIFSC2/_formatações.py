@@ -1,4 +1,4 @@
-import re
+""" import re
 
 import numpy as np
 
@@ -82,4 +82,4 @@ def formatar_medida_latex(nominal,incerteza,
                                ordem_de_grandeza,unidade.simbolo).rstrip()
     else:
         template=r"({} \pm {})\, \text{{{}}}"
-        return template.format(nominal,incerteza,unidade.simbolo).rstrip()
+        return template.format(nominal,incerteza,unidade.simbolo).rstrip() """

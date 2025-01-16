@@ -6,7 +6,7 @@ import numpy as np
 from numpy.polynomial import Polynomial
 from numpy.typing import NDArray
 
-from ._matematica import aceitamedida, exp,log,power
+from ._matematica import aceitamedida, exp, log, power
 from ._medida import Medida
 from ._operacoes_em_arrays import arrayM, nominais
 from ._tipagem_forte import obrigar_tipos

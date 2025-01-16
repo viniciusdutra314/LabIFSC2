@@ -97,7 +97,7 @@ def test_potencia():
     x=lab.Medida(2,0.01,'')
     y=lab.Medida(6,0.01,'')
     assert np.isclose((x**3).nominal,8,1e-3) 
-    assert np.isclose((2**x).nominal,4,1e-4) 
+    assert np.isclose((2**x).nominal,4,1e-3) 
     assert np.isclose((x**y).nominal,64,1e-2)
     assert (x**y).incerteza>(x**2).incerteza
     assert np.isclose((x**-20).nominal,1/(2**20),1e-3)

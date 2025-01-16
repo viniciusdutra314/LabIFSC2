@@ -38,6 +38,9 @@ jobs:
       - name: Testing code with pytest
         run: poetry run pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
 
+      - name: Mypy
+        run: poetry run mypy LabIFSC2/
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
