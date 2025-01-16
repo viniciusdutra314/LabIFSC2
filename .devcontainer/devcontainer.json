@@ -9,7 +9,9 @@
             "extensions":[
 				"ms-python.python",
 				"njpwerner.autodocstring",
-				"matangover.mypy"
+				"matangover.mypy",
+				"streetsidesoftware.code-spell-checker-portuguese-brazilian",
+				"yzhang.markdown-all-in-one"
 			]
             }
 		}

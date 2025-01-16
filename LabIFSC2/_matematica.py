@@ -14,10 +14,9 @@ def aceitamedida(func :Callable, num_args :int=1) -> Callable:
         args_transformados = [arg if isinstance(arg, Medida) else Medida(arg, 0, '') for arg in args]
         
         if all(not isinstance(arg, Medida) for arg in args): return func(*args)
-        else: return montecarlo(func, *args_transformados)
-        
-            
-    return np.frompyfunc(FuncaoLabificada,num_args,1)
+        else: return montecarlo(func, *args_transformados)    
+    funcao_com_numpy= np.frompyfunc(FuncaoLabificada,num_args,1)
+    return funcao_com_numpy
 
 '''
 Essas são as funções que o LabIFSC2 já implementa para aceitar Medidas,

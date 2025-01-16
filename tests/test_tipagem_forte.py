@@ -2,6 +2,7 @@ from collections.abc import Sequence
 from decimal import Decimal
 from fractions import Fraction
 from numbers import Number
+from typing import Any
 
 import numpy as np
 import pytest
@@ -112,3 +113,13 @@ def test_union_composed_types():
     with pytest.raises(TypeError): mult_arrays_union(np.array(['a', 'b', 'c']), y)
     with pytest.raises(TypeError): mult_arrays_union(x, np.array(['d', 'e', 'f']))
     with pytest.raises(TypeError): mult_arrays_union(np.array(['a', 'b', 'c']), np.array(['d', 'e', 'f']))
+
+def test_ndarray_medida_any():
+    @obrigar_tipos
+    def recebe_array_medida_any(x: np.ndarray[lab.Medida,Any]) -> np.ndarray[Number]:
+        return np.array([1, 2, 3, 4, 5])
+    
+    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    recebe_array_medida_any(medidas)
+    with pytest.raises(TypeError): recebe_array_medida_any(np.array([1, 2, 3, 4, 5]))
+    with pytest.raises(TypeError): recebe_array_medida_any(medidas.tolist())

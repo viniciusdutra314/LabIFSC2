@@ -1,6 +1,9 @@
 from collections.abc import Callable
 from copy import copy
+from types import UnionType
 from typing import Any, get_args, get_origin
+
+import numpy as np
 
 
 def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
@@ -9,7 +12,7 @@ def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
     get_origin_result=get_origin(tipo_esperado)
     get_args_result=get_args(tipo_esperado)
 
-    if (len(get_args_result)>1): #Unions Number | Medida
+    if (get_origin_result is UnionType): #Unions Number | Medida
         match=False
         for arg_union in get_args_result:
             try:
@@ -20,12 +23,18 @@ def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
         if not match:
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) deve ser de um dos tipos {get_args_result} \
                             e não {type(arg)}")
-    elif (get_args_result): #tipos compostos np.ndarray[Number]
+    elif (isinstance(get_origin_result,np.ndarray)): #np.ndarray[Medida,Any], só para o mypy não reclamar
+        if not (isinstance(arg,np.ndarray) and issubclass(arg.dtype.type,get_args_result[0])):
+            raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
+                            e não {type(arg)}")
+    
+    elif (get_args_result and get_origin_result is not None): #tipos compostos np.ndarray[Number]
         #Como vamos usar sempre np.ndarray, precisamos só checar um elemento
+        print(get_args_result)
         if not (isinstance(arg[0],get_args_result) and issubclass(type(arg),get_origin_result)):
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
                             e não {type(arg)}")
-    else: #tipos simples Number
+    else: #tipos simples 
         if not (isinstance(arg, tipo_esperado) or issubclass(type(arg),tipo_esperado)):
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
                             e não {type(arg)}")

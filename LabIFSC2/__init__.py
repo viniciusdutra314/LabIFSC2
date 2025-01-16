@@ -13,7 +13,8 @@ from ._matematica import (aceitamedida, acos, acosh, arccos, arccosh, arcseno,
                           sinh, sqrt, tan, tanh, tg, tgh)
 from ._medida import Comparacao, Medida, comparar_medidas, montecarlo
 from ._operacoes_em_arrays import (arrayM, converter_array, converter_array_si,
-                                   curva_max, curva_min, incertezas, linspace, nominais)
+                                   curva_max, curva_min, incertezas, linspace,
+                                   nominais)
 from ._regressões import (MExponencial, MPolinomio, regressao_exponencial,
                           regressao_linear, regressao_polinomial,
                           regressao_potencia)

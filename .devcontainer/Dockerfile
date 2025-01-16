@@ -32,8 +32,7 @@ ARG PYTHON_VERSION=3.10
 # ARG PYTHON_VERSION=3.10
 
 ENV PYENV_ROOT="${HOME}/.pyenv"
-ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${HOME}/.local/bin:$PATH"
-
+ENV PATH="${PYENV_ROOT}/shims:${PYENV_ROOT}/bin:${HOME}/.local/bin:$PATH">
 RUN echo "done 0" \
     && curl https://pyenv.run | bash \
     && echo "done 1" \
@@ -42,5 +41,5 @@ RUN echo "done 0" \
     && pyenv global ${PYTHON_VERSION} \
     && echo "done 3" \
     && curl -sSL https://install.python-poetry.org | python3 - \
-    && poetry config virtualenvs.in-project true
-    && poetry install
+    && poetry config virtualenvs.in-project true \
+    && sudo apt install -y mypy

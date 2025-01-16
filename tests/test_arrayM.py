@@ -25,6 +25,7 @@ def test_incerteza_array():
 
 def test_curvamin():
     t=np.array([Medida(5,0.1,''),Medida(9,2,''),Medida(11,0.5,'')])
+    curva_min(t)
     assert np.array_equal(curva_min(t),np.array([4.8,5,10]))
     assert np.array_equal(curva_min(t,3),np.array([4.7,3,9.5]))  
 
