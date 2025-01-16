@@ -8,13 +8,13 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 numpy = "2.*"
 pint = "^0.24"
 
 [tool.taskipy.tasks]
 lint = "isort ."
-testes={ cmd="pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml"}
+testes={ cmd="pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html"}
 docs="mkdocs serve"
 
 [tool.isort]
@@ -35,6 +35,7 @@ labifsc = "^0.1.13"
 uncertainties = "^3.2.2"
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
+scipy = "^1.15.1"
 
 
 [tool.poetry.group.linter.dependencies]

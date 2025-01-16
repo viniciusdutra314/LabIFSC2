@@ -9,17 +9,6 @@ from ._tipagem_forte import obrigar_tipos
 
 @obrigar_tipos
 def aceitamedida(func :Callable, num_args :int=1) -> Callable:
-    '''Possibilita que qualquer função aceite e
-    retorne Medidas como argumentos
-    
-    Args:
-        func: (callable) Função que não aceita medidas
-
-    Returns:
-        func_labificada: (callable) função que aceita e retorna Medidas
-
-    '''
-
     def FuncaoLabificada(*args):
         args_transformados = [arg if isinstance(arg, Medida) else Medida(arg, 0, '') for arg in args]
         

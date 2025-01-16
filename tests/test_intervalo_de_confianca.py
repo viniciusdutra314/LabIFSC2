@@ -17,8 +17,13 @@ def test_probabilidade_analitico():
     assert np.isclose(a,-2,atol=0.05) and np.isclose(b,2,atol=0.05)
     a,b=y.intervalo_de_confianca(0.997)
     assert np.isclose(a,-3,atol=0.05) and np.isclose(b,3,atol=0.05)
-
-
+    with pytest.raises(ValueError):
+        y.intervalo_de_confianca(1.1)
+    with pytest.raises(ValueError):
+         y.intervalo_de_confianca(0)
+    with pytest.raises(ValueError):
+        y.intervalo_de_confianca(-1)
+    y.intervalo_de_confianca(1)
 def test_probabilidade_unidade_errada():
     x=lab.Medida(0,1,'ly')
     with pytest.raises(ValueError):
@@ -32,4 +37,5 @@ def test_probabilidade_e_intervalo_de_confianca():
         x_min,x_max=z.intervalo_de_confianca(p)
         assert np.isclose(z.probabilidade_de_estar_entre(x_min,x_max,'s²'),p,atol=1e-4) 
 
-
+    with pytest.raises(ValueError):
+        z.probabilidade_de_estar_entre(6,3,'s²')

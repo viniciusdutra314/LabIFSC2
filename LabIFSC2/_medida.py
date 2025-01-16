@@ -94,8 +94,9 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     
     @histograma.setter
     def histograma(self,value): self._erro_por_mudar_atributo()
+    
     @histograma.deleter
-    def histograma(self,value): self._erro_por_mudar_atributo() 
+    def histograma(self): self._erro_por_mudar_atributo() 
 
 
     def converter_para_si(self):
@@ -139,8 +140,12 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
 
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
-        if not isinstance(outro,Medida):
-            raise TypeError("Uma Medida só pode ser somada/subtraída com outra Medida")
+        if not (isinstance(outro,Medida) or isinstance(outro,Number)):
+            return NotImplemented
+        if isinstance(outro,Number):
+            self._nominal+=outro
+            self._histograma+=outro
+            return self
 
         if self._nominal.is_compatible_with(outro._nominal):
             if self is outro: 
@@ -175,6 +180,8 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             resultado=Medida(self.nominal*outro,abs(self.incerteza*outro),self.unidade)
             resultado._histograma=self._histograma*outro
             return resultado
+        else:
+            return NotImplemented
     
     def __truediv__(self, outro) -> 'Medida':
         if self is outro: return Medida(1,0,self.unidade)
@@ -184,18 +191,22 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             return resultado
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x/y,self,outro)
-        
+        else:
+            return NotImplemented
+
     def __rtruediv__(self,outro) -> 'Medida':
         if isinstance(outro,Number):
             return montecarlo(lambda x: outro/x,self)
-        raise ValueError(f"Operação entre {type(self)} e {type(outro)} não suportada")
-    
+        else:
+            return NotImplemented
+
     def __pow__(self,outro) -> 'Medida':
         if isinstance(outro,Number):
             return montecarlo(lambda x: np.pow(x,outro),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
-
+        else:
+            return NotImplemented
 
     __radd__=__add__
     __rsub__=__sub__
@@ -248,7 +259,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             return np.mean((self._histograma >= a) & (self._histograma <= b))
     
     @obrigar_tipos
-    def intervalo_de_confianca(self,p:float) -> tuple[Number]:
+    def intervalo_de_confianca(self,p:Number) -> tuple[Number]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 
@@ -264,7 +275,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         
         if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
 
-        elif p==1: return (min(self._histograma.magnitude),max(self._histograma.magnitude))
+        elif p==1: return (min(self.histograma.magnitude),max(self.histograma.magnitude))
 
         elif self._gaussiana:
             #estamos resolvendo de maneira analítica

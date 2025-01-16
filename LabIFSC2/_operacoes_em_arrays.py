@@ -117,7 +117,6 @@ def linspace(a:Number,b:Number,n : int,
     entre as Medidas
         
     """
-    if a>b: raise ValueError("a é maior do que b")
     return np.array([Medida(i,incertezas,unidade) for i in np.linspace(a,b,n)])
         
 @obrigar_tipos

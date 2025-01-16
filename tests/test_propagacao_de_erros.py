@@ -43,6 +43,7 @@ def comparar_ufloat_lab2(ufloat:ufloat,medida_lab2:lab2.Medida,precisao=1e-3):
     assert np.isclose(medida_lab2.incerteza,ufloat.std_dev,rtol=precisao)
 
 
+def test_number_in_a_lab_func(): assert lab2.sin(0)==0
 
 def test_arithmetic_operations():
     incerteza = 1e-4

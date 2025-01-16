@@ -36,7 +36,7 @@ jobs:
         run: poetry install --without docs
 
       - name: Testing code with pytest
-        run: poetry run task testes
+        run: poetry run pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

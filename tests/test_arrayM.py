@@ -39,6 +39,7 @@ def test_linspace():
     assert np.all(nominais(x)==np.linspace(a,b,N))
     assert np.all(incertezas(x)==0.1)
 
+
 def test_converter_array():
     x=linspace(5,10,10,0.01,'mm')
     converter_array(x,'cm')

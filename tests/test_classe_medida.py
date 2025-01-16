@@ -31,6 +31,10 @@ def test_valores_protegidos():
         x.unidade='mm'
     with pytest.raises(PermissionError):
         del x.unidade
+    with pytest.raises(PermissionError):
+        x.histograma='mm'
+    with pytest.raises(PermissionError):
+        del x.histograma
 
 def test_comparacoes():
     x=lab.Medida(5,1,'')
