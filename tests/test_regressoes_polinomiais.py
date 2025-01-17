@@ -75,7 +75,9 @@ def test_regressao_polinominal_tipos_errados():
     y_dados = np.array([1, 4,7,6])
     grau = 1
     with pytest.raises(TypeError):
-        test_regressao_linear(x_dados,y_dados,grau)
+        regressao_polinomial(x_dados,y_dados,grau)
+
+
 def test_MPolinomio_call():
     # Coeficientes do polinômio: 2x^2 + 3x + 4
     coeficientes = np.array([Medida(2, 0.001, ''), Medida(3, 0.001, ''), Medida(4, 0.001, '')])

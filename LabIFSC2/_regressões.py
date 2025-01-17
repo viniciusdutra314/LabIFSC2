@@ -41,6 +41,7 @@ class MExponencial:
     '''Classe para modelar uma função exponencial
     y = a * base^(kx)
     '''
+    __slots__ = ['a', 'k', 'base','_valores']
     @obrigar_tipos
     def __init__(self,a:Medida,k:Medida,base:Real):
         self.a=a
@@ -60,8 +61,10 @@ class MExponencial:
 
 class MLeiDePotencia:
     '''Classe para modelar uma função de lei de potência
-    y = a * x^b
+    y = a * x^n
     '''
+    __slots__ = ['a', 'n','_valores']
+
     @obrigar_tipos
     def __init__(self, a: Medida, n: Medida):
         self.a = a
@@ -115,8 +118,8 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
 
 @obrigar_tipos
 def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
-
-    if not np.all(nominais(y_medidas)>0) and np.all(nominais(x_medidas)>0):
+    
+    if not bool(np.all(nominais(y_medidas)>0) and np.all(nominais(x_medidas)>0)):
             raise ValueError('Todos x e y precisam ser positivos para uma modelagem exponencial')
     polinomio=regressao_linear(log(x_medidas),log(y_medidas))
     a=exp(polinomio.b)
