@@ -31,6 +31,10 @@ def test_valores_protegidos():
         x.unidade='mm'
     with pytest.raises(PermissionError):
         del x.unidade
+    with pytest.raises(PermissionError):
+        x.histograma='mm'
+    with pytest.raises(PermissionError):
+        del x.histograma
 
 def test_comparacoes():
     x=lab.Medida(5,1,'')
@@ -41,6 +45,8 @@ def test_comparacoes():
     for comparacao in comparacoes:
         with pytest.raises(TypeError):
             comparacao(x,y)
+    assert x==x 
+    assert not x!=x
     
 def test_igualdades():
     x=lab.Medida(1,0.1,'')
@@ -51,8 +57,8 @@ def test_igualdades():
     assert lab.comparar_medidas(x,z)==lab.Comparacao.DIFERENTES
     assert lab.comparar_medidas(z,w)==lab.Comparacao.INCONCLUSIVO
 
-    assert lab.comparar_medidas(x,y,sigmas_customizados=[0.1,0.2])==lab.Comparacao.DIFERENTES
-    assert lab.comparar_medidas(x,z,sigmas_customizados=[100,105])==lab.Comparacao.EQUIVALENTES
+    assert lab.comparar_medidas(x,y,sigma_inferior=0.1,sigma_superior=0.2)==lab.Comparacao.DIFERENTES
+    assert lab.comparar_medidas(x,z,sigma_inferior=100,sigma_superior=105)==lab.Comparacao.EQUIVALENTES
 
     with pytest.raises(ValueError):
-        lab.comparar_medidas(x,y,sigmas_customizados=[5,1]) 
+        lab.comparar_medidas(x,y,sigma_inferior=5,sigma_superior=1) 

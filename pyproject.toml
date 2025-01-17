@@ -8,19 +8,10 @@ readme = "README.md"
 package-mode = false
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 numpy = "2.*"
 pint = "^0.24"
 
-[tool.taskipy.tasks]
-lint = "isort ."
-testes={ cmd="pytest -vv -x --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml"}
-docs="mkdocs serve"
-
-[tool.isort]
-profile = "black"
-line_length = 79
-multi_line_output=0
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5.4"
@@ -35,16 +26,22 @@ labifsc = "^0.1.13"
 uncertainties = "^3.2.2"
 pytest = "^8.3.4"
 pytest-cov = "^6.0.0"
+scipy = "^1.15.1"
 
 
 [tool.poetry.group.linter.dependencies]
-isort = "^5.13.2"
-
-
-
-[tool.poetry.group.dev.dependencies]
-pylint = "^3.3.3"
 taskipy = "^1.14.1"
+isort = "^5.13.2"
+mypy = "1.14.1"
+
+[tool.mypy]
+strict = true
+disallow_any_generics = false
+exclude = 'tests/.*'
+
+[tool.taskipy.tasks]
+testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html "}
+docs="mkdocs serve"
 
 [build-system]
 requires = ["poetry-core"]

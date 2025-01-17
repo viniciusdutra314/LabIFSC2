@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from numbers import Number
+from typing import Any
 
 import numpy as np
 
@@ -9,25 +10,13 @@ from ._tipagem_forte import obrigar_tipos
 
 @obrigar_tipos
 def aceitamedida(func :Callable, num_args :int=1) -> Callable:
-    '''Possibilita que qualquer função aceite e
-    retorne Medidas como argumentos
-    
-    Args:
-        func: (callable) Função que não aceita medidas
-
-    Returns:
-        func_labificada: (callable) função que aceita e retorna Medidas
-
-    '''
-
-    def FuncaoLabificada(*args):
+    def FuncaoLabificada(*args:Any) -> Any:
         args_transformados = [arg if isinstance(arg, Medida) else Medida(arg, 0, '') for arg in args]
         
         if all(not isinstance(arg, Medida) for arg in args): return func(*args)
-        else: return montecarlo(func, *args_transformados)
-        
-            
-    return np.frompyfunc(FuncaoLabificada,num_args,1)
+        else: return montecarlo(func, *args_transformados)    
+    funcao_com_numpy:Callable= np.frompyfunc(FuncaoLabificada,num_args,1)
+    return funcao_com_numpy
 
 '''
 Essas são as funções que o LabIFSC2 já implementa para aceitar Medidas,

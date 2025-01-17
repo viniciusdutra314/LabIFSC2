@@ -72,3 +72,18 @@ def test_conversao_interna_histograma():
     assert len(x.histograma)==100_000
     y.converter_para_si()
     assert y.histograma.units==lab._medida.ureg.m
+
+def test_converter_array():
+    x_dados=lab.arrayM([1,2,3,4,5],0.01,'m/s')
+    lab.converter_array(x_dados,'km/h')
+    for i in range(len(x_dados)):
+        assert np.isclose(x_dados[i].nominal,(i+1)*3.6)
+
+    x_dados=lab.arrayM([1,2,3,4,5],0.01,'km/h')
+    lab.converter_array_si(x_dados)
+    for i in range(len(x_dados)):
+        assert np.isclose(x_dados[i].nominal,(i+1)/3.6)
+    with pytest.raises(TypeError):
+        lab.converter_array(np.arange(10),'m/s')
+    with pytest.raises(TypeError):
+        lab.converter_array_si(np.arange(10))

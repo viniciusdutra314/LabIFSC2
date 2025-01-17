@@ -28,11 +28,11 @@ with file_like_object as txt:
         name=name.replace('-','_').replace('.','').replace("/","_over_")
         name=name.replace('(','').replace(')','').replace(',','')
         nominal=float(line[60:85].rstrip().replace(" ","").replace("...",""))
-        incerteza=line[85:110].rstrip().replace(" ","")
-        if incerteza=="(exact)": incerteza=0
-        else: incerteza=float(incerteza)
+        incerteza_str=line[85:110].rstrip().replace(" ","")
+        if incerteza_str=="(exact)": incerteza=float(0)
+        else: incerteza=float(incerteza_str)
         unidade=line[110:].strip()
-        constantes_dict[name]=[nominal,incerteza,unidade]
+        constantes_dict[name]=[nominal,incerteza_str,unidade]
 
 with open('../LabIFSC2/constantes/constantes.py','w') as python_arquivo:
     python_arquivo.write("'''Aqui são guardadas as constantes da natureza usadas no LabIFSC2 ,\n \

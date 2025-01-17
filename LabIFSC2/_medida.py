@@ -1,10 +1,11 @@
 from collections.abc import Callable
 from enum import Enum
-from numbers import Number
+from numbers import Real
 from statistics import NormalDist
-from typing import Callable
+from typing import Any
 
 import numpy as np
+import pint
 from pint import Quantity, UnitRegistry
 
 from ._formatações import *
@@ -29,7 +30,7 @@ def montecarlo(func : Callable,
 class Medida:
 
     @obrigar_tipos
-    def __init__(self,nominal:Number,incerteza : Number,
+    def __init__(self,nominal:Real,incerteza : Real,
                  unidade : str ):
         """
         Inicializa uma instância da classe Medida com um valor nominal, incerteza e unidade.
@@ -48,73 +49,77 @@ class Medida:
         self._nominal= ureg.Quantity(nominal,unidade).to_reduced_units()
         self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
         self._gaussiana=True
-        self._histograma=np.array([])
+        self._histograma=None
         self._nominal.ito_reduced_units
+        self._incerteza.ito_reduced_units
 
 
-    def _erro_por_mudar_atributo(self):
+    def _erro_por_mudar_atributo(self: 'Medida') -> None:
         raise PermissionError("Para garantir a integridade da Medida realizada \
 o LabIFSC2 não permite a alteração direta de nominal, incerteza, unidade (somente leitura).\
 Caso precise de uma nova Medida, crie outra com o \
 construtor padrão Medida(nominal, incerteza, unidade)")
 
     @property
-    def nominal(self) -> Number: return self._nominal.magnitude
+    def nominal(self:'Medida') -> float: 
+        return float(self._nominal.magnitude)
     
     @nominal.setter
-    def nominal(self, value):self._erro_por_mudar_atributo()
+    def nominal(self:'Medida', value:Any)-> None:
+        self._erro_por_mudar_atributo()
     
     @nominal.deleter
-    def nominal(self): self._erro_por_mudar_atributo()
+    def nominal(self:'Medida') -> None: 
+        self._erro_por_mudar_atributo()
 
     @property
-    def incerteza(self) -> Number: return self._incerteza.magnitude
+    def incerteza(self:'Medida') -> float: 
+        return float(self._incerteza.magnitude)
     
     @incerteza.setter
-    def incerteza(self, value): self._erro_por_mudar_atributo()
+    def incerteza(self:'Medida', value:Any) -> None: 
+        self._erro_por_mudar_atributo()
     
     @incerteza.deleter
-    def incerteza(self): self._erro_por_mudar_atributo()
+    def incerteza(self:'Medida') -> None: 
+        self._erro_por_mudar_atributo()
 
     @property
-    def unidade(self) -> str: 
+    def unidade(self:'Medida') -> str: 
         return str(self._nominal.units)
     
     @unidade.setter
-    def unidade(self, value): self._erro_por_mudar_atributo()
+    def unidade(self:'Medida', value:Any) -> None: 
+        self._erro_por_mudar_atributo()
     
     @unidade.deleter
-    def unidade(self): self._erro_por_mudar_atributo()
+    def unidade(self:'Medida') -> None: 
+        self._erro_por_mudar_atributo()
 
     @property
-    def histograma(self) -> np.ndarray:
-        if len(self._histograma)==0:
+    def histograma(self:'Medida') -> Any:
+        if self._histograma is None:
             self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
         return self._histograma
     
     @histograma.setter
-    def histograma(self,value): self._erro_por_mudar_atributo()
+    def histograma(self:'Medida',value:Any) -> None: 
+        self._erro_por_mudar_atributo()
+    
     @histograma.deleter
-    def histograma(self,value): self._erro_por_mudar_atributo() 
+    def histograma(self:'Medida') -> None: 
+        self._erro_por_mudar_atributo() 
 
 
-    def converter_para_si(self):
+    def converter_para_si(self:'Medida')->None:
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
-        if len(self._histograma): self._histograma.ito_base_units()
+        if self._histograma is not None: self._histograma.ito_base_units()
     
-    def converter_para(self,unidade:str):
+    def converter_para(self:'Medida',unidade:str)->None:
         self._nominal.ito(unidade)
         self._incerteza.ito(unidade)
-        if len(self._histograma): self._histograma.ito(unidade)
-        
-    def __eq__(self,outro):
-        raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
-diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
-chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
-não use !=,==,<=,<,>,>= diretamente com Medidas")
-    __neq__=__lt__=__le__=__gt__=__ge__=__eq__
-        
+        if self._histograma is not None: self._histograma.ito(unidade)        
 
     def __str__(self) -> str:
         incerteza_magnitude=int(np.floor(np.log10(self.incerteza)))
@@ -127,11 +132,13 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         nominal_truncated = round(self.nominal, -significant_digits)
         incerteza_truncated = round(self.incerteza, -significant_digits)
         # Get the pretty unit string
-        unidade_bonita = f"{self._nominal:~P}".split()
-        if len(unidade_bonita) == 1: unidade_bonita=''
-        if len(unidade_bonita) == 2: unidade_bonita=unidade_bonita[1]
-
-        return f"({nominal_truncated}±{incerteza_truncated}) {unidade_bonita}"
+        unidade_bonita_list = f"{self._nominal:~P}".split()
+        if len(unidade_bonita_list) == 1: 
+            unidade_bonita=''
+        else: 
+            unidade_bonita=unidade_bonita_list[1]
+        resultado=f"({nominal_truncated}±{incerteza_truncated}) {unidade_bonita}"
+        return resultado
     
     def __repr__(self) -> str:
         return self.__str__()
@@ -139,8 +146,12 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
 
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
-        if not isinstance(outro,Medida):
-            raise TypeError("Uma Medida só pode ser somada/subtraída com outra Medida")
+        if not (isinstance(outro,Medida) or isinstance(outro,Real)):
+            return NotImplemented
+        if isinstance(outro,Real):
+            self._nominal+=outro
+            self._histograma+=outro
+            return self
 
         if self._nominal.is_compatible_with(outro._nominal):
             if self is outro: 
@@ -162,39 +173,64 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             raise ValueError(f"A soma/subtração entre {self._nominal.dimensionality} e \
 {outro._nominal.dimensionality} não é possível")
 
-    def __add__(self,outro) -> 'Medida':
+    def __add__(self:'Medida',outro:Any) -> 'Medida':
         return self._adicao_subtracao(outro,True)
-    def __sub__(self,outro)-> 'Medida':
+    def __sub__(self:'Medida',outro:Any)-> 'Medida':
         return self._adicao_subtracao(outro,False)
     
-    def __mul__(self,outro)-> 'Medida':
+    def __mul__(self:'Medida',outro:Any)-> 'Medida':
         if self is outro: return montecarlo(lambda x: x**2,self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x*y,self,outro)
-        elif isinstance(outro,Number):
+        elif isinstance(outro,Real):
             resultado=Medida(self.nominal*outro,abs(self.incerteza*outro),self.unidade)
-            resultado._histograma=self._histograma*outro
+            if self._histograma is not None:
+                resultado._histograma=self._histograma*outro
             return resultado
+        else:
+            return NotImplemented
     
-    def __truediv__(self, outro) -> 'Medida':
+    def __truediv__(self:'Medida', outro:Any) -> 'Medida':
         if self is outro: return Medida(1,0,self.unidade)
-        elif isinstance(outro,Number):
-            resultado=Medida(self.nominal/outro,(self.incerteza/abs(outro)),self.unidade)
-            resultado._histograma=self._histograma/outro
+        elif isinstance(outro,Real):
+            resultado=Medida(self.nominal/float(outro),self.incerteza/abs(float(outro)),self.unidade)
+            if self._histograma is not None:
+                resultado._histograma=self._histograma/float(outro)
             return resultado
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x/y,self,outro)
-        
-    def __rtruediv__(self,outro) -> 'Medida':
-        if isinstance(outro,Number):
+        else:
+            return NotImplemented
+
+    def __rtruediv__(self:'Medida',outro:Any) -> 'Medida':
+        if isinstance(outro,Real):
             return montecarlo(lambda x: outro/x,self)
-        raise ValueError(f"Operação entre {type(self)} e {type(outro)} não suportada")
-    
-    def __pow__(self,outro) -> 'Medida':
-        if isinstance(outro,Number):
-            return montecarlo(lambda x: np.pow(x,outro),self)
+        else:
+            return NotImplemented
+
+    def __pow__(self:'Medida',outro:Any) -> 'Medida':
+        if isinstance(outro,Real):
+            return montecarlo(lambda x: np.pow(x,float(outro)),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
+        else:
+            return NotImplemented
+    def __eq__(self:'Medida',outro:Any)->bool:
+        if self is outro:
+            return True
+        else:
+            raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
+    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
+    não use !=,==,<=,<,>,>= diretamente com Medidas")
+    def __ne__(self:'Medida',outro:Any)->bool:
+        if self is outro:
+            return False
+        else:
+            raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
+    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
+    não use !=,==,<=,<,>,>= diretamente com Medidas")
 
 
     __radd__=__add__
@@ -202,12 +238,16 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
     __rmul__=__mul__
     __rpow__=__pow__
 
-    def __abs__(self) -> 'Medida':
-        return Medida(abs(self.nominal),self.incerteza,self.unidade)
+    def __abs__(self:'Medida') -> 'Medida':
+        resultado=Medida(abs(self.nominal),self.incerteza,self.unidade)
+        if self._histograma is not None:
+            resultado._histograma=abs(self._histograma)
+        return resultado
     
-    def __neg__(self) -> 'Medida': 
+    def __neg__(self:'Medida') -> 'Medida': 
         resultado=Medida(-self.nominal,self.incerteza,self.unidade)
-        resultado._histograma=-self._histograma
+        if self._histograma is not None:
+            resultado._histograma=-self._histograma
         return resultado
         
     def __pos__(self) -> 'Medida': 
@@ -216,7 +256,7 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         return resultado
 
     @obrigar_tipos
-    def probabilidade_de_estar_entre(self,a:Number,b:Number,unidade:str) -> Number:
+    def probabilidade_de_estar_entre(self,a:Real,b:Real,unidade:str) -> float:
         ''' Retorna a probabilidade que a Medida
         esteja entre [a,b] usando o histograma como
         referencia
@@ -241,14 +281,15 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
             mu=self._nominal.to(unidade).magnitude
             sigma=self._incerteza.to(unidade).magnitude
             gaussiana=NormalDist(mu,sigma)
-            return gaussiana.cdf(b)-gaussiana.cdf(a)
+            return gaussiana.cdf(float(b))-gaussiana.cdf(float(a))
         else:
-            a=ureg.Quantity(a,unidade)
-            b=ureg.Quantity(b,unidade)
-            return np.mean((self._histograma >= a) & (self._histograma <= b))
+            a_quantidade=ureg.Quantity(a,unidade)
+            b_quantidade=ureg.Quantity(b,unidade)
+            probabilidade= np.mean((self._histograma >= a_quantidade) & (self._histograma <= b_quantidade),dtype=float)
+            return float(probabilidade)
     
     @obrigar_tipos
-    def intervalo_de_confianca(self,p:float) -> tuple[Number]:
+    def intervalo_de_confianca(self,p:Real) -> list[float]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 
@@ -261,29 +302,28 @@ não use !=,==,<=,<,>,>= diretamente com Medidas")
         Raises:
             ValueError: Se `p` não estiver entre 0 e 1
         '''
-        
-        if not 0<p<=1: raise ValueError("p deve estar 0 e 1")
+        if not 0<float(p)<=1: raise ValueError("p deve estar 0 e 1")
 
-        elif p==1: return (min(self._histograma.magnitude),max(self._histograma.magnitude))
+        elif p==1: return [float(min(self.histograma.magnitude)),float(max(self.histograma.magnitude))]
 
         elif self._gaussiana:
             #estamos resolvendo de maneira analítica
             mu=self._nominal.magnitude
             sigma=self._incerteza.magnitude
             gaussiana=NormalDist(mu,sigma)
-            limite_inferior=gaussiana.inv_cdf((1-p)/2)
-            limite_superior=gaussiana.inv_cdf((1+p)/2)
-            return (limite_inferior,limite_superior)
+            limite_inferior=gaussiana.inv_cdf((1-float(p))/2)
+            limite_superior=gaussiana.inv_cdf((1+float(p))/2)
+            return [limite_inferior,limite_superior]
         else:
-            self._histograma.sort()
-            num_elements = len(self._histograma)
-            selected_elements = int(np.floor(p * num_elements))
-            magnitudes = np.array([item.magnitude for item in self._histograma])
+            self.histograma.sort()
+            num_elements = len(self.histograma)
+            selected_elements = int(np.floor(float(p) * num_elements))
+            magnitudes = np.array([item.magnitude for item in self.histograma])
             intervals = magnitudes[selected_elements:] - magnitudes[:-selected_elements]
 
             shortest_interval_index = np.argmin(intervals)
-            shortest_interval = (self._histograma[shortest_interval_index].magnitude,
-                                self._histograma[shortest_interval_index + selected_elements].magnitude)
+            shortest_interval = [float(self.histograma[shortest_interval_index].magnitude),
+                                float(self.histograma[shortest_interval_index + selected_elements].magnitude)]
             return shortest_interval
 
 
@@ -299,7 +339,7 @@ class Comparacao(Enum):
 
 @obrigar_tipos
 def comparar_medidas(medida1: Medida, medida2: Medida, 
-    sigmas_customizados: list[Number] = [2, 3]) -> Comparacao:
+    sigma_inferior : float=2,sigma_superior:float=3) -> Comparacao:
     """
     Compara duas medidas considerando suas incertezas e retorna o resultado da comparação.
 
@@ -326,15 +366,13 @@ def comparar_medidas(medida1: Medida, medida2: Medida,
                      
     diferenca_nominal=abs(medida1._nominal-medida2._nominal)
     soma_incertezas=medida1._incerteza+medida2._incerteza
-    sigma_igual=sigmas_customizados[0]
-    sigma_diferente=sigmas_customizados[1]
-    if sigma_igual>sigma_diferente:
+    if sigma_inferior>sigma_superior:
         raise ValueError("Sigma para serem consideradas iguais é maior que o sigma \
 para serem diferentes")
     
-    if diferenca_nominal<sigma_igual*soma_incertezas:
+    if diferenca_nominal<sigma_inferior*soma_incertezas:
         return Comparacao.EQUIVALENTES
-    elif diferenca_nominal>sigma_diferente*soma_incertezas:
+    elif diferenca_nominal>sigma_superior*soma_incertezas:
         return Comparacao.DIFERENTES
     else:
         return Comparacao.INCONCLUSIVO

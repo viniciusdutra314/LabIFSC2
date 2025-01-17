@@ -21,12 +21,8 @@ def test_regressao_linear():
         y_dados=lab2.arrayM(y,0.01,'m')
         reta=lab2.regressao_linear(x_dados,y_dados)
         a,b=reta
-        print(a.nominal,resposta['a'])
-        print(b.nominal,resposta['b'])
         assert np.isclose(a.nominal,resposta['a'],rtol=1e-3)
         assert np.isclose(b.nominal,resposta['b'],rtol=1e-3)
-        print(a.incerteza,resposta['Δa'])
-        print(b.incerteza,resposta['Δb'])
         assert np.isclose(a.incerteza,resposta['Δa'],rtol=1e-3)
         assert np.isclose(b.incerteza,resposta['Δb'],rtol=1e-3)
 def test_regressao_polinominal():
@@ -45,8 +41,8 @@ def test_regressao_polinominal():
     assert np.isclose(b_predito.nominal,b,rtol=1e-1)
 
 def test_regressao_polinomial_basic():
-    x_dados = np.array([1, 2, 3, 4, 5])
-    y_dados = np.array([1, 4, 9, 16, 25])
+    x_dados = lab2.arrayM([1, 2, 3, 4, 5],0,'')
+    y_dados = lab2.arrayM([1, 4, 9, 16, 25],0,'')
     grau = 2
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
     assert isinstance(polinomio, MPolinomio)
@@ -74,3 +70,26 @@ def test_regressao_polinomial_insufficient_data():
     with pytest.raises(ValueError):
         regressao_polinomial(x_dados, y_dados, grau)
 
+def test_regressao_polinominal_tipos_errados():
+    x_dados = np.array([1, 2,3,4])
+    y_dados = np.array([1, 4,7,6])
+    grau = 1
+    with pytest.raises(TypeError):
+        regressao_polinomial(x_dados,y_dados,grau)
+
+
+def test_MPolinomio_call():
+    # Coeficientes do polinômio: 2x^2 + 3x + 4
+    coeficientes = np.array([Medida(2, 0.001, ''), Medida(3, 0.001, ''), Medida(4, 0.001, '')])
+    polinomio = MPolinomio(coeficientes)
+    polinomio_number=lambda x: 2*x**2+3*x+4
+    # Teste de chamada com um número
+    x = Medida(1, 0.001, '')
+    resultado = polinomio(x)
+    np.isclose(resultado.nominal, polinomio_number(1), rtol=1e-3)
+    
+    # Teste de chamada com um array
+    x_array = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, '')])
+    resultado_array = polinomio(x_array)
+    for x in range(1,3+1):
+        np.isclose(resultado_array[x-1].nominal, polinomio_number(x), rtol=1e-3)
