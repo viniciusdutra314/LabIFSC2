@@ -73,7 +73,7 @@ def curva_min(arrayMedidas : np.ndarray,sigma: float | int =2) -> np.ndarray:
     '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray[float,Any]=nominais(arrayMedidas) -sigma*incertezas(arrayMedidas)
+    result:np.ndarray=nominais(arrayMedidas) -sigma*incertezas(arrayMedidas)
     return result
 
 @obrigar_tipos
@@ -93,7 +93,7 @@ def curva_max(arrayMedidas : np.ndarray,sigma:float | int=2)-> np.ndarray:
     '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray[float,Any]=nominais(arrayMedidas) +sigma*incertezas(arrayMedidas)
+    result:np.ndarray=nominais(arrayMedidas) +sigma*incertezas(arrayMedidas)
     return result
 
 

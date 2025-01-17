@@ -26,7 +26,6 @@ def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
     
     elif (get_args_result and get_origin_result is not None): #tipos compostos np.ndarray[Number]
         #Como vamos usar sempre np.ndarray, precisamos só checar um elemento
-        print(get_args_result)
         if not (isinstance(arg[0],get_args_result) and issubclass(type(arg),get_origin_result)):
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
                             e não {type(arg)}")

@@ -15,7 +15,7 @@ def aceitamedida(func :Callable, num_args :int=1) -> Callable:
         
         if all(not isinstance(arg, Medida) for arg in args): return func(*args)
         else: return montecarlo(func, *args_transformados)    
-    funcao_com_numpy= np.frompyfunc(FuncaoLabificada,num_args,1)
+    funcao_com_numpy:Callable= np.frompyfunc(FuncaoLabificada,num_args,1)
     return funcao_com_numpy
 
 '''

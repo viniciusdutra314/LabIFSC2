@@ -48,6 +48,7 @@ class MExponencial:
         self.k=k
         self._valores=(a,k,base)
 
+    @obrigar_tipos
     def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
         resultado:  Medida | np.ndarray=power(float(self.base),x*self.k)
         return resultado
@@ -66,7 +67,8 @@ class MLeiDePotencia:
         self.a = a
         self.n = n
         self._valores = (a, n)
-
+    
+    @obrigar_tipos
     def __call__(self, x:Medida | np.ndarray) -> Medida | np.ndarray:
         resultado : Medida | np.ndarray=self.a *power(x, self.n)
         return resultado
