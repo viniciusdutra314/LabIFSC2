@@ -1,14 +1,16 @@
+import math
+import re
 from collections.abc import Callable
+from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from numbers import Real
 from statistics import NormalDist
+from string import Template
 from typing import Any
 
 import numpy as np
-import pint
 from pint import Quantity, UnitRegistry
 
-from ._formatações import *
 from ._tipagem_forte import obrigar_tipos
 
 ureg = UnitRegistry()
@@ -121,29 +123,67 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         self._incerteza.ito(unidade)
         if self._histograma is not None: self._histograma.ito(unidade)        
 
-    def __str__(self) -> str:
-        incerteza_magnitude=int(np.floor(np.log10(self.incerteza)))
-        incerteza_arredonda=round(self.incerteza,-incerteza_magnitude+1)
-        incerteza_str = f"{incerteza_arredonda:.1e}"
-        significant_digit_position = incerteza_str.find('e')
-        significant_digits = int(incerteza_str[significant_digit_position + 1:])
-        
-        # Truncate nominal to the same number of significant digits
-        nominal_truncated = round(self.nominal, -significant_digits)
-        incerteza_truncated = round(self.incerteza, -significant_digits)
-        # Get the pretty unit string
-        unidade_bonita_list = f"{self._nominal:~P}".split()
-        if len(unidade_bonita_list) == 1: 
-            unidade_bonita=''
-        else: 
-            unidade_bonita=unidade_bonita_list[1]
-        resultado=f"({nominal_truncated}±{incerteza_truncated}) {unidade_bonita}"
-        return resultado
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-        return f"Medida({self.nominal=},{self.incerteza=},'{self.unidade=}')"
+    def __format__(self, format_spec:str) -> str:
+        nominal = Decimal(self.nominal)
+        incerteza = Decimal(self.incerteza)
 
+        #parsing format_spec
+        format_spec=format_spec.lower()
+        match_reg=re.search(r'[+-]?e(\d+)',format_spec) #E3=3, -E1=-1, +E2=2
+        fmt_exp=int(match_reg.group(1)) if match_reg else False
+        exato= (incerteza==0)
+        latex= ('latex' in format_spec)
+        
+        #templates
+        template_console=Template(r"($nominal ± $incerteza)$potencia $unidade")
+        template_console_exato=Template(r"$nominal$potencia $unidade")
+        template_latex=Template(r"($nominal \, \pm \, $incerteza)$potencia \, $unidade")
+        template_latex_exato=Template(r"$nominal$potencia \, $unidade")
+
+
+
+        og_nominal = math.floor(math.log10(nominal)) if nominal else 0
+        
+        if fmt_exp is False:
+            nominal *= Decimal(f"1e{-og_nominal}")
+            incerteza *= Decimal(f"1e{-og_nominal}")
+        else:
+            nominal *= Decimal(f"1e{-fmt_exp}")
+            incerteza *= Decimal(f"1e{-fmt_exp}")
+        
+        #arredondando nominal e incerteza
+        og_incerteza = math.floor(math.log10(incerteza)) if incerteza else 0
+        arred_nominal = nominal.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else nominal
+        arred_incerteza = incerteza.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else incerteza
+        arred_nominal_str = str(arred_nominal).replace(".", ",")
+        arred_incerteza_str = str(arred_incerteza).replace(".", ",")
+        
+        #potencia bonitinha
+        expoente_normalizacao=fmt_exp if fmt_exp is not False else og_nominal
+        if expoente_normalizacao==0: potencia_bonita=''
+        elif latex:
+            potencia_bonita=rf"\times 10^{{{expoente_normalizacao}}}"
+        elif not latex:
+            superscript_map = {'0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴',
+            '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹','-': '⁻'}
+            potencia_bonita = 'x10'+''.join(superscript_map[char] for char in str(expoente_normalizacao))
+
+        #escolhendo template
+        if exato:
+            if latex: template = template_latex_exato
+            else: template = template_console_exato
+        else:
+            if latex: template = template_latex
+            else: template = template_console
+
+        unidade=f"{self._nominal.units:~L}" if latex else f"{self._nominal.units:~P}"
+        return template.substitute(nominal=arred_nominal_str,incerteza=arred_incerteza_str,
+                                           potencia=potencia_bonita,unidade=unidade)
+    
+    def __str__(self) -> str:
+        return self.__format__('')
+    def __repr__(self) -> str:
+        return self.__format__('')
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):
