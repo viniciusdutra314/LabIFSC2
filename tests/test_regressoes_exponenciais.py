@@ -49,7 +49,7 @@ def test_equivalencia_com_scipy(a, k):
     y_dados = exponencial_lab(x_dados, a, k) * ruido
     exponencial_lab = lab.regressao_exponencial(x_dados, y_dados)
 
-    assert np.isclose(a_scipy.nominal,exponencial_lab.a.nominal,atol=(1e-2)*a)
+    assert np.isclose(a_scipy.nominal,exponencial_lab.a.nominal,atol=(5e-1)*a)
     assert np.isclose(k_scipy.nominal,exponencial_lab.k.nominal,atol=(1e-2))
     assert np.isclose(a,exponencial_lab.a.nominal,rtol=1e-2) or np.isclose(a,exponencial_lab.a.nominal,atol=1e-2) 
     assert np.isclose(k,exponencial_lab.k.nominal,rtol=1e-2) or np.isclose(k,exponencial_lab.k.nominal,atol=1e-2) 

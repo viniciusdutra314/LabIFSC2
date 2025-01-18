@@ -1,9 +1,9 @@
-""" import re
+import re
 
 import numpy as np
+from numbers import Real
 
-
-def arredondar_incerteza(incerteza:float) -> str:
+def arredondar_incerteza(incerteza:Real) -> str:
     ''' Transforma um float de incerteza em
     uma string formatada com 1 algarismo 
     significativo 
@@ -17,7 +17,10 @@ def arredondar_incerteza(incerteza:float) -> str:
     >>> arredondar_incerteza(3.1e-4)
     '0.0003'
     '''
-    power=int(np.log10(incerteza))
+    if incerteza==0:
+        return '0'
+    power=np.log10(float(incerteza))
+
     texto=str(incerteza)
     padrao=re.compile('[^+0.,]')
     first_nonzero_position=re.search(padrao,texto).start()
@@ -80,6 +83,8 @@ def formatar_medida_latex(nominal,incerteza,
         template=r"({} \pm {}) \times 10^{} \, \text{{{}}}"
         return template.format(nominal,incerteza,
                                ordem_de_grandeza,unidade.simbolo).rstrip()
+    
     else:
         template=r"({} \pm {})\, \text{{{}}}"
-        return template.format(nominal,incerteza,unidade.simbolo).rstrip() """
+        return template.format(nominal,incerteza,unidade.simbolo).rstrip()
+    
