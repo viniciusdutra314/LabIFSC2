@@ -140,7 +140,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
 
 
-        og_nominal = math.floor(math.log10(nominal)) if nominal else 0
+        og_nominal = math.floor(math.log10(abs(nominal))) if nominal else 0
         
         if fmt_exp is False:
             nominal *= Decimal(f"1e{-og_nominal}")
@@ -150,7 +150,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             incerteza *= Decimal(f"1e{-fmt_exp}")
         
         #arredondando nominal e incerteza
-        og_incerteza = math.floor(math.log10(incerteza)) if incerteza else 0
+        og_incerteza = math.floor(math.log10(abs(incerteza))) if incerteza else 0
         arred_nominal = nominal.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else nominal
         arred_incerteza = incerteza.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else incerteza
         arred_nominal_str = str(arred_nominal).replace(".", ",")
