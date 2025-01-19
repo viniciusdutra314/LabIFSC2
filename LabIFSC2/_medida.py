@@ -111,27 +111,37 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         self._erro_por_mudar_atributo() 
 
 
-    def converter_para_si(self:'Medida')->None:
+    def _converter_para_si(self:'Medida')->None:
         self._nominal.ito_base_units()
         self._incerteza.ito_base_units()
         if self._histograma is not None: self._histograma.ito_base_units()
     
-    def converter_para(self:'Medida',unidade:str)->None:
+    def _converter_para(self:'Medida',unidade:str)->None:
         self._nominal.ito(unidade)
         self._incerteza.ito(unidade)
         if self._histograma is not None: self._histograma.ito(unidade)        
 
     def __format__(self, format_spec:str) -> str:
-        nominal = Decimal(self.nominal)
-        incerteza = Decimal(self.incerteza)
+        
 
         #parsing format_spec
         format_spec=format_spec.lower()
         match_reg=re.search(r'[+-]?e(\d+)',format_spec) #E3=3, -E1=-1, +E2=2
         fmt_exp=int(match_reg.group(1)) if match_reg else False
+        unidade=format_spec.split('_')[0]
+        if unidade=='':
+            unidade=self.unidade
+        elif unidade=='si': 
+            self._converter_para_si()
+        elif not (re.search(r'[+-]?e(\d+)',unidade) or 'latex' in unidade):
+            self._converter_para(unidade)
+        else:
+            unidade=self.unidade
+
+        nominal = Decimal(self.nominal)
+        incerteza = Decimal(self.incerteza)
         exato= (incerteza==0)
         latex= ('latex' in format_spec)
-        
         #templates
         template_console=Template(r"($nominal ± $incerteza)$potencia $unidade")
         template_console_exato=Template(r"$nominal$potencia $unidade")

@@ -156,7 +156,7 @@ def converter_array(arrayM:np.ndarray,unidade:str)->None:
     if not (isinstance(arrayM[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
     
-    for medida in arrayM: medida.converter_para(unidade)
+    for medida in arrayM: medida._converter_para(unidade)
     return None
 
 @obrigar_tipos
@@ -164,5 +164,5 @@ def converter_array_si(arrayM:np.ndarray)->None:
     if not (isinstance(arrayM[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
     
-    for medida in arrayM: medida.converter_para_si()
+    for medida in arrayM: medida._converter_para_si()
     return None

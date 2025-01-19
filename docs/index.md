@@ -22,6 +22,21 @@ A biblioteca está disponível no PyPI(Python Package Index), então ela pode se
 pip install LabIFSC2
 ```
 
+## Escopo de aplicação
+A biblioteca tem a intenção de agilizar cálculos dos laboratórios de física do IFSC da USP de São Carlos:
+
+- Laboratório de Física I
+- Laboratório de Física II
+- Laboratório de Física III
+- Laboratório de Física IV
+- Laboratório de Física Avançado
+- Laboratório de Física Avançado II
+
+Os critérios de comparação e formatação são baseadas na última versão da [apostila I](https://www.ifsc.usp.br/lef/index.php/apostilas/) atualmente a versão 2017 (caso já exista uma versão mais recente por favor nós avise).
+
+É óbvio que a biblioteca se aplica a outros laboratórios e de outras universidades (principalmente por ter propagação de erros por Monte Carlo). 
+**Só por favor fique atento que talvez certas convenções sejam diferentes**
+
 ## O que há de novo?
 O LabIFSC2 é uma modernização da antiga biblioteca [LabIFSC](https://github.com/gjvnq/LabIFSC), os desenvolvedores do LabIFSC2 não são os mesmos, porém queríamos deixar aqui nosso agradecimento por terem concebido uma solução tão elegante que agilizou a graduação de várias pessoas.
 

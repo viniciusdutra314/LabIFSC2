@@ -12,7 +12,7 @@ def test_dimensoes_incompativeis():
         x+y
     z=lab.Medida(55,0.1,'cm')
     w=x+z
-    w.converter_para('m')
+    w._converter_para('m')
     assert np.isclose(w.nominal,10.55)
     assert np.isclose(w.incerteza,1)
 
@@ -55,22 +55,22 @@ def test_soma_graus():
     theta2=lab.Medida(1,0.01,'radian')
     theta_soma=theta+theta2
     assert np.isclose(theta_soma.nominal,1+0.785398,rtol=1e-2)
-    theta_soma.converter_para('degree')
+    theta_soma._converter_para('degree')
     assert np.isclose(theta_soma.nominal,45+57.29,rtol=1e-2)
 
 def test_conversao_interna_histograma():
     x=lab.Medida(1,0.01,'m')
     y=lab.Medida(1,0.01,'cm')
     z=x*y
-    z.converter_para('cm²')
+    z._converter_para('cm²')
     assert z.histograma.units==lab._medida.ureg.cm**2
-    z.converter_para_si()
+    z._converter_para_si()
     assert z.histograma.units==lab._medida.ureg.m**2
 
-    x.converter_para('cm')
+    x._converter_para('cm')
     assert x.histograma.units==lab._medida.ureg.cm
     assert len(x.histograma)==100_000
-    y.converter_para_si()
+    y._converter_para_si()
     assert y.histograma.units==lab._medida.ureg.m
 
 def test_converter_array():
