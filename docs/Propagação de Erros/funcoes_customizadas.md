@@ -2,7 +2,7 @@ Como demonstrada na secção [Monte Carlo](monte carlo.md), a incerteza
 associada a qualquer função pode ser calculada com esse método, portanto, o LabIFSC2 oferece um decorador conveniente chamado
 **aceitamedida**
 
-:::LabIFSC2.matematica.aceitamedida
+:::LabIFSC2._matematica.aceitamedida
 ## Exemplos
 Imagine que você precise utilizar a função fatorial \(\Gamma\),
 podemos criar uma ponte entre a função definida na biblioteca

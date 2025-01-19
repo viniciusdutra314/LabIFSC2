@@ -8,7 +8,7 @@ desvio padrão \(\sigma\) da Medida
 ```{.py3 title=LabIFSC2.medida.montecarlo}
 def montecarlo(func : callable, *parametros : list[Medida]): -> Medida
 ```
-:::LabIFSC2.medida.montecarlo
+:::LabIFSC2._medida.montecarlo
 ## Exemplos
 ```{.py3 title="Exemplo com \(sin(xy)\)"}
     import LabIFSC2 as lab

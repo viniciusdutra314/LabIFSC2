@@ -79,7 +79,7 @@ retorna a probabilidade
     z=lab.Medida(5,0.1)**3
     print(z.probabilidade(110,130)) #0.7291
 ```
-:::LabIFSC2.medida.Medida.probabilidade_de_estar_entre
+:::LabIFSC2._medida.Medida.probabilidade_de_estar_entre
 
 ### Compatibilidade com o LabIFSC original
 O método tradicional usado no LabIFSC é uma propagação de erros lineares, é usada uma expansão de Taylor com centro em \(\mu\).

@@ -3,7 +3,7 @@ import re
 from collections.abc import Callable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
-from numbers import Real
+from numbers import Number, Real
 from statistics import NormalDist
 from string import Template
 from typing import Any
@@ -35,17 +35,15 @@ class Medida:
     def __init__(self,nominal:Real,incerteza : Real,
                  unidade : str ):
         """
-        Inicializa uma instância da classe Medida com um valor nominal, incerteza e unidade.
-        Valor numérico se entende como qualquer objeto que possa interagir normalmente com floats,
+        Representa uma medida física com um valor nominal, incerteza e unidade.
 
-        Parâmetros:
-            - nominal: Um valor numérico que representa o valor nominal da medida.
-            - incerteza: Um valor numérico que representa a incerteza associada à medida.
-            - unidade: Uma string que descreve a unidade da medida.
+        A classe Medida é usada para converter unidades e propagar incertezas
+        de maneira simples, se comportando para vários propósitos como um número
 
-        Raises:
-            - TypeError: Se o nominal ou incerteza não puderem ser convertidos para um número.
-            - TypeError: A unidade precisa ser uma string
+        Atributos:
+            nominal (Real): O valor nominal da medida.
+            incerteza (Real): A incerteza associada à medida.
+            unidade (str): A unidade da medida.
         """
         if incerteza<0: raise ValueError("Incerteza não pode ser negativa")
         self._nominal= ureg.Quantity(nominal,unidade).to_reduced_units()
@@ -329,7 +327,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             return float(probabilidade)
     
     @obrigar_tipos
-    def intervalo_de_confianca(self,p:Real) -> list[float]:
+    def intervalo_de_confiança(self,p:Real) -> list[float]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 

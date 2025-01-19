@@ -1,2 +1,2 @@
-:::LabIFSC2.operacoes_em_arrays.linspace
+:::LabIFSC2._operacoes_em_arrays.linspace
 

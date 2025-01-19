@@ -1,7 +1,5 @@
 
-## Instalação
-
-O LabIFSC2 está disponível no PyPI, portanto, basta usar um instalador de pacotes como pip e você estará pronto para usar a biblioteca. Como o LabIFSC2 depende de duas bibliotecas externas ([numpy](https://numpy.org) e [pint](https://pint.readthedocs.io/)), **recomendamos que você instale a biblioteca em um ambiente virtual** para evitar conflitos de versões do numpy.
+## Instalação em ambiente virtual
 
 O ecossistema Python é cheio de gerenciadores de pacotes/ambientes ([pipx](https://github.com/pypa/pipx), [poetry](https://python-poetry.org/), [uv](https://astral.sh/blog/uv), [miniconda](https://docs.anaconda.com/miniconda/), etc.). Sinta-se livre para escolher o de sua preferência. Caso seja um iniciante no assunto, recomendamos testar o [uv](https://astral.sh/blog/uv).
 

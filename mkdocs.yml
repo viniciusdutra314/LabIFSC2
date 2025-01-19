@@ -1,13 +1,12 @@
 site_name: LabIFSC2
 nav:
   - Sobre: index.md
-  - Instalação: instalacao.md
   - Introdução: introducao.md
-  - LabIFSC vs LabIFSC2: labifsc.md
+  - Exemplos: exemplos.md
   - Constantes da Natureza: Constantes/constantes da natureza.md
   - Arrays: arrays.md
   - Regressões (Fitting): Regressões (fitting)/linear.md
-
+  - API Completa: api.md
 
 
 repo_url: https://github.com/viniciusdutra314/LabIFSC2
