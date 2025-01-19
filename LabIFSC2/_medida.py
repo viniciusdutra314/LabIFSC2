@@ -99,7 +99,10 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     @property
     def histograma(self:'Medida') -> Any:
         if self._histograma is None:
-            self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
+            if self.incerteza!=0:
+                self._histograma=np.random.normal(self.nominal,self.incerteza,size=100_000)*self._nominal.units
+            else:
+                self._histograma=self.nominal*self._nominal.units
         return self._histograma
     
     @histograma.setter
@@ -129,17 +132,24 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         match_reg=re.search(r'[+-]?e(\d+)',format_spec) #E3=3, -E1=-1, +E2=2
         fmt_exp=int(match_reg.group(1)) if match_reg else False
         unidade=format_spec.split('_')[0]
+        
         if unidade=='':
             unidade=self.unidade
+            nominal_pint = self._nominal
+            incerteza_pint = self._incerteza
         elif unidade=='si': 
-            self._converter_para_si()
+            nominal_pint=self._nominal.to_base_units()
+            incerteza_pint=self._incerteza.to_base_units()
         elif not (re.search(r'[+-]?e(\d+)',unidade) or 'latex' in unidade):
-            self._converter_para(unidade)
+            nominal_pint=self._nominal.to(unidade)
+            incerteza_pint=self._incerteza.to(unidade)
         else:
+            nominal_pint = self._nominal
+            incerteza_pint = self._incerteza
             unidade=self.unidade
+        nominal=Decimal(nominal_pint.magnitude)
+        incerteza=Decimal(incerteza_pint.magnitude)
 
-        nominal = Decimal(self.nominal)
-        incerteza = Decimal(self.incerteza)
         exato= (incerteza==0)
         latex= ('latex' in format_spec)
         #templates
@@ -184,7 +194,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             if latex: template = template_latex
             else: template = template_console
 
-        unidade=f"{self._nominal.units:~L}" if latex else f"{self._nominal.units:~P}"
+        unidade=f"{nominal_pint.units:~L}" if latex else f"{nominal_pint.units:~P}"
         return template.substitute(nominal=arred_nominal_str,incerteza=arred_incerteza_str,
                                            potencia=potencia_bonita,unidade=unidade)
     

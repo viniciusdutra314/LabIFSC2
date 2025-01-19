@@ -2,8 +2,8 @@ site_name: LabIFSC2
 nav:
   - Sobre: index.md
   - Introdução: introducao.md
-  - Exemplos: exemplos.md
   - Constantes da Natureza: Constantes/constantes da natureza.md
+  - Exemplos: exemplos.md
   - Arrays: arrays.md
   - Regressões (Fitting): Regressões (fitting)/linear.md
   - API Completa: api.md
