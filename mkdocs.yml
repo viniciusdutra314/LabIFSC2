@@ -3,11 +3,12 @@ nav:
   - Sobre: index.md
   - Introdução: introducao.md
   - Constantes da Natureza: Constantes/constantes da natureza.md
-  - Exemplos: exemplos.md
-  - Arrays: arrays.md
+  - Funções Matemáticas: funcoes_matematicas.md
+  - Operação em Arrays: arrays.md
   - Regressões (Fitting): Regressões (fitting)/linear.md
+  - Formataçõs/LaTeX: formatacoes_latex.md
   - API Completa: api.md
-
+  - Como contribuir: contribuir.md
 
 repo_url: https://github.com/viniciusdutra314/LabIFSC2
 theme:
