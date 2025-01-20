@@ -10,12 +10,12 @@ def test_funcoes_customizadas():
     with pytest.raises(TypeError):
         sinc(x)
     lab_sinc=lab.aceitamedida(sinc)
-    assert np.isclose(lab_sinc(x).nominal,1,rtol=1e-4)
+    assert np.isclose(lab_sinc(x).nominal(""),1,rtol=1e-4)
     x_array=lab.linspace(0.1,10,10,0.001,'')
     aplicado=lab_sinc(x_array)
     for i in range(len(aplicado)):
-        assert np.isclose(aplicado[i].nominal,
-                          sinc(x_array[i].nominal),rtol=1e-4)
+        assert np.isclose(aplicado[i].nominal(""),
+                          sinc(x_array[i].nominal("")),rtol=1e-4)
 
 def test_array_medida_soma():
     x=lab.Medida(0,0.0001,'')
@@ -27,7 +27,7 @@ def test_array_medida_soma():
     for soma in somar:
         assert isinstance(soma,lab.Medida)
     for index, soma in enumerate(somar):
-        assert np.isclose(soma.nominal,x_array[index].nominal,rtol=1e-2)
+        assert np.isclose(soma.nominal(""),x_array[index].nominal(""),rtol=1e-2)
 
 def test_array_medida_subtracao():
     x = lab.Medida(10, 0.0001, '')
@@ -39,7 +39,7 @@ def test_array_medida_subtracao():
     for diferenca in subtrair:
         assert isinstance(diferenca, lab.Medida)
     for index, diferenca in enumerate(subtrair):
-        assert np.isclose(diferenca.nominal, x_array[index].nominal-10, rtol=1e-3)
+        assert np.isclose(diferenca.nominal(""), x_array[index].nominal("")-10, rtol=1e-3)
 
 
 
@@ -53,7 +53,7 @@ def test_array_medida_multiplicacao():
     for produto in multiplicar:
         assert isinstance(produto, lab.Medida)
     for index, produto in enumerate(multiplicar):
-        assert np.isclose(produto.nominal,2*x_array[index].nominal, rtol=1e-3)
+        assert np.isclose(produto.nominal(""),2*x_array[index].nominal(""), rtol=1e-3)
 
 def test_array_medida_divisao():
     x = lab.Medida(13, 0.001, '')
@@ -65,4 +65,4 @@ def test_array_medida_divisao():
     for quociente in dividir:
         assert isinstance(quociente, lab.Medida)
     for index, quociente in enumerate(dividir):
-        assert np.isclose(quociente.nominal,  x_array[index].nominal/13, rtol=1e-3)
+        assert np.isclose(quociente.nominal(""),  x_array[index].nominal("")/13, rtol=1e-3)

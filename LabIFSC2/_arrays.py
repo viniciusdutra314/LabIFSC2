@@ -9,7 +9,7 @@ from ._tipagem_forte import obrigar_tipos
 
 
 @obrigar_tipos
-def nominais(arrayMedidas : np.ndarray) -> np.ndarray:
+def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     '''*get_nominais* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com seus valores nominais
     
@@ -32,10 +32,10 @@ def nominais(arrayMedidas : np.ndarray) -> np.ndarray:
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
     
-    return np.array([medida.nominal for medida in arrayMedidas],dtype=float)
+    return np.array([medida._nominal.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
-def incertezas(arrayMedidas : np.ndarray) -> np.ndarray:
+def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     '''*get_incertezas* Transforma um array/lista (Sequência) de medidas  em
     um arrays somente com suas incertezas
     
@@ -54,10 +54,10 @@ def incertezas(arrayMedidas : np.ndarray) -> np.ndarray:
 '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    return np.array([medida.incerteza for medida in arrayMedidas],dtype=float)
+    return np.array([medida.incerteza(unidade) for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
-def curva_min(arrayMedidas : np.ndarray,sigma: float | int =2) -> np.ndarray:
+def curva_min(arrayMedidas : np.ndarray,unidade:str,sigma: float | int =2) -> np.ndarray:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, com quantidade de sigmas usados personalizável
 
@@ -73,11 +73,11 @@ def curva_min(arrayMedidas : np.ndarray,sigma: float | int =2) -> np.ndarray:
     '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray=nominais(arrayMedidas) -sigma*incertezas(arrayMedidas)
+    result:np.ndarray=nominais(arrayMedidas,unidade) -sigma*incertezas(arrayMedidas,unidade)
     return result
 
 @obrigar_tipos
-def curva_max(arrayMedidas : np.ndarray,sigma:float | int=2)-> np.ndarray:
+def curva_max(arrayMedidas : np.ndarray,unidade:str,sigma:float | int=2)-> np.ndarray:
     '''Usada para auxiliar o plot de curvas teóricas
     com erros, quantidade de sigmas usados personalizável
 
@@ -93,7 +93,7 @@ def curva_max(arrayMedidas : np.ndarray,sigma:float | int=2)-> np.ndarray:
     '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray=nominais(arrayMedidas) +sigma*incertezas(arrayMedidas)
+    result:np.ndarray=nominais(arrayMedidas,unidade) +sigma*incertezas(arrayMedidas,unidade)
     return result
 
 
@@ -151,18 +151,4 @@ def arrayM(nominais:np.ndarray | Sequence ,incerteza:Real,unidade:str) ->np.ndar
 
     return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais],dtype=Medida)
 
-@obrigar_tipos
-def converter_array(arrayM:np.ndarray,unidade:str)->None:
-    if not (isinstance(arrayM[0],Medida)):
-        raise TypeError('Os valores do array não são Medidas')
-    
-    for medida in arrayM: medida._converter_para(unidade)
-    return None
 
-@obrigar_tipos
-def converter_array_si(arrayM:np.ndarray)->None:
-    if not (isinstance(arrayM[0],Medida)):
-        raise TypeError('Os valores do array não são Medidas')
-    
-    for medida in arrayM: medida._converter_para_si()
-    return None

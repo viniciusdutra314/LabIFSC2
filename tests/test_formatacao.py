@@ -20,15 +20,13 @@ def test_arredondamento():
     assert f"{x:latex}" == r"(1,79 \, \pm \, 0,01) \, \mathrm{m}"
     assert f"{-x:latex}" == r"(-1,79 \, \pm \, 0,01) \, \mathrm{m}"
 
-    x._converter_para('cm')
-    assert str(x)=='(1,79 ± 0,01)x10² cm'
-    assert str(-x)=='(-1,79 ± 0,01)x10² cm'
-    assert f"{x:E0}"=='(179 ± 1) cm'
-    assert f"{-x:E0}"=='(-179 ± 1) cm'
+    assert f"{x:cm}"=='(1,79 ± 0,01)x10² cm'
+    assert f"{-x:cm}"=='(-1,79 ± 0,01)x10² cm'
+    assert f"{x:cm_E0}"=='(179 ± 1) cm'
+    assert f"{-x:cm_E0}"=='(-179 ± 1) cm'
     g=lab.Medida(981.13413,1.5739275,'cm/s²')
-    g._converter_para('m/s²')
-    assert str(g)=='(9,81 ± 0,02) m/s²'
-    assert str(-g)=='(-9,81 ± 0,02) m/s²'
+    assert f"{g:m/s²}"=='(9,81 ± 0,02) m/s²'
+    assert f"{-g:m/s²}"=='(-9,81 ± 0,02) m/s²'
     
 def test_exato():
     x=lab.constantes.speed_of_light_in_vacuum

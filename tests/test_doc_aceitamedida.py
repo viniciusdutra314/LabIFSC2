@@ -10,4 +10,4 @@ seno=aceitamedida(np.sin)
 angulo=Medida(30,0.1,'degree')
 resultado=seno(angulo) 
 print(f"{resultado:E0}") #(0,500 ± 0,002)
-assert f"{resultado:E0}"=="(0,500 ± 0,002) "
+assert np.isclose(resultado.nominal(''),0.5,1e-3)

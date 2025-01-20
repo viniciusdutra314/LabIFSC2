@@ -6,9 +6,9 @@ from typing import Any
 import numpy as np
 from numpy.polynomial import Polynomial
 
+from ._arrays import arrayM, nominais
 from ._matematica import aceitamedida, exp, log, power
 from ._medida import Medida
-from ._operacoes_em_arrays import arrayM, nominais
 from ._tipagem_forte import obrigar_tipos
 
 
@@ -90,8 +90,8 @@ def regressao_polinomial(x_medidas:np.ndarray,y_medidas:np.ndarray,grau:int) -> 
         raise ValueError("Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
     if not (isinstance(x_medidas[0],Medida) and isinstance(y_medidas[0],Medida)):
         raise TypeError('x_medidas e y_medidas precisam ser np.ndarray de medidas')
-    x_medidas=nominais(x_medidas)
-    y_medidas=nominais(y_medidas)
+    x_medidas=np.array([x._nominal.magnitude for x in x_medidas])
+    y_medidas=np.array([y._nominal.magnitude for y in y_medidas])
     p, cov = np.polyfit(x_medidas.astype(float), y_medidas.astype(float), grau, cov=True)
     medidas_coeficientes = np.array([Medida(valor, np.sqrt(cov[i, i]),'') for i, valor in enumerate(p)],dtype=Medida)
     return MPolinomio(medidas_coeficientes)
@@ -106,7 +106,7 @@ def regressao_linear(x_medidas:np.ndarray,
 def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
                           base:Real=np.exp(1)) -> MExponencial:
  
-    if not np.all(nominais(y_medidas)>0):
+    if not np.all([y._nominal.magnitude>0 for y in y_medidas]):
             raise ValueError('Todos y precisam ser positivos para uma modelagem exponencial') 
 
     if base<1: raise ValueError('Base precisa ser maior que 1')
@@ -119,7 +119,7 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
 @obrigar_tipos
 def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
     
-    if not bool(np.all(nominais(y_medidas)>0) and np.all(nominais(x_medidas)>0)):
+    if not bool(np.all([y._nominal.magnitude>0 for y in y_medidas]) and np.all([x._nominal.magnitude>0 for x in x_medidas])):
             raise ValueError('Todos x e y precisam ser positivos para uma modelagem exponencial')
     polinomio=regressao_linear(log(x_medidas),log(y_medidas))
     a=exp(polinomio.b)

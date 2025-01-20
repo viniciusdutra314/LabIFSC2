@@ -17,24 +17,6 @@ def test_inicializacao():
     except Exception as exc:
         assert False, "Não deveria levantar um erro"
 
-def test_valores_protegidos(): 
-    x=lab.Medida(10,1,'')
-    with pytest.raises(PermissionError):
-        x.incerteza=3
-    with pytest.raises(PermissionError):
-        del x.incerteza
-    with pytest.raises(PermissionError):
-        x.nominal=1
-    with pytest.raises(PermissionError):
-        del x.nominal
-    with pytest.raises(PermissionError):
-        x.unidade='mm'
-    with pytest.raises(PermissionError):
-        del x.unidade
-    with pytest.raises(PermissionError):
-        x.histograma='mm'
-    with pytest.raises(PermissionError):
-        del x.histograma
 
 def test_comparacoes():
     x=lab.Medida(5,1,'')

@@ -26,10 +26,10 @@ def test_lei_de_potencia(a, b):
     x_dados = lab.linspace(3, 10, 100, 0.01, '')
     y_dados = potencia_lab(x_dados, a, b) * ruido
     potencia_lab = lab.regressao_potencia(x_dados, y_dados)
-    assert np.isclose(a_scipy,potencia_lab.a.nominal,atol=(1e-2)*a)
-    assert np.isclose(b_scipy,potencia_lab.n.nominal,atol=(1e-2))
-    assert np.isclose(a,potencia_lab.a.nominal,rtol=1e-2) or np.isclose(a,potencia_lab.a.nominal,atol=1e-2) 
-    assert np.isclose(b,potencia_lab.n.nominal,rtol=1e-2) or np.isclose(b,potencia_lab.n.nominal,atol=1e-2)
+    assert np.isclose(a_scipy,potencia_lab.a.nominal(""),atol=(1e-2)*a)
+    assert np.isclose(b_scipy,potencia_lab.n.nominal(""),atol=(1e-2))
+    assert np.isclose(a,potencia_lab.a.nominal(""),rtol=1e-2) or np.isclose(a,potencia_lab.a.nominal(""),atol=1e-2) 
+    assert np.isclose(b,potencia_lab.n.nominal(""),rtol=1e-2) or np.isclose(b,potencia_lab.n.nominal(""),atol=1e-2)
 
 
 def test_exceptions():

@@ -23,24 +23,24 @@ ser muita alta
 def comparar_relativo_ufloat_lab1_lab2(ufloat:ufloat,medida_lab1:lab2.Medida,
                               medida_lab2:lab1.Medida,precisao=1e-3):
     assert np.isclose(medida_lab1.nominal,ufloat.nominal_value,rtol=precisao)
-    assert np.isclose(medida_lab1.nominal,medida_lab2.nominal,rtol=precisao)
+    assert np.isclose(medida_lab1.nominal,medida_lab2.nominal(""),rtol=precisao)
 
     assert np.isclose(medida_lab1.incerteza,ufloat.std_dev,rtol=precisao)
-    assert np.isclose(medida_lab1.incerteza,medida_lab2.incerteza,rtol=precisao)
+    assert np.isclose(medida_lab1.incerteza,medida_lab2.incerteza(""),rtol=precisao)
 
 def comparar_absoluto_ufloat_lab1_lab2(ufloat:ufloat,medida_lab1:lab2.Medida,
                               medida_lab2:lab1.Medida,precisao=1e-3):
     assert np.isclose(medida_lab1.nominal,ufloat.nominal_value,atol=precisao)
-    assert np.isclose(medida_lab1.nominal,medida_lab2.nominal,atol=precisao)
+    assert np.isclose(medida_lab1.nominal,medida_lab2.nominal(""),atol=precisao)
 
     assert np.isclose(medida_lab1.incerteza,ufloat.std_dev,atol=precisao)
-    assert np.isclose(medida_lab1.incerteza,medida_lab2.incerteza,atol=precisao)
+    assert np.isclose(medida_lab1.incerteza,medida_lab2.incerteza(""),atol=precisao)
 
 
 
 def comparar_ufloat_lab2(ufloat:ufloat,medida_lab2:lab2.Medida,precisao=1e-3):
-    assert np.isclose(medida_lab2.nominal,ufloat.nominal_value,rtol=precisao)
-    assert np.isclose(medida_lab2.incerteza,ufloat.std_dev,rtol=precisao)
+    assert np.isclose(medida_lab2.nominal(""),ufloat.nominal_value,rtol=precisao)
+    assert np.isclose(medida_lab2.incerteza(""),ufloat.std_dev,rtol=precisao)
 
 
 def test_number_in_a_lab_func(): assert lab2.sin(0)==0
