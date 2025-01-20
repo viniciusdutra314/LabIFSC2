@@ -21,10 +21,10 @@ def test_regressao_linear():
         y_dados=lab2.arrayM(y,0.01,'m')
         reta=lab2.regressao_linear(x_dados,y_dados)
         a,b=reta
-        assert np.isclose(a.nominal(""),resposta['a'],rtol=1e-3)
-        assert np.isclose(b.nominal(""),resposta['b'],rtol=1e-3)
-        assert np.isclose(a.incerteza(""),resposta['Δa'],rtol=1e-3)
-        assert np.isclose(b.incerteza(""),resposta['Δb'],rtol=1e-3)
+        assert np.isclose(a.nominal("m/s"),resposta['a'],rtol=1e-3)
+        assert np.isclose(b.nominal("m"),resposta['b'],rtol=1e-3)
+        assert np.isclose(a.incerteza("m/s"),resposta['Δa'],rtol=1e-3)
+        assert np.isclose(b.incerteza("m"),resposta['Δb'],rtol=1e-3)
 def test_regressao_polinominal_nominal():
     num=10
     a,b=np.random.normal(0,1,2)
@@ -36,9 +36,9 @@ def test_regressao_polinominal_nominal():
     y_dados=lab2.arrayM(y,0.01,'m')
     parabola=lab2.regressao_polinomial(x_dados,y_dados,2)
     parabola_predito,a_predito,b_predito=parabola
-    assert np.isclose(parabola_predito.nominal(""),0,atol=1e-2)
-    assert np.isclose(a_predito.nominal(""),a,rtol=1e-1)
-    assert np.isclose(b_predito.nominal(""),b,rtol=1e-1)
+    assert np.isclose(parabola_predito.nominal("m/s²"),0,atol=1e-2)
+    assert np.isclose(a_predito.nominal("m/s"),a,rtol=1e-1)
+    assert np.isclose(b_predito.nominal("m"),b,rtol=1e-1)
 
 def test_regressao_polinomial_basic():
     x_dados = lab2.arrayM([1, 2, 3, 4, 5],0,'')

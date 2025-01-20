@@ -26,6 +26,7 @@ def test_incerteza_array():
     assert incerteza[3]==0
     with pytest.raises(TypeError):
         incertezas(np.arange(10),'')
+        
 
 def test_curvamin():
     t=np.array([Medida(5,0.1,''),Medida(9,2,''),Medida(11,0.5,'')])

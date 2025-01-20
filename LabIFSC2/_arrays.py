@@ -31,8 +31,10 @@ def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    
-    return np.array([medida._nominal.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
+    if unidade=='si':
+        return np.array([medida._nominal.to_base_units().magnitude for medida in arrayMedidas],dtype=float)
+    else:
+        return np.array([medida._nominal.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
 def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
@@ -54,7 +56,10 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
 '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
-    return np.array([medida.incerteza(unidade) for medida in arrayMedidas],dtype=float)
+    if unidade=='si':
+        return np.array([medida._incerteza.to_base_units().magnitude for medida in arrayMedidas],dtype=float)
+    else:
+        return np.array([medida._incerteza.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
 @obrigar_tipos
 def curva_min(arrayMedidas : np.ndarray,unidade:str,sigma: float | int =2) -> np.ndarray:

@@ -29,6 +29,14 @@ Com o LabIFSC2, podemos fazer os cálculos assim:
 ```
 Calculamos então que o IMC tem valor esperado de \(\mu=24,5 \, kg/m²\) e desvio padrão de \(\sigma=0.3 \, kg/m²\).
 
+Você pode acessar o valor nominal e a incerteza fazendo `medida.nominal(unidade)` ou `medida.incerteza(unidade)`,
+repare que é necessário especificar uma unidade, visto que o valor nominal/incerteza são totalmente dependentes
+dela. É importante notar que somente em casos bem específicos você vai acessar diretamente esses valores, se você usa muito essas funções talvez não esteja usando corretamente a biblioteca
+
+```py title="Cálculo de IMC"
+--8<-- "tests/test_doc_imc.py:7:8"
+```
+
 ## Comparando Medidas
 Se uma segunda pessoa afirmar que seu IMC é de (25 ± 0.1), podemos dizer que seus IMCs são equivalentes? Mesmo que \(25 \ne 24.5\), pela incerteza nas medidas podemos dizer que essa diferença está na margem de erro do experimento.
 

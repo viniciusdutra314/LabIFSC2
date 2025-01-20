@@ -34,6 +34,10 @@ taskipy = "^1.14.1"
 isort = "^5.13.2"
 mypy = "1.14.1"
 
+
+[tool.poetry.group.testes.dependencies]
+matplotlib = "^3.10.0"
+
 [tool.mypy]
 strict = true
 disallow_any_generics = false
