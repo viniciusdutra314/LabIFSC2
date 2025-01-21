@@ -5,10 +5,10 @@ from typing import Any
 
 import numpy as np
 import pint
+from numpy import exp, log, power
 from numpy.polynomial import Polynomial
 
 from ._arrays import arrayM, nominais
-from ._matematica import aceitamedida, exp, log, power
 from ._medida import Medida
 from ._tipagem_forte import obrigar_tipos
 
@@ -74,7 +74,8 @@ class MExponencial:
 
     @obrigar_tipos
     def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
-        resultado:  Medida | np.ndarray=self.a*power(float(self.base),x*self.k)
+        base=Medida(self.base,0,"")
+        resultado:  Medida | np.ndarray=self.a*base**(x*self.k)
         return resultado
     
     def __repr__(self)->str:
@@ -152,7 +153,7 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
 
     if base<1: raise ValueError('Base precisa ser maior que 1')
     
-    pegar_log=lambda x: log(x)/log(base)
+    pegar_log=lambda x: log(x)/log(float(base))
     log_y_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(y_medidas,pegar_log) 
     polinomio=regressao_linear(x_medidas,log_y_medidas)
     k=polinomio.a

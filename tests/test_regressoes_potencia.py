@@ -14,22 +14,21 @@ import LabIFSC2 as lab
     (1,0.05)
 ])
 def test_lei_de_potencia(a, b):
-    potencia_lab = lambda x, a, b: a * lab.pow(x, b)
     potencia_np = lambda x, a, b: a * np.power(x, b)
 
     ruido = np.random.normal(1, 0.002, 100)
     x_dados = np.linspace(3, 10, 100)
-    y_dados = potencia_lab(x_dados, a, b) * ruido
+    y_dados = potencia_np(x_dados, a, b) * ruido
     popt,   pcov = curve_fit(potencia_np, x_dados, y_dados)  
     a_scipy, b_scipy = popt
 
     x_dados = lab.linspace(3, 10, 100, 0.01, '')
-    y_dados = potencia_lab(x_dados, a, b) * ruido
-    potencia_lab = lab.regressao_potencia(x_dados, y_dados)
-    assert np.isclose(a_scipy,potencia_lab.a.nominal(""),atol=(1e-2)*a)
-    assert np.isclose(b_scipy,potencia_lab.n.nominal(""),atol=(1e-2))
-    assert np.isclose(a,potencia_lab.a.nominal(""),rtol=1e-2) or np.isclose(a,potencia_lab.a.nominal(""),atol=1e-2) 
-    assert np.isclose(b,potencia_lab.n.nominal(""),rtol=1e-2) or np.isclose(b,potencia_lab.n.nominal(""),atol=1e-2)
+    y_dados = potencia_np(x_dados, a, b) * ruido
+    potencia_np = lab.regressao_potencia(x_dados, y_dados)
+    assert np.isclose(a_scipy,potencia_np.a.nominal(""),atol=(1e-2)*a)
+    assert np.isclose(b_scipy,potencia_np.n.nominal(""),atol=(1e-2))
+    assert np.isclose(a,potencia_np.a.nominal(""),rtol=1e-2) or np.isclose(a,potencia_np.a.nominal(""),atol=1e-2) 
+    assert np.isclose(b,potencia_np.n.nominal(""),rtol=1e-2) or np.isclose(b,potencia_np.n.nominal(""),atol=1e-2)
 
 
 def test_exceptions():

@@ -173,6 +173,19 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         return self.__format__('')
     def __repr__(self) -> str:
         return self.__format__('')
+    '''O método abaixo faz a magia que basicamente qualquer função do numpy possa
+    ser aplicada diretamente em uma medida
+    '''
+    def __getattr__(self, func_name:str) -> Any:
+        funcoes_suportadas=['sin','cos','exp','sqrt',"sinh","cosh","tanh","arcsinh","arccosh",
+                            "arctanh","cbrt","power","pow",
+                            'tan','arcsin','arccos','arctan','log','log2','log10']
+        if func_name not in funcoes_suportadas:
+            raise AttributeError
+        else:
+            func=getattr(np,func_name)
+            def FuncaoComMedida() -> Any: return montecarlo(func, self)    
+            return FuncaoComMedida
 
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):

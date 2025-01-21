@@ -26,28 +26,28 @@ def test_dimensoes_multiplicacao():
 def test_trignometria():
     x = lab.Medida(45, 1, "m")
     with pytest.raises(pint.errors.DimensionalityError):
-        lab.sin(x)
+        np.sin(x)
     with pytest.raises(pint.errors.DimensionalityError):
-        lab.cos(x)
+        np.cos(x)
     with pytest.raises(pint.errors.DimensionalityError):
-        lab.tan(x)
+        np.tan(x)
     x = lab.Medida(45, 1, "rad")
-    lab.sin(x)
-    lab.cos(x)
-    lab.tan(x)
+    np.sin(x)
+    np.cos(x)
+    np.tan(x)
 
 def test_angulos_notaveis():
-    x=lab.sin(lab.Medida(45,0.01,'degree'))
-    y=lab.cos(lab.Medida(60,0.01,'degree'))
+    x=np.sin(lab.Medida(45,0.01,'degree'))
+    y=np.cos(lab.Medida(60,0.01,'degree'))
     assert np.isclose(x.nominal(''),1/np.sqrt(2),rtol=1e-4)
     assert np.isclose(y.nominal(""),1/2,rtol=1e-4)
 
 def test_exponencial_unidade():
     x=lab.Medida(1,0.01,'m')
     with pytest.raises(pint.errors.DimensionalityError):
-        lab.exp(x)
+        np.exp(x)
     with pytest.raises(pint.errors.DimensionalityError):
-        lab.ln(x)
+        np.log(x)
 
 def test_soma_graus():
     theta=lab.Medida(45,0.01,'degree')

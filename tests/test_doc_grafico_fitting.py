@@ -22,4 +22,4 @@ plt.plot(nominais(x,unidade_x),nominais(regressao(x),unidade_y),color='blue',
 plt.fill_between(nominais(x,unidade_x),curva_min(regressao(x),unidade_y),
                  curva_max(regressao(x),unidade_y),color='blue',alpha=0.3)
 plt.legend()
-plt.savefig('teste.jpg') 
+#plt.savefig('teste.jpg') 

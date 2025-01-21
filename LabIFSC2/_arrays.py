@@ -135,7 +135,7 @@ def linspace(a:Real,b:Real,n : int,
     entre as Medidas
         
     """
-    return np.array([Medida(i,incertezas,unidade) for i in np.linspace(float(a),float(b),n)])
+    return np.array([Medida(i,incertezas,unidade) for i in np.linspace(float(a),float(b),n)],dtype=object)
         
 
 @obrigar_tipos

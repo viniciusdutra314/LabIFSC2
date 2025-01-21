@@ -33,12 +33,11 @@ def test_MExponencial_call():
     (1,0)
 ])
 def test_equivalencia_com_scipy(a, k):
-    exponencial_lab = lambda x, a, k: a * lab.exp(k * x)
     exponencial_np = lambda x, a, k: a * np.exp(k * x)
 
     ruido = np.random.normal(1, 0.001, 100)
     x_dados = np.linspace(3, 10, 100)
-    y_dados = exponencial_lab(x_dados, a, k) * ruido
+    y_dados = exponencial_np(x_dados, a, k) * ruido
     popt, pcov = curve_fit(exponencial_np, x_dados, y_dados, p0=[a, k])  
     a_scipy, k_scipy = popt
     perr = np.sqrt(np.diag(pcov))
@@ -46,13 +45,13 @@ def test_equivalencia_com_scipy(a, k):
     k_scipy = lab.Medida(k_scipy, perr[1], '')
 
     x_dados = lab.linspace(3, 10, 100, 0.01, '')
-    y_dados = exponencial_lab(x_dados, a, k) * ruido
-    exponencial_lab = lab.regressao_exponencial(x_dados, y_dados)
+    y_dados = exponencial_np(x_dados, a, k) * ruido
+    exponencial_np = lab.regressao_exponencial(x_dados, y_dados)
 
-    assert np.isclose(a_scipy.nominal(""),exponencial_lab.a.nominal(""),atol=(5e-1)*a)
-    assert np.isclose(k_scipy.nominal(""),exponencial_lab.k.nominal(""),atol=(1e-2))
-    assert np.isclose(a,exponencial_lab.a.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_lab.a.nominal(""),atol=1e-2) 
-    assert np.isclose(k,exponencial_lab.k.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_lab.k.nominal(""),atol=1e-2) 
+    assert np.isclose(a_scipy.nominal(""),exponencial_np.a.nominal(""),atol=(5e-1)*a)
+    assert np.isclose(k_scipy.nominal(""),exponencial_np.k.nominal(""),atol=(1e-2))
+    assert np.isclose(a,exponencial_np.a.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_np.a.nominal(""),atol=1e-2) 
+    assert np.isclose(k,exponencial_np.k.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_np.k.nominal(""),atol=1e-2) 
 
 
 
