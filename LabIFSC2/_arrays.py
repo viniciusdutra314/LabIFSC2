@@ -103,7 +103,7 @@ def curva_max(arrayMedidas : np.ndarray,unidade:str,sigma:float | int=2)-> np.nd
 
 
 @obrigar_tipos
-def linspace(a:Real,b:Real,n : int,
+def linspaceM(a:Real,b:Real,n : int,
              incertezas : Real ,unidade : str) -> np.ndarray:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,

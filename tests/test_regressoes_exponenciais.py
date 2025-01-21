@@ -21,7 +21,7 @@ def test_MExponencial_call():
     exponencial=lab.MExponencial(a,k,base)
     x=lab.Medida(2,0.1,'')
     exponencial(x)
-    x_array=lab.linspace(0,1,10,0.1,'')
+    x_array=lab.linspaceM(0,1,10,0.1,'')
     exponencial(x_array)
 
 @pytest.mark.parametrize("a, k", [
@@ -44,7 +44,7 @@ def test_equivalencia_com_scipy(a, k):
     a_scipy = lab.Medida(a_scipy, perr[0], '')
     k_scipy = lab.Medida(k_scipy, perr[1], '')
 
-    x_dados = lab.linspace(3, 10, 100, 0.01, '')
+    x_dados = lab.linspaceM(3, 10, 100, 0.01, '')
     y_dados = exponencial_np(x_dados, a, k) * ruido
     exponencial_np = lab.regressao_exponencial(x_dados, y_dados)
 
@@ -57,8 +57,8 @@ def test_equivalencia_com_scipy(a, k):
 
 
 def test_exceptions():
-    y=lab.linspace(-3,1,10,0.1,'')
-    x=lab.linspace(3,1,10,0.1,'')
+    y=lab.linspaceM(-3,1,10,0.1,'')
+    x=lab.linspaceM(3,1,10,0.1,'')
     
     with pytest.raises(ValueError):
         lab.regressao_exponencial(x,y)

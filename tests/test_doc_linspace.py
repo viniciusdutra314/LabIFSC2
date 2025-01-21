@@ -1,6 +1,6 @@
 from LabIFSC2 import *
 
-distancias=linspace(1,10,10,0.05,'cm') 
+distancias=linspaceM(1,10,10,0.05,'cm') 
 print(distancias)
 #[(1,00 ± 0,05) cm (2,00 ± 0,05) cm (3,00 ± 0,05) cm (4,00 ± 0,05) cm
 #(5,00 ± 0,05) cm (6,00 ± 0,05) cm (7,00 ± 0,05) cm (8,00 ± 0,05) cm

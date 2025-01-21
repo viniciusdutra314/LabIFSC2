@@ -5,9 +5,10 @@ nav:
   - Constantes: Constantes/constantes da natureza.md
   - Funções Matemáticas: funcoes_matematicas.md
   - Arrays: arrays.md
-  - Gráficos: graficos.md
   - Regressões (Fitting): Regressões (fitting)/linear.md
+  - Gráficos: graficos.md
   - Formataçõs/LaTeX: formatacoes_latex.md
+  - Como erros são propagados?: propagacao_de_erros.md
   - API Completa: api.md
   - Como contribuir: contribuir.md
 
@@ -50,3 +51,4 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - mdx_math
+  - footnotes

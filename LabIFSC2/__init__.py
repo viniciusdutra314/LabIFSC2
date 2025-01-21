@@ -6,7 +6,7 @@ Documentação completa em https://viniciusdutra314.github.io/LabIFSC2/
 '''
 
 
-from ._arrays import (arrayM, curva_max, curva_min, incertezas, linspace,
+from ._arrays import (arrayM, curva_max, curva_min, incertezas, linspaceM,
                       nominais)
 from ._medida import Comparacao, Medida, comparar_medidas, montecarlo
 from ._regressões import (MExponencial, MPolinomio, regressao_exponencial,

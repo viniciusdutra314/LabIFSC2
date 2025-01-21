@@ -4,13 +4,13 @@ import pytest
 from LabIFSC2 import *
 
 campo_magnético=arrayM([210,90,70,54,39,32,33,27,22,20],1,'muT')
-distancias=linspace(1,10,10,0.01,'cm') 
-unidade_errada=linspace(1,10,10,0.001,'kg')
+distancias=linspaceM(1,10,10,0.01,'cm') 
+unidade_errada=linspaceM(1,10,10,0.001,'kg')
 
 def test_regressao_linear_unidades():
     linha=regressao_linear(distancias,campo_magnético) 
     linha(distancias)
-    unidade_errada=linspace(1,10,10,0.001,'')
+    unidade_errada=linspaceM(1,10,10,0.001,'')
     with pytest.raises(ValueError):
        linha(unidade_errada)
     comparar_medidas(linha(distancias)[0],campo_magnético[0])

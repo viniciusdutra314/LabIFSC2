@@ -5,7 +5,7 @@ import LabIFSC2 as lab
 
 
 def test_initialization():
-    coeficientes = lab.linspace(1,3,3,0,'')
+    coeficientes = lab.linspaceM(1,3,3,0,'')
     with pytest.raises(TypeError):
         lab.MPolinomio(np.array([1, 2, 3]))
     polinomio=lab.MPolinomio(coeficientes)
@@ -16,11 +16,11 @@ def test_initialization():
     assert polinomio.c.nominal("") == 3
 
 def test_call():
-    coeficientes = lab.linspace(1,3,3,0,'')
+    coeficientes = lab.linspaceM(1,3,3,0,'')
     polinomio=lab.MPolinomio(coeficientes)
     with pytest.raises(TypeError):
         polinomio(0)
-    pontos=lab.linspace(0,2,3,0,'')
+    pontos=lab.linspaceM(0,2,3,0,'')
     assert np.isclose(polinomio(pontos[0]).nominal(""), 3)
     assert np.isclose(polinomio(pontos[1]).nominal(""),6)
     assert np.isclose(polinomio(pontos[2]).nominal("") , 11)
@@ -32,7 +32,7 @@ def test_call():
 
 
 def test_unpacking():
-    coeficientes = lab.linspace(1,3,3,0,'')
+    coeficientes = lab.linspaceM(1,3,3,0,'')
     polinomio = lab.MPolinomio(coeficientes)
     a, b, c = polinomio
     assert a.nominal("") == 1

@@ -184,9 +184,8 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             raise AttributeError
         else:
             func=getattr(np,func_name)
-            def FuncaoComMedida() -> Any: return montecarlo(func, self)    
-            return FuncaoComMedida
-
+            def funcao_recebe_medida() -> Any: return montecarlo(func, self)    
+            return funcao_recebe_medida
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):
             return NotImplemented

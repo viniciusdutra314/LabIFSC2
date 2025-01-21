@@ -22,7 +22,7 @@ def test_lei_de_potencia(a, b):
     popt,   pcov = curve_fit(potencia_np, x_dados, y_dados)  
     a_scipy, b_scipy = popt
 
-    x_dados = lab.linspace(3, 10, 100, 0.01, '')
+    x_dados = lab.linspaceM(3, 10, 100, 0.01, '')
     y_dados = potencia_np(x_dados, a, b) * ruido
     potencia_np = lab.regressao_potencia(x_dados, y_dados)
     assert np.isclose(a_scipy,potencia_np.a.nominal(""),atol=(1e-2)*a)
@@ -32,8 +32,8 @@ def test_lei_de_potencia(a, b):
 
 
 def test_exceptions():
-    negativo=lab.linspace(-5,5,11,0.01,'')
-    positivo=lab.linspace(5,10,11,0.01,'')
+    negativo=lab.linspaceM(-5,5,11,0.01,'')
+    positivo=lab.linspaceM(5,10,11,0.01,'')
 
     with pytest.raises(ValueError):
         lab.regressao_potencia(negativo,positivo)

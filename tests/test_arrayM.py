@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from LabIFSC2 import (Medida, arrayM, curva_max, curva_min, incertezas,
-                      linspace, nominais)
+                      linspaceM, nominais)
 
 
 def test_nominal():
@@ -44,19 +44,19 @@ def test_curvamax():
 
 def test_linspace():
     a=1 ; b=20 ; N=20
-    x=linspace(a,b,N,0.1,'')
+    x=linspaceM(a,b,N,0.1,'')
     assert np.all(nominais(x,"")==np.linspace(a,b,N))
     assert np.all(incertezas(x,"")==0.1)
 
 
 def test_converter_array():
-    x=linspace(5,10,10,0.01,'mm')
+    x=linspaceM(5,10,10,0.01,'mm')
     esperado=np.linspace(0.5,1,10) #cm
     for index in range(len(x)):
         assert np.isclose(x[index].nominal('cm'),esperado[index])
 
 def test_converter_array_si():
-    x=linspace(10,50,10,0.01,'cm')
+    x=linspaceM(10,50,10,0.01,'cm')
     esperado=np.linspace(0.1,0.5,10) #si
     for index in range(len(x)):
         assert np.isclose(x[index].nominal('si'),esperado[index])

@@ -67,7 +67,7 @@ def test_sequence_array_com_subtipos():
     @obrigar_tipos
     def recebe_array_de_medidas(x:np.ndarray[lab.Medida])-> np.ndarray[Number]:
         return np.array([1,2,3,4,5])
-    medidas=lab.linspace(1,10,10,3,'m')
+    medidas=lab.linspaceM(1,10,10,3,'m')
     recebe_array_de_medidas(medidas)
     with pytest.raises(TypeError):recebe_array_de_medidas(np.array([1,2,3,4,5]))
     with pytest.raises(TypeError):recebe_array_de_medidas(medidas.tolist())
@@ -82,7 +82,7 @@ def test_union_types():
     multiplicacao_union(1, 2)
     multiplicacao_union(Fraction(1, 2), 2)
     multiplicacao_union(Decimal('0.5'), 1)
-    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    medidas = lab.linspaceM(1, 10, 10, 3, 'm')
     multiplicacao_union(medidas[0], medidas[1])
     multiplicacao_union(1, medidas[0])
 
@@ -102,7 +102,7 @@ def test_union_composed_types():
     y = np.array([4, 5, 6])
     mult_arrays_union(x, y)
     
-    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    medidas = lab.linspaceM(1, 10, 10, 3, 'm')
     mult_arrays_union(medidas, medidas)
     mult_arrays_union(3*medidas, medidas)
     
@@ -119,7 +119,7 @@ def test_ndarray_medida_any():
     def recebe_array_medida_any(x: np.ndarray[lab.Medida,Any]) -> np.ndarray[Number]:
         return np.array([1, 2, 3, 4, 5])
     
-    medidas = lab.linspace(1, 10, 10, 3, 'm')
+    medidas = lab.linspaceM(1, 10, 10, 3, 'm')
     recebe_array_medida_any(medidas)
     with pytest.raises(TypeError): recebe_array_medida_any(np.array([1, 2, 3, 4, 5]))
     with pytest.raises(TypeError): recebe_array_medida_any(medidas.tolist())

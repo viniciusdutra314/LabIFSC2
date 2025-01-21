@@ -51,7 +51,6 @@ Mesmo que a interface seja intencionalmente parecida a implementação é totalm
 | Unidades | Implementação autoral | Baseado no famoso [pint](https://pint.readthedocs.io/)
 | Constantes da natureza| ❌ | +350  definidas pela [CODATA(2022)](https://codata.org/initiatives/data-science-and-stewardship/fundamental-physical-constants/)
 | Operações com arrays| ❌ | Suportadas pelo [Numpy](numpy.org) 
-| Tabelas em LaTeX | ❌| ✅ 
 | Segurança de tipos (mypy)| ❌ | ✅ 
 | Docstrings em funções | ❌ | ✅
 | Suporte         | ❌ | Ativo         |
