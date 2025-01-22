@@ -1,4 +1,5 @@
 import string
+from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterator
 from numbers import Real
 from typing import Any
@@ -8,8 +9,8 @@ import pint
 from numpy import exp, log, power
 from numpy.polynomial import Polynomial
 
-from ._arrays import arrayM, nominais
-from ._medida import Medida
+from ._arrays import arrayM, incertezas, nominais
+from ._medida import Medida, ureg
 from ._tipagem_forte import obrigar_tipos
 
 
@@ -28,14 +29,45 @@ def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         incerteza=medida_intermediaria._incerteza._magnitude
         medidas_novas.append(Medida(nominal,incerteza,unidade))
     return np.array(medidas_novas)
-def _forcar_troca_de_unidade(medida:Medida|np.ndarray,unidade:str)->Medida|np.ndarray:
+def _forcar_troca_de_unidade(medida:Medida|np.ndarray,unidade:str)-> Medida | np.ndarray:
     if isinstance(medida,np.ndarray):
         return np.array([Medida(med._nominal.magnitude,med._incerteza.magnitude,unidade) for med in medida])
     else:
         return Medida(medida._nominal.magnitude,medida._incerteza.magnitude,unidade)
 
+class ABCRegressao(ABC):
+    
+    def __init__(self)->None:
+        self._amostragem_pre_calculada_nominal: np.ndarray = np.array([])
+        self._amostragem_pre_calculada_incerteza: np.ndarray = np.array([])
+        self._valores: Iterator = iter([])
+    
+    @abstractmethod
+    def __repr__(self)->str:...
 
-class MPolinomio:
+    @abstractmethod
+    def amostrar(self, x:np.ndarray,unidade_x:str,unidade_y:str) -> np.ndarray:...
+
+    def __iter__(self)->Iterator[object]:
+        return self._valores
+
+    def curva_min(self,sigmas:float | int=2)->np.ndarray:
+        if not isinstance(sigmas,Real):
+            raise TypeError('sigmas precisa ser um número real')
+        if not self._amostragem_pre_calculada_nominal.size:
+            raise ValueError('É necessário amostrar a regressão antes de calcular a curva min')
+        return self._amostragem_pre_calculada_nominal-sigmas*self._amostragem_pre_calculada_incerteza
+    
+    def curva_max(self,sigmas:float | int=2)->np.ndarray:
+        if not isinstance(sigmas,Real):
+            raise TypeError('sigmas precisa ser um número real')
+        if not self._amostragem_pre_calculada_incerteza.size:
+            raise ValueError('É necessaŕio amostrar a regressão antes de calcular a curva min')
+        return self._amostragem_pre_calculada_nominal+sigmas*self._amostragem_pre_calculada_incerteza
+
+
+
+class MPolinomio(ABCRegressao):
     @obrigar_tipos
     def __init__(self,coeficientes:np.ndarray):
         if not (isinstance(coeficientes[0],Medida)):
@@ -47,20 +79,16 @@ class MPolinomio:
             setattr(self,string.ascii_lowercase[index],coef)
         self._grau=len(coeficientes)-1
     
-    @obrigar_tipos
-    def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
-        avaliar=lambda x:sum(coef*x**(self._grau-i) for i,coef in enumerate(self._coeficientes))
-        resultado: Medida | np.ndarray=np.frompyfunc(avaliar,1,1)(x)
-        return resultado
-    
+
     def __iter__(self) -> Iterator[Medida]:
         return iter(self._coeficientes)
+    
     def __repr__(self) -> str:
         return f"MPolinomio(coefs={self._coeficientes},grau={self._grau})"
 
 
 
-class MExponencial:
+class MExponencial(ABCRegressao):
     '''Classe para modelar uma função exponencial
     y = a * base^(kx)
     '''
@@ -71,52 +99,37 @@ class MExponencial:
         self.base=base
         self.k=k
         self._valores=(a,k,base)
-
-    @obrigar_tipos
-    def __call__(self,x:Medida | np.ndarray) -> Medida | np.ndarray:
-        base=Medida(self.base,0,"")
-        resultado:  Medida | np.ndarray=self.a*base**(x*self.k)
-        return resultado
     
     def __repr__(self)->str:
         return f'MExponencial(a={self.a},k={self.k},base={self.base})'
-    def __iter__(self)->Iterator[object]:
-        return iter(self._valores)
 
-class MLeiDePotencia:
+class MLeiDePotencia(ABCRegressao):
     '''Classe para modelar uma função de lei de potência
     y = a * x^n
     '''
 
     @obrigar_tipos
     def __init__(self, a: Medida, n: Medida,y_unidade:pint.Quantity):
+        super().__init__()
         self.a = a
         self.n = n
-        self._valores = (a, n)
+        self._valores=iter([a,n])
         self._y_unidade=y_unidade
     
     @obrigar_tipos
-    def __call__(self, x:Medida | np.ndarray) -> Medida | np.ndarray:
-        #Aqui teremos um pequeno passo quick and dirty de novo
-        #se tentarmos fazer a exponencial de um PlainQuatity temos um erro:
-        #PlainQuantity array exponents are only allowed if the plain is dimensionless
-        #então precisamos fazer umas conversões manuais aqui
-        if isinstance(x,np.ndarray): unidade=(x[0]._nominal**self.n._nominal)
-        else: unidade=(x._nominal**self.n._nominal)
-        x=_forcar_troca_de_unidade(x,'dimensionless')
-        parte_exponencial=x**self.n
-        resultado:Medida | np.ndarray=self.a*_forcar_troca_de_unidade(parte_exponencial,str(unidade.units))
-
-        resultado_pint=resultado._nominal if isinstance(resultado,Medida) else resultado[0]._nominal
-        if not resultado_pint.is_compatible_with(self._y_unidade):
-            raise ValueError("Unidades incompatíveis")
-        return resultado
+    def amostrar(self, x:np.ndarray,unidade_x:str,unidade_y:str) -> np.ndarray:
+        expoente=x**self.n
+        expoente_medida=_forcar_troca_de_unidade(expoente,str(ureg(unidade_x)**self.n._nominal))
+        y=expoente_medida*self.a
+        if isinstance(y,np.ndarray):#essa linha é só para o mpy não reclamar que y não é indexável 
+            if not y[0]._nominal.is_compatible_with(self._y_unidade):
+                raise ValueError(f'Unidade de x não está correta')
+        self._amostragem_pre_calculada_nominal=nominais(y,unidade_y)
+        self._amostragem_pre_calculada_incerteza=incertezas(y,unidade_y)
+        return self._amostragem_pre_calculada_nominal
     
     def __repr__(self)->str:
         return f'MLeiDePotencia(a={self.a}, b={self.n})'
-
-    def __iter__(self)->Iterator[object]:
-        return iter(self._valores)
 
 
 

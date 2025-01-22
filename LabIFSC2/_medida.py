@@ -18,16 +18,20 @@ from ._tipagem_forte import obrigar_tipos
 ureg = UnitRegistry()
 
 
-def montecarlo(func : Callable, 
-               *parametros : 'Medida',N:int=100_000) -> 'Medida':
+def montecarlo(func : Callable,
+               *parametros : 'Medida',N:int=100_000,
+               histograma_completo: bool=True) -> 'Medida':
     x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
         x_samples[index]=parametro.histograma
     histograma=func(*x_samples)
     mean=np.mean(histograma)
     std=np.std(histograma,mean=mean)
-    resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
-    resultado._histograma=histograma
+    if (isinstance(histograma,Quantity)):
+        resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
+    else:
+        resultado=Medida(mean,std,"")
+    if histograma_completo: resultado._histograma=histograma
     return resultado
 
 class Medida:
@@ -60,22 +64,22 @@ o LabIFSC2 não permite a alteração direta de nominal, incerteza, unidade (som
 Caso precise de uma nova Medida, crie outra com o \
 construtor padrão Medida(nominal, incerteza, unidade)")
 
-    def nominal(self:'Medida',unidade:str) -> float: 
-        if unidade.lower()=='si': 
+    def nominal(self:'Medida',unidade:str) -> float:
+        if unidade.lower()=='si':
             return float(self._nominal.to_base_units().magnitude)
         else:
             return float(self._nominal.to(unidade).magnitude)
 
-    def incerteza(self:'Medida',unidade:str) -> float: 
+    def incerteza(self:'Medida',unidade:str) -> float:
         if unidade.lower()=='si':
             return float(self._incerteza.to_base_units().magnitude)
         else:
             return float(self._incerteza.to(unidade).magnitude)
-    
+
     @property
-    def dimensao(self:'Medida') -> UnitsContainer: 
+    def dimensao(self:'Medida') -> UnitsContainer:
         return self._nominal.dimensionality
-    
+
     @property
     def histograma(self:'Medida') -> Any:
         if self._histograma is None:
@@ -85,30 +89,30 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             else:
                 self._histograma=self._nominal
         return self._histograma
-    
+
     @histograma.setter
-    def histograma(self:'Medida',value:Any) -> None: 
+    def histograma(self:'Medida',value:Any) -> None:
         self._erro_por_mudar_atributo()
-    
+
     @histograma.deleter
-    def histograma(self:'Medida') -> None: 
+    def histograma(self:'Medida') -> None:
         self._erro_por_mudar_atributo()
-         
+
 
     def __format__(self, format_spec:str) -> str:
-        
+
 
         #parsing format_spec
         format_spec=format_spec.lower()
         match_reg=re.search(r'[+-]?e(\d+)',format_spec) #E3=3, -E1=-1, +E2=2
         fmt_exp=int(match_reg.group(1)) if match_reg else False
         unidade=format_spec.split('_')[0]
-        
+
         if unidade=='':
             unidade=str(self._nominal.units)
             nominal_pint = self._nominal
             incerteza_pint = self._incerteza
-        elif unidade=='si': 
+        elif unidade=='si':
             nominal_pint=self._nominal.to_base_units()
             incerteza_pint=self._incerteza.to_base_units()
         elif not (re.search(r'[+-]?e(\d+)',unidade) or 'latex' in unidade):
@@ -132,21 +136,21 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
 
         og_nominal = math.floor(math.log10(abs(nominal))) if nominal else 0
-        
+
         if fmt_exp is False:
             nominal *= Decimal(f"1e{-og_nominal}")
             incerteza *= Decimal(f"1e{-og_nominal}")
         else:
             nominal *= Decimal(f"1e{-fmt_exp}")
             incerteza *= Decimal(f"1e{-fmt_exp}")
-        
+
         #arredondando nominal e incerteza
         og_incerteza = math.floor(math.log10(abs(incerteza))) if incerteza else 0
         arred_nominal = nominal.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else nominal
         arred_incerteza = incerteza.quantize(Decimal(f'1e{og_incerteza}'), rounding=ROUND_HALF_UP) if not exato else incerteza
         arred_nominal_str = str(arred_nominal).replace(".", ",")
         arred_incerteza_str = str(arred_incerteza).replace(".", ",")
-        
+
         #potencia bonitinha
         expoente_normalizacao=fmt_exp if fmt_exp is not False else og_nominal
         if expoente_normalizacao==0: potencia_bonita=''
@@ -168,7 +172,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         unidade=f"{nominal_pint.units:~L}" if latex else f"{nominal_pint.units:~P}"
         return template.substitute(nominal=arred_nominal_str,incerteza=arred_incerteza_str,
                                            potencia=potencia_bonita,unidade=unidade)
-    
+
     def __str__(self) -> str:
         return self.__format__('')
     def __repr__(self) -> str:
@@ -184,7 +188,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             raise AttributeError
         else:
             func=getattr(np,func_name)
-            def funcao_recebe_medida() -> Any: return montecarlo(func, self)    
+            def funcao_recebe_medida() -> Any: return montecarlo(func, self)
             return funcao_recebe_medida
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):
@@ -195,7 +199,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             return self
 
         if self._nominal.is_compatible_with(outro._nominal):
-            if self is outro: 
+            if self is outro:
                 return 2*self if positivo else Medida(0,0,str(self._nominal.units))
 
             elif (self._histograma is None and outro._histograma is None):
@@ -218,7 +222,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         return self._adicao_subtracao(outro,True)
     def __sub__(self:'Medida',outro:Any)-> 'Medida':
         return self._adicao_subtracao(outro,False)
-    
+
     def __mul__(self:'Medida',outro:Any)-> 'Medida':
         if self is outro: return montecarlo(lambda x: x**2,self)
         elif isinstance(outro,Medida):
@@ -231,7 +235,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             return resultado
         else:
             return NotImplemented
-    
+
     def __truediv__(self:'Medida', outro:Any) -> 'Medida':
         if self is outro: return Medida(1,0,str(self._nominal.units))
         elif isinstance(outro,Real):
@@ -259,6 +263,13 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             return montecarlo(lambda x,y: x**y,self,outro)
         else:
             return NotImplemented
+    def __rpow__(self:'Medida',outro:Any) -> 'Medida':
+        if isinstance(outro,Real):
+            return montecarlo(lambda x: np.pow(float(outro),x),self)
+        elif isinstance(outro,Medida):
+            return montecarlo(lambda x,y: x**y,self,outro)
+        else:
+            return NotImplemented
     def __eq__(self:'Medida',outro:Any)->bool:
         if self is outro:
             return True
@@ -280,7 +291,6 @@ construtor padrão Medida(nominal, incerteza, unidade)")
     __radd__=__add__
     __rsub__=__sub__
     __rmul__=__mul__
-    __rpow__=__pow__
 
     def __abs__(self:'Medida') -> 'Medida':
         resultado=Medida(abs(self._nominal.magnitude),
@@ -289,16 +299,16 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         if self._histograma is not None:
             resultado._histograma=abs(self._histograma)
         return resultado
-    
-    def __neg__(self:'Medida') -> 'Medida': 
+
+    def __neg__(self:'Medida') -> 'Medida':
         resultado=Medida(-(self._nominal.magnitude),
                          self._incerteza.magnitude,
                          str(self._nominal.units))
         if self._histograma is not None:
             resultado._histograma=-self._histograma
         return resultado
-        
-    def __pos__(self) -> 'Medida': 
+
+    def __pos__(self) -> 'Medida':
         return self
 
     @obrigar_tipos
@@ -313,7 +323,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
         Returns:
             `probabilidade`: (Number) probabilidade de estar entre [a,b]
-        
+
         Raises:
             ValueError: Se `a` for maior que `b`
         '''
@@ -333,7 +343,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             b_quantidade=ureg.Quantity(b,unidade)
             probabilidade= np.mean((self._histograma >= a_quantidade) & (self._histograma <= b_quantidade),dtype=float)
             return float(probabilidade)
-    
+
     def intervalo_de_confiança(self:'Medida',p:Real,unidade:str) -> list[float]:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
@@ -343,7 +353,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
         Returns:- p) < 1e-2
             `intervalo`: (tuple) intervalo de confiança
-        
+
         Raises:
             ValueError: Se `p` não estiver entre 0 e 1
         '''
@@ -384,7 +394,7 @@ class Comparacao(Enum):
     INCONCLUSIVO = "inconclusivo"
 
 @obrigar_tipos
-def comparar_medidas(medida1: Medida, medida2: Medida, 
+def comparar_medidas(medida1: Medida, medida2: Medida,
     sigma_inferior : float=2,sigma_superior:float=3) -> Comparacao:
     """
     Compara duas medidas considerando suas incertezas e retorna o resultado da comparação.
@@ -394,28 +404,28 @@ def comparar_medidas(medida1: Medida, medida2: Medida,
 
         `medida2` (Medida) A segunda medida a ser comparada.
 
-        `sigmas_customizados` (list[Number], opcional): Lista contendo dois valores sigma. 
-            O primeiro sigma é usado para determinar se as medidas são iguais. 
-            O segundo sigma é usado para determinar se as medidas são diferentes. 
+        `sigmas_customizados` (list[Number], opcional): Lista contendo dois valores sigma.
+            O primeiro sigma é usado para determinar se as medidas são iguais.
+            O segundo sigma é usado para determinar se as medidas são diferentes.
             O valor padrão é [2, 3].
-    
+
     Returns:
         `Comparacao` (Enum):
         - `Comparacao.IGUAIS`: Se as medidas são consideradas iguais.
         - `Comparacao.DIFERENTES`: Se as medidas são consideradas diferentes.
         - `Comparacao.INCONCLUSIVO`: Se a comparação é inconclusiva.
-        
-    
+
+
     Raises:
         ValueError: Se o sigma para serem consideradas iguais for maior que o sigma para serem diferentes.
     """
-                     
+
     diferenca_nominal=abs(medida1._nominal-medida2._nominal)
     soma_incertezas=medida1._incerteza+medida2._incerteza
     if sigma_inferior>sigma_superior:
         raise ValueError("Sigma para serem consideradas iguais é maior que o sigma \
 para serem diferentes")
-    
+
     if diferenca_nominal<sigma_inferior*soma_incertezas:
         return Comparacao.EQUIVALENTES
     elif diferenca_nominal>sigma_superior*soma_incertezas:

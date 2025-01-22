@@ -1,4 +1,7 @@
+import time
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 from LabIFSC2 import *
 
@@ -18,16 +21,17 @@ plt.errorbar(x=nominais(distancias,unidade_x),
              yerr=incertezas(campo_magnético,unidade_y),
              fmt='o',label='Dados experimentais',color='red')
 
-x=linspaceM(1,10,100,0,unidade_x)
-plt.plot(nominais(x,unidade_x),
-         nominais(regressao(x),unidade_y),
-         color='blue',
-         label="Curva teórica")
-
-plt.fill_between(x=nominais(x,unidade_x),
-                 y1=curva_min(regressao(x),unidade_y),
-                 y2=curva_max(regressao(x),unidade_y),
+x=np.linspace(1,10,100)
+tempo=time.time()
+plt.plot(x,regressao.amostrar(x,unidade_x,unidade_y),
+         color='blue',label="Curva teórica")
+print(time.time()-tempo)
+tempo=time.time()
+plt.fill_between(x=x,
+                 y1=regressao.curva_min(),
+                 y2=regressao.curva_max(),
                  color='blue',alpha=0.3)
+print(time.time()-tempo)
 plt.legend()
 plt.savefig('docs/images/graficos_fitting.jpg',dpi=300) 
 plt.cla()
