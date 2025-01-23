@@ -20,7 +20,8 @@ from ._tipagem_forte import obrigar_tipos
 @obrigar_tipos
 def alterar_monte_carlo_samples(novo_valor:int) -> None:
     global MCSamples
-    assert novo_valor>0, "MCSamples deve ser maior que 0"
+    if novo_valor<=0:
+        raise ValueError("MCSamples deve ser maior que 0")
     MCSamples=novo_valor
     return None
 
@@ -38,6 +39,7 @@ def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
         resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
     else:
         resultado=Medida(mean,std,"")
+    resultado._histograma=histograma
     return resultado
 
 class Medida:

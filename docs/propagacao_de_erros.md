@@ -1,3 +1,9 @@
+!!! warning
+    A leitura dessa parte da documentação não é obrigatória para o uso da biblioteca, caso sinta que a matemática/estatística é muito complexa, sinta-se livre para pular. Mas caso queira realmente entender como as coisas funcionam por baixo dos panos essa secção é pra você.
+
+
+
+
 Nesta seção, explicarei em mais detalhes como a biblioteca propaga incertezas, o método usado é mais geral, mas ainda assim compatível com o da apostila. Nos testes unitários da biblioteca, comparamos os erros calculados pelo LabIFSC2 com as bibliotecas [uncertainties](https://pythonhosted.org/uncertainties/) e [LabIFSC](https://github.com/gjvnq/LabIFSC), chegando a um acordo geralmente de \(10^{-3}\) para erros pequenos, onde os métodos devem ser equivalentes.
 
 ## Apostila
@@ -56,6 +62,12 @@ Repare como \(T\) e \(L\) são gaussianas (\(\mu_L=15cm\), \(\sigma_L=1cm\)) e (
 <img src="./images/gravidade_histograma.jpg" width=600>
 
 Já o histograma de \(g\) é centralizado em \(10m/s²\), mas observe que ele possui uma cauda para a direita. A distribuição não é simétrica, logo, não é gaussiana. Se usássemos \(g\) para outros cálculos, esse desvio de uma gaussiana provavelmente iria se amplificando. Esse fato não é observado no método GUM, que assume linearidade e basicamente tudo é uma gaussiana.
+
+
+!!! tip
+    Por padrão a biblioteca utiliza \(N=10^5\) amostras, acredito que esse seja um número que vá satisfazer a maioria das aplicações e não trazer problemas de performance para a biblioteca, mas caso queira alterar esse número é só usar
+    `alterar_monte_carlo_sample`, por enquanto Medidas com N diferentes não se interagem corretamente (pense o que isso significa), então se quiser mudar esse número é recomendado alterar no começo do código ou as varíaveis usadas só terem escopo dentro dessa alteração do N
+
 
 
 
