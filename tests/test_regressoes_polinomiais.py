@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 import LabIFSC2 as lab2
-from LabIFSC2 import Medida, MPolinomio, regressao_polinomial
+from LabIFSC2 import Medida, regressao_polinomial
 
 
 def test_regressao_linear():
@@ -17,8 +17,8 @@ def test_regressao_linear():
         resposta=lab1.linearize(x,y)
         
         
-        x_dados=lab2.arrayM(x,0.01,'s')
-        y_dados=lab2.arrayM(y,0.01,'m')
+        x_dados=lab2.arrayM(x,'s',0.01)
+        y_dados=lab2.arrayM(y,'m',0.01)
         reta=lab2.regressao_linear(x_dados,y_dados)
         a,b=reta
         assert np.isclose(a.nominal("m/s"),resposta['a'],rtol=1e-3)
@@ -32,8 +32,8 @@ def test_regressao_polinominal_nominal():
     x=np.arange(num)
     y=a*x+b+epsilon
 
-    x_dados=lab2.arrayM(x,0.01,'s')
-    y_dados=lab2.arrayM(y,0.01,'m')
+    x_dados=lab2.arrayM(x,'s',0.01)
+    y_dados=lab2.arrayM(y,'m',0.01)
     parabola=lab2.regressao_polinomial(x_dados,y_dados,2)
     parabola_predito,a_predito,b_predito=parabola
     assert np.isclose(parabola_predito.nominal("m/s²"),0,atol=1e-2)
@@ -41,12 +41,12 @@ def test_regressao_polinominal_nominal():
     assert np.isclose(b_predito.nominal("m"),b,rtol=1e-1)
 
 def test_regressao_polinomial_basic():
-    x_dados = lab2.arrayM([1, 2, 3, 4, 5],0,'')
-    y_dados = lab2.arrayM([1, 4, 9, 16, 25],0,'')
+    x_dados = lab2.arrayM([1, 2, 3, 4, 5],'',0)
+    y_dados = lab2.arrayM([1, 4, 9, 16, 25],'',0)
     grau = 2
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
-    assert isinstance(polinomio, MPolinomio)
-    assert polinomio._grau == grau
+    assert isinstance(polinomio, lab2._regressões.MPolinomio)
+    assert polinomio.grau == grau
 
 def test_regressao_polinomial_medida():
     x_dados = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, ''), Medida(4, 0.1, ''), Medida(5, 0.1, '')])
@@ -54,7 +54,7 @@ def test_regressao_polinomial_medida():
     grau = 2
     
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
-    assert polinomio._grau == grau
+    assert polinomio.grau == grau
 
 def test_regressao_polinomial_mismatched_lengths():
     x_dados = np.array([1, 2, 3])
@@ -81,15 +81,15 @@ def test_regressao_polinominal_tipos_errados():
 def test_MPolinomio_call():
     # Coeficientes do polinômio: 2x^2 + 3x + 4
     coeficientes = np.array([Medida(2, 0.001, ''), Medida(3, 0.001, ''), Medida(4, 0.001, '')])
-    polinomio = MPolinomio(coeficientes)
+    polinomio = lab2._regressões.MPolinomio(coeficientes)
     polinomio_number=lambda x: 2*x**2+3*x+4
     # Teste de chamada com um número
     x = Medida(1, 0.001, '')
-    resultado = polinomio(x)
-    np.isclose(resultado.nominal(""), polinomio_number(1), rtol=1e-3)
+    resultado = polinomio.amostrar(x,'')
+    np.isclose(resultado, polinomio_number(1), rtol=1e-3)
     
     # Teste de chamada com um array
     x_array = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, '')])
-    resultado_array = polinomio(x_array)
+    resultado_array = polinomio.amostrar(x_array,'')
     for x in range(1,3+1):
-        np.isclose(resultado_array[x-1].nominal(""), polinomio_number(x), rtol=1e-3)
+        np.isclose(resultado_array[x-1], polinomio_number(x), rtol=1e-3)

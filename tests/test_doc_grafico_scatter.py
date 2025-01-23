@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 
 from LabIFSC2 import *
 
-campo_magnético=arrayM([250,150,110,90,70,60,55,40,25,20],1,'muT')
-distancias=linspaceM(1,10,10,0.5,'cm') 
+campo_magnético=arrayM([250,150,110,90,70,60,55,40,25,20],'muT',1)
+distancias=linspaceM(1,10,10,'cm',0.5) 
 
 unidade_x='cm'
 unidade_y='muT'

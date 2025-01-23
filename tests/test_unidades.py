@@ -58,10 +58,10 @@ def test_soma_graus():
 
 
 def test_converter_array():
-    x_dados=lab.arrayM([1,2,3,4,5],0.01,'m/s')
+    x_dados=lab.arrayM([1,2,3,4,5],'m/s',0.01)
     for i in range(len(x_dados)):
         assert np.isclose(x_dados[i].nominal('km/h'),(i+1)*3.6)
 
-    x_dados=lab.arrayM([1,2,3,4,5],0.01,'km/h')
+    x_dados=lab.arrayM([1,2,3,4,5],'km/h',0.01)
     for i in range(len(x_dados)):
         assert np.isclose(x_dados[i].nominal('m/s'),(i+1)/3.6)

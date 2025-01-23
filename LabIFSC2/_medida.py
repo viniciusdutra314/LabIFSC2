@@ -13,14 +13,21 @@ from pint import Quantity, UnitRegistry
 from pint.facets.plain import PlainQuantity
 from pint.util import UnitsContainer
 
+from . import MCSamples
 from ._tipagem_forte import obrigar_tipos
+
+
+@obrigar_tipos
+def alterar_monte_carlo_samples(novo_valor:int) -> None:
+    global MCSamples
+    assert novo_valor>0, "MCSamples deve ser maior que 0"
+    MCSamples=novo_valor
+    return None
 
 ureg = UnitRegistry()
 
 
-def montecarlo(func : Callable,
-               *parametros : 'Medida',N:int=100_000,
-               histograma_completo: bool=True) -> 'Medida':
+def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
     x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
         x_samples[index]=parametro.histograma
@@ -31,7 +38,6 @@ def montecarlo(func : Callable,
         resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
     else:
         resultado=Medida(mean,std,"")
-    if histograma_completo: resultado._histograma=histograma
     return resultado
 
 class Medida:
@@ -64,12 +70,13 @@ o LabIFSC2 não permite a alteração direta de nominal, incerteza, unidade (som
 Caso precise de uma nova Medida, crie outra com o \
 construtor padrão Medida(nominal, incerteza, unidade)")
 
+    @obrigar_tipos
     def nominal(self:'Medida',unidade:str) -> float:
         if unidade.lower()=='si':
             return float(self._nominal.to_base_units().magnitude)
         else:
             return float(self._nominal.to(unidade).magnitude)
-
+    @obrigar_tipos
     def incerteza(self:'Medida',unidade:str) -> float:
         if unidade.lower()=='si':
             return float(self._incerteza.to_base_units().magnitude)
@@ -85,20 +92,13 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         if self._histograma is None:
             if self._incerteza.magnitude!=0:
                 self._histograma=np.random.normal(self._nominal.magnitude,
-                                                  self._incerteza.magnitude,size=100_000)*self._nominal.units
+                                                  self._incerteza.magnitude,
+                                                  size=MCSamples)*self._nominal.units
             else:
                 self._histograma=self._nominal
         return self._histograma
 
-    @histograma.setter
-    def histograma(self:'Medida',value:Any) -> None:
-        self._erro_por_mudar_atributo()
-
-    @histograma.deleter
-    def histograma(self:'Medida') -> None:
-        self._erro_por_mudar_atributo()
-
-
+    @obrigar_tipos
     def __format__(self, format_spec:str) -> str:
 
 
@@ -172,11 +172,14 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         unidade=f"{nominal_pint.units:~L}" if latex else f"{nominal_pint.units:~P}"
         return template.substitute(nominal=arred_nominal_str,incerteza=arred_incerteza_str,
                                            potencia=potencia_bonita,unidade=unidade)
-
+    
     def __str__(self) -> str:
-        return self.__format__('')
+        printado:str=self.__format__('')
+        return printado
     def __repr__(self) -> str:
-        return self.__format__('')
+        representacao:str=self.__format__('')
+        return representacao
+    
     '''O método abaixo faz a magia que basicamente qualquer função do numpy possa
     ser aplicada diretamente em uma medida
     '''
@@ -344,7 +347,8 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             probabilidade= np.mean((self._histograma >= a_quantidade) & (self._histograma <= b_quantidade),dtype=float)
             return float(probabilidade)
 
-    def intervalo_de_confiança(self:'Medida',p:Real,unidade:str) -> list[float]:
+    @obrigar_tipos
+    def intervalo_de_confiança(self:'Medida',p:Real,unidade:str) -> list:
         ''' Retorna o intervalo de confiança para a Medida
         com base no histograma
 

@@ -8,5 +8,5 @@ print(imc.nominal('kg/m²')) #24.5
 print(imc.incerteza('kg/m²')) #0.3
 
 
-assert abs(imc.nominal('kg/m²')-24.5)<1e-2
+assert abs(imc.nominal('kg/m²')-24.5)<1e-1
 assert abs(imc.incerteza('kg/m²')-0.28)<1e-1

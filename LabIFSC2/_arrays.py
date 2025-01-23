@@ -61,50 +61,10 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     else:
         return np.array([medida._incerteza.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
-@obrigar_tipos
-def curva_min(arrayMedidas : np.ndarray,unidade:str,sigma: float | int =2) -> np.ndarray:
-    '''Usada para auxiliar o plot de curvas teóricas
-    com erros, com quantidade de sigmas usados personalizável
-
-       curva_min=lab.get_nominais(arrayM) - sigmas*lab.get_incertezas(arrayM)
-    
-    Args: 
-        arrayMedida (Sequence): iterável com Medidas
-        sigma (Number): confiança estatística 
-
-    Returns:
-        arrayCurva (np.ndarray): array com a curva de Medidas
-
-    '''
-    if not (isinstance(arrayMedidas[0],Medida)):
-        raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray=nominais(arrayMedidas,unidade) -sigma*incertezas(arrayMedidas,unidade)
-    return result
-
-@obrigar_tipos
-def curva_max(arrayMedidas : np.ndarray,unidade:str,sigma:float | int=2)-> np.ndarray:
-    '''Usada para auxiliar o plot de curvas teóricas
-    com erros, quantidade de sigmas usados personalizável
-
-       CurvaMin=Nominais(arrayM) + sigmas*Incertezas(arrayM)
-
-    
-    Args: 
-        arrayM (Sequence[Medida]) (array,lista,...) com Medidas
-        sigma (Number, default=2) relacionada com a confiança estatística 
-
-    Returns:
-        arrayCurva (np.ndarray[Medida]): array com a curva de Medidas
-    '''
-    if not (isinstance(arrayMedidas[0],Medida)):
-        raise TypeError('Os valores do array não são Medidas')
-    result:np.ndarray=nominais(arrayMedidas,unidade) +sigma*incertezas(arrayMedidas,unidade)
-    return result
-
 
 @obrigar_tipos
 def linspaceM(a:Real,b:Real,n : int,
-             incertezas : Real ,unidade : str) -> np.ndarray:
+             unidade : str,incertezas : Real ,) -> np.ndarray:
     """Gera um array com N Medidas de valor nominal [a,b]
     A incerteza será constante caso 'incertezas' for um número,
     mas se ela for um array cada Medida terá a respectiva incerteza.
@@ -139,7 +99,7 @@ def linspaceM(a:Real,b:Real,n : int,
         
 
 @obrigar_tipos
-def arrayM(nominais:np.ndarray | Sequence ,incerteza:Real,unidade:str) ->np.ndarray:
+def arrayM(nominais:np.ndarray | Sequence ,unidade:str,incerteza:Real) ->np.ndarray:
     '''Converte um array de números em um array de Medidas
     
     Args:

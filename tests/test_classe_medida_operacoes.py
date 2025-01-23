@@ -31,9 +31,9 @@ def test_multiplicacao_medidas():
     x=lab.Medida(0,0.1,'')
     y=lab.Medida(0,0.1,'')
     correlacionado=x*x
-    nao_correlacionado=lab.montecarlo(lambda a,b: a*b,x,y)
+    nao_correlacionado=lab._medida.montecarlo(lambda a,b: a*b,x,y)
     assert not (np.any(correlacionado)<0)
-    assert np.any(nao_correlacionado._histograma>0) and np.any(nao_correlacionado._histograma<0)
+    assert np.any(nao_correlacionado.histograma>0) and np.any(nao_correlacionado.histograma<0)
     assert not (correlacionado._histograma is None and nao_correlacionado._histograma is None)
     w=lab.Medida(0,0.1,'')
     assert lab.comparar_medidas(w*x,nao_correlacionado)==lab.Comparacao.EQUIVALENTES
@@ -62,11 +62,11 @@ def test_mudanca_de_sinal():
     
     
     z=+w
-    for i in range(len(z._histograma)):
-        assert z._histograma[i]==w._histograma[i]
+    for i in range(len(z.histograma)):
+        assert z.histograma[i]==w.histograma[i]
     z=-w
     for i in range(len(z._histograma)):
-        assert z._histograma[i]==-w._histograma[i]
+        assert z.histograma[i]==-w.histograma[i]
 
 def test_divisao():
     x=lab.Medida(-3,0.1,'')

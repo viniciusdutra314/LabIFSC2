@@ -14,6 +14,7 @@ from ._medida import Medida, ureg
 from ._tipagem_forte import obrigar_tipos
 
 
+@obrigar_tipos
 def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         array_medidas:np.ndarray,lab_func:Callable)->np.ndarray:
     '''
@@ -29,11 +30,9 @@ def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         incerteza=medida_intermediaria._incerteza._magnitude
         medidas_novas.append(Medida(nominal,incerteza,unidade))
     return np.array(medidas_novas)
-def _forcar_troca_de_unidade(medida:Medida|np.ndarray,unidade:str)-> Medida | np.ndarray:
-    if isinstance(medida,np.ndarray):
-        return np.array([Medida(med._nominal.magnitude,med._incerteza.magnitude,unidade) for med in medida])
-    else:
-        return Medida(medida._nominal.magnitude,medida._incerteza.magnitude,unidade)
+@obrigar_tipos
+def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
+    return np.array([Medida(med._nominal.magnitude,med._incerteza.magnitude,unidade) for med in array_medidas])
 
 class ABCRegressao(ABC):
     
@@ -41,30 +40,49 @@ class ABCRegressao(ABC):
         self._amostragem_pre_calculada_nominal: np.ndarray = np.array([])
         self._amostragem_pre_calculada_incerteza: np.ndarray = np.array([])
         self._valores: Iterator = iter([])
+        self._sigmas:float=2
+    
+    def _retornar(self,y:np.ndarray|Medida,unidade_y:str,retornar_como_medidas:bool=False)->np.ndarray|Medida:
+        if isinstance(y,Medida): y=np.array([y])
+        self._amostragem_pre_calculada_nominal=nominais(y,unidade_y)
+        self._amostragem_pre_calculada_incerteza=incertezas(y,unidade_y)
+        if y.size==1: y=y[0]
+        if retornar_como_medidas: return y
+        else: return self._amostragem_pre_calculada_nominal
+    
+    def _verificar_tipo_de_x(self,x:np.ndarray|Medida)->None:
+        if isinstance(x,np.ndarray):
+            if not isinstance(x[0],Medida):
+                raise TypeError("x precisa ser um array de medidas ou uma medida \
+mesmo que com incerteza 0, pois precisamos das unidades")
+        return None
     
     @abstractmethod
     def __repr__(self)->str:...
 
     @abstractmethod
-    def amostrar(self, x:np.ndarray,unidade_x:str,unidade_y:str) -> np.ndarray:...
+    def amostrar(self, x:np.ndarray|Medida,
+                 unidade_y:str,retornar_medidas:bool=False) -> np.ndarray|Medida:...
 
     def __iter__(self)->Iterator[object]:
         return self._valores
 
-    def curva_min(self,sigmas:float | int=2)->np.ndarray:
-        if not isinstance(sigmas,Real):
-            raise TypeError('sigmas precisa ser um número real')
+    def mudar_intervalo_de_confianca(self,sigmas:float | int)->None:
+        self._sigmas=sigmas
+
+    @property
+    def curva_min(self)->np.ndarray:
         if not self._amostragem_pre_calculada_nominal.size:
             raise ValueError('É necessário amostrar a regressão antes de calcular a curva min')
-        return self._amostragem_pre_calculada_nominal-sigmas*self._amostragem_pre_calculada_incerteza
+        y:np.ndarray=self._amostragem_pre_calculada_nominal-self._sigmas*self._amostragem_pre_calculada_incerteza
+        return y
     
-    def curva_max(self,sigmas:float | int=2)->np.ndarray:
-        if not isinstance(sigmas,Real):
-            raise TypeError('sigmas precisa ser um número real')
+    @property
+    def curva_max(self)->np.ndarray:
         if not self._amostragem_pre_calculada_incerteza.size:
             raise ValueError('É necessaŕio amostrar a regressão antes de calcular a curva min')
-        return self._amostragem_pre_calculada_nominal+sigmas*self._amostragem_pre_calculada_incerteza
-
+        y:np.ndarray=self._amostragem_pre_calculada_nominal+self._sigmas*self._amostragem_pre_calculada_incerteza
+        return y
 
 
 class MPolinomio(ABCRegressao):
@@ -77,14 +95,21 @@ class MPolinomio(ABCRegressao):
         for index,coef in enumerate(coeficientes):
             self._coeficientes.append(coef)
             setattr(self,string.ascii_lowercase[index],coef)
-        self._grau=len(coeficientes)-1
+        self.grau=len(coeficientes)-1
     
+    @obrigar_tipos
+    def amostrar(self:'MPolinomio', 
+                 x:np.ndarray | Medida,unidade_y:str,retornar_como_medidas:bool=False) -> np.ndarray | Medida:
+        self._verificar_tipo_de_x(x)
+        y=Medida(0,0,unidade_y)
+        for index,coef in enumerate(self._coeficientes):y+=coef*x**(self.grau-index)
+        return self._retornar(y,unidade_y,retornar_como_medidas)
 
     def __iter__(self) -> Iterator[Medida]:
         return iter(self._coeficientes)
     
     def __repr__(self) -> str:
-        return f"MPolinomio(coefs={self._coeficientes},grau={self._grau})"
+        return f"MPolinomio(coefs={self._coeficientes},grau={self.grau})"
 
 
 
@@ -98,7 +123,13 @@ class MExponencial(ABCRegressao):
         self.a=a
         self.base=base
         self.k=k
-        self._valores=(a,k,base)
+        self._valores=iter((a,k,base))
+    
+    @obrigar_tipos
+    def amostrar(self:'MExponencial', x:np.ndarray|Medida, unidade_y:str,retornar_como_medidas:bool=False)->np.ndarray|Medida:
+        self._verificar_tipo_de_x(x)
+        y:np.ndarray|Medida=np.power(float(self.base),(self.k*x))*self.a
+        return self._retornar(y,unidade_y,retornar_como_medidas)
     
     def __repr__(self)->str:
         return f'MExponencial(a={self.a},k={self.k},base={self.base})'
@@ -117,16 +148,18 @@ class MLeiDePotencia(ABCRegressao):
         self._y_unidade=y_unidade
     
     @obrigar_tipos
-    def amostrar(self, x:np.ndarray,unidade_x:str,unidade_y:str) -> np.ndarray:
+    def amostrar(self:'MLeiDePotencia',
+                  x:np.ndarray|Medida,unidade_y:str,retornar_como_medidas:bool=False) -> np.ndarray|Medida:
+        self._verificar_tipo_de_x(x)
+        if isinstance(x,Medida):x=np.array([x])
+        unidade_expoente=str((x[0]._nominal**self.n._nominal).units)
+        x=_forcar_troca_de_unidade(x,'')    
         expoente=x**self.n
-        expoente_medida=_forcar_troca_de_unidade(expoente,str(ureg(unidade_x)**self.n._nominal))
+        expoente_medida=_forcar_troca_de_unidade(expoente,unidade_expoente)
         y=expoente_medida*self.a
-        if isinstance(y,np.ndarray):#essa linha é só para o mpy não reclamar que y não é indexável 
-            if not y[0]._nominal.is_compatible_with(self._y_unidade):
-                raise ValueError(f'Unidade de x não está correta')
-        self._amostragem_pre_calculada_nominal=nominais(y,unidade_y)
-        self._amostragem_pre_calculada_incerteza=incertezas(y,unidade_y)
-        return self._amostragem_pre_calculada_nominal
+        if not y[0]._nominal.is_compatible_with(self._y_unidade):
+            raise ValueError(f'Unidade de x não está correta')
+        return self._retornar(y,unidade_y,retornar_como_medidas)
     
     def __repr__(self)->str:
         return f'MLeiDePotencia(a={self.a}, b={self.n})'
@@ -172,9 +205,9 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
     k=polinomio.a
     a=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(np.array([polinomio.b]),exp)[0]
     
-    k=_forcar_troca_de_unidade(k,str((1/x_medidas[0]._nominal).units))
-    a=_forcar_troca_de_unidade(a,str(y_medidas[0]._nominal.units))
-    return MExponencial(a,k,base)
+    k=_forcar_troca_de_unidade(np.array([k]),str((1/x_medidas[0]._nominal).units))
+    a=_forcar_troca_de_unidade(np.array([a]),str(y_medidas[0]._nominal.units))
+    return MExponencial(a[0],k[0],base)
 
 @obrigar_tipos
 def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
@@ -186,6 +219,6 @@ def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePote
     polinomio=regressao_linear(log_x_medidas,log_y_medidas)
     a=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(np.array([polinomio.b]),exp)[0]
     n=polinomio.a
-    a=_forcar_troca_de_unidade(a,str((y_medidas[0]._nominal/x_medidas[0]._nominal**n._nominal.magnitude).units))
-    n=_forcar_troca_de_unidade(n,"dimensionless")
-    return MLeiDePotencia(a,n,y_medidas[0]._nominal)
+    a=_forcar_troca_de_unidade(np.array([a]),str((y_medidas[0]._nominal/x_medidas[0]._nominal**n._nominal.magnitude).units))
+    n=_forcar_troca_de_unidade(np.array([n]),"dimensionless")
+    return MLeiDePotencia(a[0],n[0],y_medidas[0]._nominal)
