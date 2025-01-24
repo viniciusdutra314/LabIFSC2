@@ -46,16 +46,18 @@ class Medida:
     @obrigar_tipos
     def __init__(self,nominal:Real | list,unidade : str,incerteza : Real):
         """
-        Representa uma medida física com um valor nominal, incerteza e unidade.
-
-        A classe Medida é usada para converter unidades e propagar incertezas
-        de maneira simples, se comportando para vários propósitos como um número
-
-        Atributos:
-            nominal (Real): O valor nominal da medida.
-            incerteza (Real): A incerteza associada à medida.
-            unidade (str): A unidade da medida.
+        Inicializa uma instância da classe com valores nominais, unidade e incerteza.
+        
+        Args:
+            nominal (Real | list): Valor nominal ou uma lista de valores nominais.
+            unidade (str): Unidade de medida.
+            incerteza (Real): Incerteza associada ao valor nominal.
+        
+        Raises:
+            ValueError: Se a incerteza for negativa.
+            ValueError: Se a lista de medidas tiver menos de 2 elementos.
         """
+
         if incerteza<0: raise ValueError("Incerteza não pode ser negativa")
 
         if isinstance(nominal,list):
@@ -77,12 +79,32 @@ class Medida:
 
     @obrigar_tipos
     def nominal(self:'Medida',unidade:str) -> float:
+        """
+        Retorna o valor nominal da medida na unidade especificada.
+        
+        Args:
+            unidade (str): A unidade na qual o valor nominal deve ser retornado. 
+                           Se 'si', retorna o valor em unidades do Sistema Internacional (SI).
+        
+        Returns:
+            float: O valor nominal da medida na unidade especificada.
+        """
         if unidade.lower()=='si':
             return float(self._nominal.to_base_units().magnitude)
         else:
             return float(self._nominal.to(unidade).magnitude)
     @obrigar_tipos
     def incerteza(self:'Medida',unidade:str) -> float:
+        """
+        Retorna a incerteza da medida na unidade especificada.
+        
+        Args:
+            unidade (str): A unidade na qual a incerteza deve ser retornado. 
+                           Se 'si', retorna o valor em unidades do Sistema Internacional (SI).
+        
+        Returns:
+            float: O valor da incerteza da medida na unidade especificada.
+        """
         if unidade.lower()=='si':
             return float(self._incerteza.to_base_units().magnitude)
         else:
@@ -320,21 +342,21 @@ class Medida:
 
     @obrigar_tipos
     def probabilidade_de_estar_entre(self,a:Real,b:Real,unidade:str) -> float:
-        ''' Retorna a probabilidade que a Medida
-        esteja entre [a,b] usando o histograma como
-        referencia
-
+        """
+        Calcula a probabilidade de uma medida estar entre dois valores especificados.
+        
         Args:
-            `a` (Number): Extremo inferior
-            `b`(Number): Extremo superior
-
+            a (Real): O valor inferior do intervalo.
+            b (Real): O valor superior do intervalo.
+            unidade (str): A unidade de medida dos valores a e b.
+        
         Returns:
-            `probabilidade`: (Number) probabilidade de estar entre [a,b]
-
+            float: A probabilidade de a medida estar entre os valores a e b.
+        
         Raises:
-            ValueError: Se `a` for maior que `b`
-        '''
-
+            ValueError: Se o valor de `a` for maior que `b`.
+            ValueError: Se a unidade fornecida não for compatível com a unidade da medida.
+        """
         if a>b: raise ValueError("a deve ser menor que b")
         if not self._nominal.is_compatible_with(unidade):
                 raise ValueError(f"Unidade {unidade} não é compatível com a unidade da medida")
@@ -353,18 +375,20 @@ class Medida:
 
     @obrigar_tipos
     def intervalo_de_confiança(self:'Medida',p:Real,unidade:str) -> list:
-        ''' Retorna o intervalo de confiança para a Medida
-        com base no histograma
-
+        """
+        Calcula o intervalo de confiança para a medida.
+        
         Args:
-            `p` (float): Probabilidade de estar dentro do intervalo
-
-        Returns:- p) < 1e-2
-            `intervalo`: (tuple) intervalo de confiança
-
+            p (Real): Probabilidade associada ao intervalo de confiança. Deve estar entre 0 e 1.
+            unidade (str): Unidade de medida para o intervalo de confiança.
+        
+        Returns:
+            list: Lista contendo os limites inferior e superior do intervalo de confiança.
+        
         Raises:
-            ValueError: Se `p` não estiver entre 0 e 1
-        '''
+            ValueError: Se `p` não estiver entre 0 e 1.
+        """
+
         if not 0<float(p)<=1: raise ValueError("p deve estar 0 e 1")
 
         elif p==1: return [float(min(self.histograma.magnitude)),float(max(self.histograma.magnitude))]
@@ -402,30 +426,21 @@ class Comparacao(Enum):
     INCONCLUSIVO = "inconclusivo"
 
 @obrigar_tipos
-def comparar_medidas(medida1: Medida, medida2: Medida,
-    sigma_inferior : float=2,sigma_superior:float=3) -> Comparacao:
+def comparar_medidas(medida1: Medida, medida2: Medida, sigma_inferior: float = 2, sigma_superior: float = 3) -> Comparacao:
     """
     Compara duas medidas considerando suas incertezas e retorna o resultado da comparação.
-
+    
     Args:
-        `medida1` (Medida) A primeira medida a ser comparada.
-
-        `medida2` (Medida) A segunda medida a ser comparada.
-
-        `sigmas_customizados` (list[Number], opcional): Lista contendo dois valores sigma.
-            O primeiro sigma é usado para determinar se as medidas são iguais.
-            O segundo sigma é usado para determinar se as medidas são diferentes.
-            O valor padrão é [2, 3].
-
+        medida1 (Medida): A primeira medida a ser comparada.
+        medida2 (Medida): A segunda medida a ser comparada.
+        sigma_inferior (float, opcional): O fator sigma inferior para considerar as medidas equivalentes. Default é 2.
+        sigma_superior (float, opcional): O fator sigma superior para considerar as medidas diferentes. Default é 3.
+    
     Returns:
-        `Comparacao` (Enum):
-        - `Comparacao.IGUAIS`: Se as medidas são consideradas iguais.
-        - `Comparacao.DIFERENTES`: Se as medidas são consideradas diferentes.
-        - `Comparacao.INCONCLUSIVO`: Se a comparação é inconclusiva.
-
-
+        Comparacao: O resultado da comparação, que pode ser EQUIVALENTES, DIFERENTES ou INCONCLUSIVO.
+    
     Raises:
-        ValueError: Se o sigma para serem consideradas iguais for maior que o sigma para serem diferentes.
+        ValueError: Se o sigma_inferior for maior que o sigma_superior.
     """
 
     diferenca_nominal=abs(medida1._nominal-medida2._nominal)

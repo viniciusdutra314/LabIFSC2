@@ -10,25 +10,21 @@ from ._tipagem_forte import obrigar_tipos
 
 @obrigar_tipos
 def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
-    '''*get_nominais* Transforma um array/lista (Sequência) de medidas  em
-    um arrays somente com seus valores nominais
-    
-    Args:
-        arrayMedidas (Sequence | np.ndarray): array com medidas
+    """
+        Converte um array de objetos Medida para um array de valores nominais em uma unidade especificada.
+        
+        Args:
+            arrayMedidas (np.ndarray): Array de objetos Medida.
+            unidade (str): Unidade para a conversão dos valores nominais. Use 'si' para unidades do Sistema Internacional.
+        
+        Returns:
+            np.ndarray: Array de valores nominais convertidos para a unidade especificada.
+        
+        Raises:
+            TypeError: Se algum dos valores no array não for um objeto Medida.
+    """
+       
 
-    Returns:
-        arrayNominais (Sequence | np.ndarray): array valores nominais
-
-    Raises:
-        ValueError: Se algum valor não for uma Medida
-  
-    Examples:
-        >>> import LabIFSC2 as lab
-        >>> import numpy as np
-        >>> array = np.array([lab.Medida(4, 0.2),lab.Medida(35, 3), lab.Medida(-97, 1)])
-        >>> lab.get_nominais(array)
-        array([  4.,  35., -97.])
-    '''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
     if unidade=='si':
@@ -38,22 +34,20 @@ def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
 
 @obrigar_tipos
 def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
-    '''*get_incertezas* Transforma um array/lista (Sequência) de medidas  em
-    um arrays somente com suas incertezas
-    
-    Args:
-        arrayMedidas (Sequence[Medida]): array com medidas
+    """
+        Converte um array de objetos Medida para um array de incertezas em uma unidade especificada.
+        
+        Args:
+            arrayMedidas (np.ndarray): Array de objetos Medida.
+            unidade (str): Unidade para a conversão das incertezas. Use 'si' para unidades do Sistema Internacional.
+        
+        Returns:
+            np.ndarray: Array de incertezas convertidas para a unidade especificada.
+        
+        Raises:
+            TypeError: Se algum dos valores no array não for um objeto Medida.
+    """
 
-    Returns:
-        arrayIncertezas(np.ndarray[Medida])  : array com incertezas
-
-    Examples:
-        >>> import LabIFSC2 as lab
-        >>> import numpy as np
-        >>> array = np.array([lab.Medida(4, 0.2),lab.Medida(35, 3), lab.Medida(-97, 1)])
-        >>> lab.get_incertezas(array)
-        array([0.2, 3. , 1. ])
-'''
     if not (isinstance(arrayMedidas[0],Medida)):
         raise TypeError('Os valores do array não são Medidas')
     if unidade=='si':
@@ -63,54 +57,39 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
 
 
 @obrigar_tipos
-def linspaceM(a:Real,b:Real,n : int,
-             unidade : str,incertezas : Real ,) -> np.ndarray:
-    """Gera um array com N Medidas de valor nominal [a,b]
-    A incerteza será constante caso 'incertezas' for um número,
-    mas se ela for um array cada Medida terá a respectiva incerteza.
-    A unidade será a mesma e é opcional
+def linspaceM(a:Real,b:Real,n : int,unidade:str,incertezas:Real) -> np.ndarray:
+    """Gera um array de Medidas com valores igualmente espaçados.
     
     Args:
-        `a` (Number): Menor nominal
-        `b` (Number): Maior nominal
-        `n` (int): Número de Medidas
-        `incertezas` (Number | Sequence[Number]): incerteza ou array de incertezas
-        `unidade` (str): unidade das medidas
+        a (Real): O valor inicial do intervalo.
+        b (Real): O valor final do intervalo.
+        n (int): O número de elementos no array.
+        unidade (str): A unidade das medidas.
+        incertezas (Real): A incerteza associada a cada medida.
     
     Returns:
-        arrayM (np.ndarray[Medida]): array de Medidas
-
-    Examples:
-        >>> import LabIFSC2 as lab
-        >>> import numpy as np
-        >>> a=1 ; b=5 ; N=3
-        >>> tempo=lab.linspace(a,b,N,0.1,'s')
-        >>> tempo 
-        array([(1.0±0.1)s, (3.0±0.1)s, (5.0±0.1)s], dtype=object)
-        >>> tempo**2 
-        (1.0±0.2)s... (4.0±0.4)s ... (25±1)s]    
-    
-    Esse é um exemplo com poucos pontos para que
-    seja possível observar uma diferença significativa
-    entre as Medidas
-        
+        np.ndarray: Um array de objetos Medida com valores igualmente espaçados.
     """
     return np.array([Medida(i,unidade,incertezas) for i in np.linspace(float(a),float(b),n)],dtype=object)
         
 
 @obrigar_tipos
 def arrayM(nominais:np.ndarray | Sequence ,unidade:str,incerteza:Real) ->np.ndarray:
-    '''Converte um array de números em um array de Medidas
+    """
+    Cria um array de objetos Medida a partir de valores nominais, unidade e incerteza.
     
     Args:
-        nominais (Sequence[Number]):  valores nominais
-        incerteza (Number): incerteza associada a cada medição 
-        unidade (str):  unidade das medições        
-
+        nominais (np.ndarray | Sequence): Uma sequência de valores nominais.
+        unidade (str): A unidade de medida.
+        incerteza (Real): A incerteza associada aos valores nominais.
+    
     Returns:
-        arrayM (np.ndarray[Medida]):  array de Medidas
+        np.ndarray: Um array de objetos Medida.
+    
+    Raises:
+        TypeError: Se os valores do array não forem números reais.
+    """
 
-    '''
     if not (isinstance(nominais[0],Real)):
         raise TypeError('Os valores do array não são números reais')
 
