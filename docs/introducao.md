@@ -41,7 +41,7 @@ Podemos também criar uma medida baseada em várias medições, imagine que voc�
 ```
 Caso o desvio padrão das medições seja maior do que a incerteza experimental, então a incerteza é o desvio padrão. Intuitivamente, podemos pensar que o fio é objetivamente irregular e não existe exatamente um raio que o define. 
 
-Mas se a incerteza experimental for maior que o desvio padrão, então não temos certeza se essa variação é devido ao fio ter um formato irregular ou por efeitos aleatórios de medição. A incerteza então é a incerteza experimental. 
+Mas se a incerteza experimental for maior que o desvio padrão, então não temos certeza se essa variação é devido ao fio ter um formato irregular ou por efeitos aleatórios de medição, a incerteza então é a incerteza experimental. 
 
 
 Esse comportamento pode ser visto nesse exemplo, preste atenção nas incertezas:
@@ -65,7 +65,7 @@ O método que faz essa comparação é `comparar_medidas`, que recebe duas Medid
 
 Perceba que 3 resultados são possíveis, então infelizmente a sintaxe `ìmc1==imc2` ou `ìmc1!=imc2` não é perfeita, porque no caso inconclusivo temos `ìmc1==imc2 (False)` e `ìmc1!=imc2 (False)` ao mesmo tempo, o que creio ser javascript demais pro meu gosto.
 
-O critério usado é da apostila:
+O critério usado é o da apostila:
 
 - EQUIVALENTES: \(|\Delta \mu| \le 2(\sigma_1+\sigma_2)\)
 - INCONCLUSIVO: \(2(\sigma_1+\sigma_2) < |\Delta \mu| < 3(\sigma_1+\sigma_2)\)

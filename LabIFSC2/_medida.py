@@ -109,7 +109,7 @@ class Medida:
 
         #parsing format_spec
         format_spec=format_spec.lower()
-        match_reg=re.search(r'[+-]?e(\d+)',format_spec) #E3=3, -E1=-1, +E2=2
+        match_reg=re.search(r'e([+-]?\d+)',format_spec) #E3=3, -E1=-1, +E2=2
         fmt_exp=int(match_reg.group(1)) if match_reg else False
         unidade=format_spec.split('_')[0]
 
@@ -120,7 +120,7 @@ class Medida:
         elif unidade=='si':
             nominal_pint=self._nominal.to_base_units()
             incerteza_pint=self._incerteza.to_base_units()
-        elif not (re.search(r'[+-]?e(\d+)',unidade) or 'latex' in unidade):
+        elif not (re.search(r'e[+-]?(\d+)',unidade) or 'latex' in unidade):
             nominal_pint=self._nominal.to(unidade)
             incerteza_pint=self._incerteza.to(unidade)
         else:
