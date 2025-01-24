@@ -18,8 +18,8 @@ from ._tipagem_forte import obrigar_tipos
 def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         array_medidas:np.ndarray,lab_func:Callable)->np.ndarray:
     '''
-    #precisamos aplicar log/exp sem passar pelo sistema de unidades
-    #um método meio quicky and dirty mas necessário para não dar erro de dimensão
+    precisamos aplicar log/exp sem passar pelo sistema de unidades
+    um método meio quicky and dirty mas necessário para não dar erro de dimensão
     '''
     medidas_novas=[]
     for medida in array_medidas:
@@ -28,6 +28,10 @@ def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         medida_intermediaria=lab_func(medida_intermediaria)
         nominal=medida_intermediaria._nominal._magnitude
         incerteza=medida_intermediaria._incerteza._magnitude
+        if np.isnan(nominal) or np.isnan(incerteza):
+            raise ValueError(f'Erro ao aplicar {lab_func} no processo de regressão. Lembre-se que, para regressões \
+exponenciais, todos os valores de y precisam ser positivos. No caso da regressão de lei de potência, os valores \
+em x também precisam ser positivos. Além disso, um valor pode não ser negativo, mas devido à incerteza associada, ele pode assumir valores negativos.')
         medidas_novas.append(Medida(nominal,incerteza,unidade))
     return np.array(medidas_novas)
 @obrigar_tipos
@@ -117,22 +121,22 @@ class MExponencial(ABCRegressao):
     '''Classe para modelar uma função exponencial
     y = a * base^(kx)
     '''
-    __slots__ = ['a', 'k', 'base','_valores']
+    __slots__ = ['cte_multiplicativa', 'expoente', 'base','_valores']
     @obrigar_tipos
     def __init__(self,a:Medida,k:Medida,base:Real):
-        self.a=a
+        self.cte_multiplicativa=a
         self.base=base
-        self.k=k
+        self.expoente=k
         self._valores=iter((a,k,base))
     
     @obrigar_tipos
     def amostrar(self:'MExponencial', x:np.ndarray|Medida, unidade_y:str,retornar_como_medidas:bool=False)->np.ndarray|Medida:
         self._verificar_tipo_de_x(x)
-        y:np.ndarray|Medida=np.power(float(self.base),(self.k*x))*self.a
+        y:np.ndarray|Medida=np.power(float(self.base),(self.expoente*x))*self.cte_multiplicativa
         return self._retornar(y,unidade_y,retornar_como_medidas)
     
     def __repr__(self)->str:
-        return f'MExponencial(a={self.a},k={self.k},base={self.base})'
+        return f'MExponencial(cte_multiplicativa={self.cte_multiplicativa},expoente={self.expoente},base={self.base})'
 
 class MLeiDePotencia(ABCRegressao):
     '''Classe para modelar uma função de lei de potência
@@ -194,26 +198,18 @@ def regressao_linear(x_medidas:np.ndarray,
 def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
                           base:Real=np.exp(1)) -> MExponencial:
  
-    if not np.all([y._nominal.magnitude>0 for y in y_medidas]):
-            raise ValueError('Todos y precisam ser positivos para uma modelagem exponencial') 
-
     if base<1: raise ValueError('Base precisa ser maior que 1')
-    
     pegar_log=lambda x: log(x)/log(float(base))
     log_y_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(y_medidas,pegar_log) 
     polinomio=regressao_linear(x_medidas,log_y_medidas)
     k=polinomio.a
     a=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(np.array([polinomio.b]),exp)[0]
-    
     k=_forcar_troca_de_unidade(np.array([k]),str((1/x_medidas[0]._nominal).units))
     a=_forcar_troca_de_unidade(np.array([a]),str(y_medidas[0]._nominal.units))
     return MExponencial(a[0],k[0],base)
 
 @obrigar_tipos
 def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
-    
-    if not bool(np.all([y._nominal.magnitude>0 for y in y_medidas]) and np.all([x._nominal.magnitude>0 for x in x_medidas])):
-            raise ValueError('Todos x e y precisam ser positivos para uma modelagem exponencial')
     log_y_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(y_medidas,log)
     log_x_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(x_medidas,log)
     polinomio=regressao_linear(log_x_medidas,log_y_medidas)

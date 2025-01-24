@@ -8,8 +8,8 @@ import LabIFSC2 as lab
 def test_MExponencial_valores():
     a,k,base=lab.Medida(1,0.1,''),lab.Medida(3,0.01,''),np.exp(1)
     exponencial=lab._regressões.MExponencial(a,k,base)
-    assert exponencial.a.nominal("")==a.nominal("")
-    assert exponencial.k.nominal("")==k.nominal("")
+    assert exponencial.cte_multiplicativa.nominal("")==a.nominal("")
+    assert exponencial.expoente.nominal("")==k.nominal("")
     assert exponencial.base==base
     a_armazenado,k_armazenado,base_armazenado=exponencial
     assert a_armazenado.nominal("")==a.nominal("")
@@ -48,10 +48,10 @@ def test_equivalencia_com_scipy(a, k):
     y_dados = exponencial_np(x_dados, a, k) * ruido
     exponencial_np = lab.regressao_exponencial(x_dados, y_dados)
 
-    assert np.isclose(a_scipy.nominal(""),exponencial_np.a.nominal(""),atol=(5e-1)*a)
-    assert np.isclose(k_scipy.nominal(""),exponencial_np.k.nominal(""),atol=(1e-2))
-    assert np.isclose(a,exponencial_np.a.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_np.a.nominal(""),atol=1e-2) 
-    assert np.isclose(k,exponencial_np.k.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_np.k.nominal(""),atol=1e-2) 
+    assert np.isclose(a_scipy.nominal(""),exponencial_np.cte_multiplicativa.nominal(""),atol=(5e-1)*a)
+    assert np.isclose(k_scipy.nominal(""),exponencial_np.expoente.nominal(""),atol=(1e-2))
+    assert np.isclose(a,exponencial_np.cte_multiplicativa.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_np.cte_multiplicativa.nominal(""),atol=1e-2) 
+    assert np.isclose(k,exponencial_np.expoente.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_np.expoente.nominal(""),atol=1e-2) 
 
 
 

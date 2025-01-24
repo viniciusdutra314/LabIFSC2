@@ -1,3 +1,10 @@
+!!! warning
+    Mesmo que as funções de regressão da biblioteca recebam Medidas, a regressão é feita **sem considerar as
+    incertezas nas medições**, é passado arrays de Medidas somente para a conversão de unidades ser feita.
+    Para os erros serem considerados teríamos que usar algum método de [Total least square](https://en.wikipedia.org/wiki/Total_least_squares) que envolveria escolher alguma função peso para cada medida, o que faria as regressões
+    serem mais corretas porém incompatíveis com a apostila
+
+
 # Regressão Linear
 
 Quando temos uma equação física que prevê a relação entre duas ou mais variáveis, geralmente tentamos encontrar a  curva teórica prevista pela equação que mais se encaixe com os dados experimentais. Um exemplo é a lei de Hooke:
@@ -56,6 +63,7 @@ No fim, você chegará a uma equação matricial que te dá os coeficientes do p
 
 $$\text{coeficientes} = (A^T A)^{-1} A^T y$$
 
+Em que a matriz A é matrix de [Vandermonde](https://en.wikipedia.org/wiki/Vandermonde_matrix), definida como \(A_{ij}=x^j_i\)
 É interessante pensar que você, em teoria, pode fazer o método dos mínimos quadrados para um polinômio arbitrário com uma linha de Python.
 
 Caso queiram ver mais sobre, recomendo este [artigo](https://www.researchgate.net/publication/337103890_Linear_Least_Squares_Versatile_Curve_and_Surface_Fitting_CDT-17) do Luciano da Fontoura Costa. Ele é um pesquisador do IFSC que, além dos seus artigos de pesquisa, também publica vários materiais interessantes a nível de graduação chamados de CDT (Costa’s Didactic Texts).
@@ -72,7 +80,7 @@ Que é uma equação linear se plotarmos \(x \times \ln(y)\). Talvez seja difíc
 
 $$Y = kx + B$$
 
-Agora creio que seja fácil ver que é de fato linear, a menos de uma transformação de variável.
+Agora creio que seja fácil ver que é de fato linear a menos de uma transformação de variável.
 
 ## Regressão Lei de Potência
 

@@ -6,5 +6,5 @@ Para não misturar o uso da biblioteca com a teoria por trás, estou aqui dividi
 secção em duas
 
 #[Teoria dos mínimos quadrados](regressoes_teoria.md)
-#[Uso na biblioteca](#lei-de-potência)
+#[Uso na biblioteca](regressao_pratica.md)
 
