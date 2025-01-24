@@ -1,6 +1,6 @@
 Muitas constantes da natureza são usadas para cálculos físicos, Alguns exemplos são \(\pi\), \(c\) e \(G\). A biblioteca possui um submódulo chamado **constantes** que armazena esses valores segundo a [CODATA2022](https://arxiv.org/abs/2409.03787). É altamente recomendado que você utilize um editor de texto com **autocompletar** para rapidamente encontrar a constante desejada.
 
-<img src=autocomplete.png alt='Exemplo com autocomplete' width=500>
+<img src=images/autocomplete.png alt='Exemplo com autocomplete' width=500>
 
 ## Exatas
 Como os nomes das constantes são geralmente verbosos, é interessante salvar a constante com uma variável de nome reduzido no seu código. O código abaixo calcula o tempo que um fóton leva para sair do Sol e chegar até a Terra, usando a velocidade da luz e o semi-eixo maior médio da órbita da Terra:

@@ -2,10 +2,10 @@ site_name: LabIFSC2
 nav:
   - Sobre: index.md
   - Introdução: introducao.md
-  - Constantes: Constantes/constantes da natureza.md
+  - Constantes: constantes da natureza.md
   - Funções Matemáticas: funcoes_matematicas.md
   - Arrays: arrays.md
-  - Regressões (Fitting): Regressões (fitting)/linear.md
+  - Mínimos quadrados: regressoes_menu.md
   - Gráficos: graficos.md
   - Formataçõs/LaTeX: formatacoes_latex.md
   - Como erros são propagados?: propagacao_de_erros.md
