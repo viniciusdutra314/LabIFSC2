@@ -4,14 +4,14 @@ float, para que se possa criar gráficos em bibliotecas como o [Matplotlib](http
 ## Nominais
 Para obter os valores nominais de um array numpy de medidas basta usar a função `nominais(array_medida,unidade)`
 ```py
---8<-- "tests/test_doc_nominal.py:1:5"
+--8<-- "tests/test_doc_nominal.py:7:9"
 ```
 
 
 ## Incertezas
 De maneira análogo podemos também pegar as incertezas com `incertezas(array_medida,unidade)`
 ```py
---8<-- "tests/test_doc_incerteza.py:1:5"
+--8<-- "tests/test_doc_incerteza.py:7:9"
 ```
 
 ## Dispersão com barras de erro 
@@ -21,8 +21,8 @@ basta usar a função do matplotlib [`plt.errorbar`](https://matplotlib.org/stab
 
 <img src="./images/graficos_scatter.jpg" width=400>
 
-```py hl_lines="12-16"
---8<-- "tests/test_doc_grafico_scatter.py:1:19"
+```py
+--8<-- "tests/test_doc_grafico_scatter.py:5:21"
 ```
 
 Repare que as unidade são variáveis no código que podem ser modificadas rapidamente.
@@ -38,8 +38,8 @@ Regressões de dados inevitavelmente apresentam incertezas nos parâmetros encon
 
 <img src="./images/graficos_fitting.jpg" width=400>
 
-```py hl_lines="20-29"
---8<-- "tests/test_doc_grafico_fitting.py:1:30"
+```py
+--8<-- "tests/test_doc_grafico_fitting.py:7:39"
 ```
 
 Perceba que para lidar com as unidades acaba que a sintaxe fica infelizmente verbosa, isso é algo pessoal mas nesse caso eu recomendo usar um tipo de indentação chamada `Hanging indentation ` em cada argumento ocupa uma linha de código, assim o código fica mais legível (na minha opinião) e menos horizontal.

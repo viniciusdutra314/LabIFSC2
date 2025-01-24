@@ -9,14 +9,14 @@ Com arrays numpy temos a magia da vetorização, ou seja, podemos fazer operaç�
 entre arrays, o resultado disso são operações elemento a elemento
 
 ```py
---8<-- "tests/test_doc_operacoes_basicas_arrays.py:1:12"
+--8<-- "tests/test_doc_operacoes_basicas_arrays.py:5:14"
 ```
 
 ## Operações matemáticas
 Como discutido na secção de [Funçõs matemáticas](funcoes_matematicas.md), as funções do numpy podem atuar diretamente na classe Medida.
 
 ```py 
---8<-- "tests/test_doc_sqrt_vetorizado.py:1:8"
+--8<-- "tests/test_doc_sqrt_vetorizado.py:5:10"
 ```
 
 ## linspaceM
@@ -27,7 +27,7 @@ o valor da última, a quantidade de medições entre elas, a incerteza da mediç
 No exemplo abaixo nós fizemos 10 medições entre [1cm,10cm], com precisão de 0.05cm cada
 
 ```py 
---8<-- "tests/test_doc_linspace.py:1:7"
+--8<-- "tests/test_doc_linspace.py:5:9"
 ```
 
 A função é o análogo do [np.linspace](https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy-linspace) que recebe medidas
@@ -39,5 +39,5 @@ Agora que temos as distâncias nós medimos o campo magnético pra cada distânc
 teríamos que criar 10 objetos `Medida` diretamente? Não, a solução é o lab.arrayM, ele recebe uma lista/array
 de valores nominais, a incerteza das medidas e a unidade 
 ```py 
---8<-- "tests/test_doc_linspace.py:8:11"
+--8<-- "tests/test_doc_linspace.py:10:13"
 ```

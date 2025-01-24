@@ -54,7 +54,7 @@ Retornando ao exemplo da estimativa da gravidade usando um pêndulo, mas agora c
 A classe `Medida` possui um atributo chamado `histograma`, onde estão guardados os histogramas. No dia a dia, esse atributo deve ser raramente acessado, mas para fins didáticos ele é interessante.
 
 ```py 
---8<-- "tests/test_doc_gravidade_histograma.py:8:15"
+--8<-- "tests/test_doc_gravidade_histograma.py:11:17"
 ```
 
 Repare como \(T\) e \(L\) são gaussianas (\(\mu_L=15cm\), \(\sigma_L=1cm\)) e (\(\mu_T=780ms\), \(\sigma_T=80ms\)).

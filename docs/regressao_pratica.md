@@ -18,7 +18,7 @@ nós registramos a sua posição na vertical em função de tempo e queremos enc
 que se encaixa nos dados
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:1:13"
+--8<-- "tests/test_doc_regressoes_construir.py:7:16"
 ```
 Nós podemos acessar os coeficientes do polinômio fazendo, `polinomio.a`,`polinomio.b` etc (seguindo a convenção
 de que **a** é o coeficiente de maior grau), ou fazendo a técnica de unpacking do python que nós igualamos os 
@@ -33,7 +33,7 @@ são somente ilustrativas*, podemos acessar a constante multiplicativa fazendo `
 fazendo `exponencial.expoente`.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:13:24"
+--8<-- "tests/test_doc_regressoes_construir.py:23:33"
 ```
 Repare que a regressão aceita uma base (por padrão base=\(e\))
 
@@ -42,11 +42,7 @@ Repare que a regressão aceita uma base (por padrão base=\(e\))
 Quando queremos fazer o gráfico de uma curva precisamos amostrar essa curva em conjunto de pontos,
 tomemos o exemplo simples de fazer o gráfico da função exponencial
 
-```py
---8<-- "tests/test_doc_grafico_seno.py:1:6"
-```
 
-<img src="./images/exponencial.jpg" width=300>
 
 A interface do LabIFSC2 é parecida, a diferença é que devido a [propagação de erros](propagacao_de_erros.md) ser feita por monte carlo, além da curva temos também a dispersão dessa curva teórica.
 

@@ -3,14 +3,13 @@ import re
 from collections.abc import Callable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
-from numbers import Number, Real
+from numbers import Real
 from statistics import NormalDist
 from string import Template
 from typing import Any
 
 import numpy as np
 from pint import Quantity, UnitRegistry
-from pint.facets.plain import PlainQuantity
 from pint.util import UnitsContainer
 
 from . import MCSamples

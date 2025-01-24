@@ -4,7 +4,7 @@
 
 Eis um exemplo simples de uso da biblioteca, estamos estimando a gravidade da Terra baseado no período de um pêndulo pela conhecida formula \(T=2\pi \sqrt{\frac{L}{g}}\)
 ```py title="Estimativa da gravidade (com LabIFSC2)"
---8<-- "tests/test_doc_gravidade_com_LabIFSC2.py:1:12"
+--8<-- "tests/test_doc_gravidade_com_LabIFSC2.py:5:13"
 ```
 
 \(g=(9,73 \, \pm \, 0,07) \, 
@@ -14,7 +14,7 @@ Eis um exemplo simples de uso da biblioteca, estamos estimando a gravidade da Te
 Podemos copiar o resultado em formato \(\LaTeX\) e adicionarmos em nosso relatório! A fins de comparação esse é o código equivalente sem a ajuda da biblioteca, perceba como sem a biblioteca existem muitas possibilidades de erros acidentais
 
 ```py title="Estimativa da gravidade (sem LabIFSC2)"
---8<-- "tests/test_doc_gravidade_sem_LabIFSC2.py:1:12"
+--8<-- "tests/test_doc_gravidade_sem_LabIFSC2.py:5:14"
 ```
 ## Instalação
 A biblioteca está disponível no PyPI(Python Package Index), então ela pode ser instalada facilmente usando pip, atualmente é necessário ter uma versão do python igual ou superior a 3.10, para descobrir a versão do seu python digite `python --version` no terminal

@@ -5,8 +5,8 @@ Muitas constantes da natureza são usadas para cálculos físicos, Alguns exempl
 ## Exatas
 Como os nomes das constantes são geralmente verbosos, é interessante salvar a constante com uma variável de nome reduzido no seu código. O código abaixo calcula o tempo que um fóton leva para sair do Sol e chegar até a Terra, usando a velocidade da luz e o semi-eixo maior médio da órbita da Terra:
 
-```python
---8<-- "tests/test_doc_constantes.py:1:6"
+```py
+--8<-- "tests/test_doc_constantes.py:2:9"
 ```
 
 Repare como não há incerteza no resultado anterior, isso porque a velocidade da luz e a unidade astronômica são **exatas**, A velocidade da luz, por exemplo, é usada para a própria definição de distância no sistema métrico. O único erro vem da precisão finita de floats, geralmente na casa de \(~10^{-16}\) no caso do [Python](https://docs.python.org/3/library/sys.html#sys.float_info).
@@ -16,6 +16,6 @@ Repare como não há incerteza no resultado anterior, isso porque a velocidade d
 ## Inexatas
 As constantes do exemplo anterior eram exatas porque eram definições do sistema métrico. No próximo exemplo, do cálculo do campo magnético de um solenoide, será usada a constante de permeabilidade magnética \(\mu_0\) = (1,2566370613 ± 2E-10)x10⁻⁶ N/A², que possui uma pequena incerteza:
 
-```python
---8<-- "tests/test_doc_constantes_com_incerteza.py:1:8"
+```py
+--8<-- "tests/test_doc_constantes_com_incerteza.py:4:10"
 ```

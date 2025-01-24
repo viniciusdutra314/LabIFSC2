@@ -3,7 +3,7 @@ A classe Medida implementa todas as operações matemáticas elementares,
 portanto, operações entre Medidas são idênticas a operações entre números 
 
 ```py
---8<-- "tests/test_doc_operacoes_basicas.py:1:10"
+--8<-- "tests/test_doc_operacoes_basicas.py:7:14"
 ```
 
 ## Funções Numpy
@@ -13,7 +13,7 @@ O LabIFSC2 implementa uma compatibilidade direta com as funções do Numpy (tecn
 
 
 ```py
---8<-- "tests/test_doc_sqrt_vetorizado.py:1:8"
+--8<-- "tests/test_doc_sqrt_vetorizado.py:5:8"
 ```
 
 [^1]:

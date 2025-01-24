@@ -25,7 +25,7 @@ Para um exemplo prático, consideraremos um tipo de medida comum, o IMC (não co
 Com o LabIFSC2, podemos fazer os cálculos assim:
 
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_imc.py:1:6"
+--8<-- "tests/test_doc_imc.py:5:8"
 ```
 Calculamos então que o IMC tem valor esperado de \(\mu=24,5 \, kg/m²\) e desvio padrão de \(\sigma=0.3 \, kg/m²\).
 
@@ -34,7 +34,7 @@ repare que é necessário especificar uma unidade, visto que o valor nominal/inc
 dela. É importante notar que somente em casos bem específicos você vai acessar diretamente esses valores, se você usa muito essas funções talvez não esteja usando corretamente a biblioteca
 
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_imc.py:7:8"
+--8<-- "tests/test_doc_imc.py:9:10"
 ```
 
 ## Comparando Medidas
@@ -47,7 +47,7 @@ O método que faz essa comparação é `comparar_medidas`, que recebe duas Medid
 - INCONCLUSIVO
 
 ```py title="Comparando IMC"
---8<-- "tests/test_doc_equivalencia.py:1:6"
+--8<-- "tests/test_doc_equivalencia.py:5:8"
 ```
 
 Perceba que 3 resultados são possíveis, então infelizmente a sintaxe `ìmc1==imc2` ou `ìmc1!=imc2` não é perfeita, porque no caso inconclusivo temos `ìmc1==imc2 (False)` e `ìmc1!=imc2 (False)` ao mesmo tempo, o que creio ser javascript demais pro meu gosto.
@@ -64,7 +64,7 @@ Intuitivamente, a comparação é feita pelo quanto os valores nominais são dif
 Como estamos falando de medidas experimentais, falamos de **intervalos** e não valores exatos. Objetos da classe `Medida` possuem um método chamado `intervalo_de_confiança`. Com ele, podemos especificar uma probabilidade `p` de estarmos representando os valores possíveis das Medidas.
 
 ```py title="Intervalo de confiança IMC"
---8<-- "tests/test_doc_intervalo_de_confianca.py:1:5"
+--8<-- "tests/test_doc_intervalo_de_confianca.py:5:7"
 ```
 Basicamente, isso significa que estamos 95% certos de que o IMC está entre \(23,91 \le IMC \le 25,08\). Talvez você esteja surpreso que pelo método de medida temos 1 unidade inteira de IMC podendo variar.
 
@@ -80,5 +80,5 @@ print(f"{medida:unidade}")
 Um exemplo concreto se encontra abaixo:
 
 ```py title="Conversão de unidades Medida"
---8<-- "tests/test_doc_imc_cm.py:1:9"
+--8<-- "tests/test_doc_imc_cm.py:10:14"
 ```
