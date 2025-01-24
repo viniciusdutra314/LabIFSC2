@@ -35,17 +35,16 @@ def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
     mean=np.mean(histograma)
     std=np.std(histograma,mean=mean)
     if (isinstance(histograma,Quantity)):
-        resultado=Medida(mean.magnitude,std.magnitude,str(histograma.units))
+        resultado=Medida(mean.magnitude,str(histograma.units),std.magnitude)
     else:
-        resultado=Medida(mean,std,"")
+        resultado=Medida(mean,"",std)
     resultado._histograma=histograma
     return resultado
 
 class Medida:
 
     @obrigar_tipos
-    def __init__(self,nominal:Real,incerteza : Real,
-                 unidade : str ):
+    def __init__(self,nominal:Real | list,unidade : str,incerteza : Real):
         """
         Representa uma medida física com um valor nominal, incerteza e unidade.
 
@@ -58,18 +57,23 @@ class Medida:
             unidade (str): A unidade da medida.
         """
         if incerteza<0: raise ValueError("Incerteza não pode ser negativa")
-        self._nominal= ureg.Quantity(nominal,unidade).to_reduced_units()
-        self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
+
+        if isinstance(nominal,list):
+            if len(nominal)<2:
+                raise ValueError("Lista de medidas deve ter pelo menos 2 elementos")
+            mean=np.average(nominal)
+            std=np.std(nominal,mean=mean)
+            self._nominal= ureg.Quantity(mean,unidade).to_reduced_units()
+            if std>incerteza:
+                self._incerteza=ureg.Quantity(std,unidade).to_reduced_units()
+            else:
+                self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
+        else:
+            self._nominal=ureg.Quantity(nominal,unidade).to_reduced_units()
+            self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
         self._histograma:Any=None
         self._nominal.ito_reduced_units
         self._incerteza.ito_reduced_units
-
-
-    def _erro_por_mudar_atributo(self: 'Medida') -> None:
-        raise PermissionError("Para garantir a integridade da Medida realizada \
-o LabIFSC2 não permite a alteração direta de nominal, incerteza, unidade (somente leitura).\
-Caso precise de uma nova Medida, crie outra com o \
-construtor padrão Medida(nominal, incerteza, unidade)")
 
     @obrigar_tipos
     def nominal(self:'Medida',unidade:str) -> float:
@@ -204,7 +208,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
         if self._nominal.is_compatible_with(outro._nominal):
             if self is outro:
-                return 2*self if positivo else Medida(0,0,str(self._nominal.units))
+                return 2*self if positivo else Medida(0,str(self._nominal.units),0)
 
             elif (self._histograma is None and outro._histograma is None):
                 #Como existe solução analítica da soma/subtração entre duas gaussianas
@@ -213,8 +217,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
                 else: media=self._nominal-outro._nominal
                 desvio_padrao=(self._incerteza**2 + outro._incerteza**2)**(1/2)
                 desvio_padrao.ito(media.units)
-                return Medida(media.magnitude,desvio_padrao.magnitude,
-                              str(media.units))
+                return Medida(media.magnitude,str(media.units),desvio_padrao.magnitude)
             else:
                 if positivo: return montecarlo(lambda x,y: x+y,self,outro)
                 else : return montecarlo(lambda x,y: x-y,self,outro)
@@ -232,8 +235,7 @@ construtor padrão Medida(nominal, incerteza, unidade)")
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x*y,self,outro)
         elif isinstance(outro,Real):
-            resultado=Medida(self._nominal.magnitude*outro,
-                             abs(self._incerteza.magnitude*outro),str(self._nominal.units))
+            resultado=Medida(self._nominal.magnitude*outro,str(self._nominal.units),abs(self._incerteza.magnitude*outro),)
             if self._histograma is not None:
                 resultado._histograma=self._histograma*outro
             return resultado
@@ -241,11 +243,12 @@ construtor padrão Medida(nominal, incerteza, unidade)")
             return NotImplemented
 
     def __truediv__(self:'Medida', outro:Any) -> 'Medida':
-        if self is outro: return Medida(1,0,str(self._nominal.units))
+        if self is outro: return Medida(1,str(self._nominal.units),0)
         elif isinstance(outro,Real):
             resultado=Medida(self._nominal.magnitude/float(outro),
+                             str(self._nominal.units),
                              self._incerteza.magnitude/abs(float(outro)),
-                             str(self._nominal.units))
+                             )
             if self._histograma is not None:
                 resultado._histograma=self._histograma/float(outro)
             return resultado
@@ -298,16 +301,16 @@ construtor padrão Medida(nominal, incerteza, unidade)")
 
     def __abs__(self:'Medida') -> 'Medida':
         resultado=Medida(abs(self._nominal.magnitude),
-                         self._incerteza.magnitude,
-                         str(self._nominal.units))
+                         str(self._nominal.units),
+                         self._incerteza.magnitude,)
         if self._histograma is not None:
             resultado._histograma=abs(self._histograma)
         return resultado
 
     def __neg__(self:'Medida') -> 'Medida':
         resultado=Medida(-(self._nominal.magnitude),
-                         self._incerteza.magnitude,
-                         str(self._nominal.units))
+                         str(self._nominal.units),
+                         self._incerteza.magnitude,)
         if self._histograma is not None:
             resultado._histograma=-self._histograma
         return resultado

@@ -9,8 +9,8 @@ def test_doc_histograma():
 
     # Definindo as constantes e medidas
     pi = constantes.pi
-    L = Medida(15, 1, 'cm')
-    T = Medida(780, 80, 'ms')
+    L = Medida(15, 'cm',1)
+    T = Medida(780, 'ms',80)
     gravidade = (4 * pi**2) * L / T**2
     histograma_g = gravidade.histograma
     histograma_L = L.histograma

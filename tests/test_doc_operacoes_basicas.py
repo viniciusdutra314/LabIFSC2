@@ -4,8 +4,8 @@ from LabIFSC2 import *
 def test_doc_operacoes_basicas():
     
 
-    x=Medida(1,0.01,'m')
-    y=Medida(200,1,'cm')
+    x=Medida(1,'m',0.01)
+    y=Medida(200,'cm',1)
     #Operações básicas
     print(x+y)#(3,00 ± 0,01) m
     print(x-y)#(-1,00 ± 0,01) m 
@@ -20,5 +20,3 @@ def test_doc_operacoes_basicas():
     assert isclose((x*y).nominal('m²'),2,1e-2)
     assert isclose((x/y).nominal(''),0.5,1e-2)
     assert isclose((y**2).nominal('cm²'),4e4,1e-2)
-
-

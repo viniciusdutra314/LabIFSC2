@@ -1,26 +1,24 @@
 ## Importação
-Como a biblioteca será usada na maioria dos casos para códigos pequenos, não vejo problema em importar a biblioteca para o namespace global. Então, sinta-se à vontade para fazer:
+Como a biblioteca é em português e a maioria das bibliotecas são em inglês, acho muito difícil haver algum tipo de conflito de nomes. Então, sinta-se à vontade para fazer:
 
 ```py
 from LabIFSC2 import *
 ```
 
-Ou, se não quiser sujar o namespace global, use:
+Ou, se não quiser poluir o namespace global, use:
 
 ```py
 import LabIFSC2 as lab
 ```
 
-Só não importe globalmente outra biblioteca numérica como o numpy, caso contrário, haverá conflitos de nomes (lab.sin, np.sin,lab.linspace,np.linspace...).
-
 ## Classe Medida
-A principal classe da biblioteca é a `Medida`. Ela recebe 3 argumentos para sua inicialização:
+A principal classe da biblioteca é a `Medida`. Ela recebe 3 argumentos para sua inicialização[^1]:
 
-- Nominal (\(\mu\)): Valor medido ou média dos valores medidos.
-- Incerteza (\(\sigma\)): Incerteza experimental ou dispersão das medidas.
+- Nominal (\(\mu\)): Valor(es) medido(s).
 - Unidade: Unidade da medida (precisa ser a mesma do valor nominal e da incerteza).
+- Incerteza (\(\sigma\)): Incerteza experimental.
 
-Para um exemplo prático, consideraremos um tipo de medida comum, o IMC (não confundir com ICMC). Suponhamos que uma pessoa foi medida (valores fictícios) com uma fita métrica e temos certeza apenas na casa de 1 cm, e usamos uma balança com precisão de 100 g.
+Para um exemplo prático, consideraremos um tipo de medida comum, o IMC (Índice de Massa Corporal), não confundir com (ICMC). Suponhamos que uma pessoa foi medida (valores fictícios) com uma fita métrica e temos certeza apenas na casa de 1 cm de sua altura e usamos uma balança com precisão de 100 g para medir a sua massa.
 
 Com o LabIFSC2, podemos fazer os cálculos assim:
 
@@ -29,12 +27,27 @@ Com o LabIFSC2, podemos fazer os cálculos assim:
 ```
 Calculamos então que o IMC tem valor esperado de \(\mu=24,5 \, kg/m²\) e desvio padrão de \(\sigma=0.3 \, kg/m²\).
 
-Você pode acessar o valor nominal e a incerteza fazendo `medida.nominal(unidade)` ou `medida.incerteza(unidade)`,
-repare que é necessário especificar uma unidade, visto que o valor nominal/incerteza são totalmente dependentes
-dela. É importante notar que somente em casos bem específicos você vai acessar diretamente esses valores, se você usa muito essas funções talvez não esteja usando corretamente a biblioteca
+Você pode acessar o valor nominal e a incerteza fazendo `medida.nominal(unidade)` ou `medida.incerteza(unidade)`. Repare que é necessário especificar uma unidade, visto que o valor nominal/incerteza são totalmente dependentes dela. É importante notar que somente em casos bem específicos você vai acessar diretamente esses valores. Se você usa muito essas funções, talvez não esteja usando a biblioteca corretamente.
 
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_imc.py:9:10"
+```
+
+## Várias medições
+Podemos também criar uma medida baseada em várias medições, imagine que você está medindo o diâmetro de um fio levemente irregular. Você pode preencher o valor nominal como sendo uma lista de medições, a biblioteca irá considerar o valor nominal como a média dos valores.
+
+```py title="Cálculo de IMC"
+--8<-- "tests/test_doc_medida_lista.py:7:8"
+```
+Caso o desvio padrão das medições seja maior do que a incerteza experimental, então a incerteza é o desvio padrão. Intuitivamente, podemos pensar que o fio é objetivamente irregular e não existe exatamente um raio que o define. 
+
+Mas se a incerteza experimental for maior que o desvio padrão, então não temos certeza se essa variação é devido ao fio ter um formato irregular ou por efeitos aleatórios de medição. A incerteza então é a incerteza experimental. 
+
+
+Esse comportamento pode ser visto nesse exemplo, preste atenção nas incertezas:
+
+```py title="Cálculo de IMC"
+--8<-- "tests/test_doc_medida_lista.py:7:10"
 ```
 
 ## Comparando Medidas
@@ -82,3 +95,6 @@ Um exemplo concreto se encontra abaixo:
 ```py title="Conversão de unidades Medida"
 --8<-- "tests/test_doc_imc_cm.py:10:14"
 ```
+
+[^1]:
+    Perceba que o LabIFSC2 tem uma diferença de ordem de argumentos na criação de uma `Medida` em relação ao LabIFSC. Eu decidi colocar as unidades no meio da declaração pois, pessoalmente, acho que uma unidade no meio dos argumentos torna a leitura dos valores nominal e incerteza mais simples. Isso fica mais evidente em funções como `lab.linspaceM` e `lab.arrayM` em que temos muitos valores numéricos nos seus construtores.

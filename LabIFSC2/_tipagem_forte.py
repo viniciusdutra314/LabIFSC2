@@ -24,12 +24,12 @@ def checar_argumento(arg:Any,nome_argumento:str,tipo_esperado:Any,
             except TypeError: pass
         if not match:
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) deve ser de um dos tipos {get_args_result} \
-                            e não {type(arg)}")
+e não {type(arg)}")
     
     else: #tipos simples 
         if not (isinstance(arg, tipo_esperado) or issubclass(type(arg),tipo_esperado)):
             raise TypeError(f"Argumento {nome_argumento} (da função {func_name}) precisa ser do tipo {tipo_esperado} \
-                            e não {type(arg)}")
+ e não {type(arg)}")
 
 def remover_self_dentro_de_classe(annotations:dict[str,Any], args:tuple[Any,...])->tuple[tuple[Any,...],dict[str,Any]]:
     args_para_analisar=copy(args)

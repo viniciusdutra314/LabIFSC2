@@ -95,7 +95,7 @@ def linspaceM(a:Real,b:Real,n : int,
     entre as Medidas
         
     """
-    return np.array([Medida(i,incertezas,unidade) for i in np.linspace(float(a),float(b),n)],dtype=object)
+    return np.array([Medida(i,unidade,incertezas) for i in np.linspace(float(a),float(b),n)],dtype=object)
         
 
 @obrigar_tipos
@@ -114,6 +114,6 @@ def arrayM(nominais:np.ndarray | Sequence ,unidade:str,incerteza:Real) ->np.ndar
     if not (isinstance(nominais[0],Real)):
         raise TypeError('Os valores do array não são números reais')
 
-    return np.array([Medida(nominal,incerteza,unidade) for nominal in nominais],dtype=Medida)
+    return np.array([Medida(nominal,unidade,incerteza) for nominal in nominais],dtype=Medida)
 
 

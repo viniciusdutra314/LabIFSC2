@@ -24,7 +24,7 @@ def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
     medidas_novas=[]
     for medida in array_medidas:
         unidade=str(medida._nominal.units)
-        medida_intermediaria=Medida(medida._nominal.magnitude,medida._incerteza._magnitude,"")
+        medida_intermediaria=Medida(medida._nominal.magnitude,"",medida._incerteza._magnitude)
         medida_intermediaria=lab_func(medida_intermediaria)
         nominal=medida_intermediaria._nominal._magnitude
         incerteza=medida_intermediaria._incerteza._magnitude
@@ -32,11 +32,11 @@ def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
             raise ValueError(f'Erro ao aplicar {lab_func} no processo de regressão. Lembre-se que, para regressões \
 exponenciais, todos os valores de y precisam ser positivos. No caso da regressão de lei de potência, os valores \
 em x também precisam ser positivos. Além disso, um valor pode não ser negativo, mas devido à incerteza associada, ele pode assumir valores negativos.')
-        medidas_novas.append(Medida(nominal,incerteza,unidade))
+        medidas_novas.append(Medida(nominal,unidade,incerteza))
     return np.array(medidas_novas)
 @obrigar_tipos
 def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
-    return np.array([Medida(med._nominal.magnitude,med._incerteza.magnitude,unidade) for med in array_medidas])
+    return np.array([Medida(med._nominal.magnitude,unidade,med._incerteza.magnitude,) for med in array_medidas])
 
 class ABCRegressao(ABC):
     
@@ -105,7 +105,7 @@ class MPolinomio(ABCRegressao):
     def amostrar(self:'MPolinomio', 
                  x:np.ndarray | Medida,unidade_y:str,retornar_como_medidas:bool=False) -> np.ndarray | Medida:
         self._verificar_tipo_de_x(x)
-        y=Medida(0,0,unidade_y)
+        y=Medida(0,unidade_y,0)
         for index,coef in enumerate(self._coeficientes):y+=coef*x**(self.grau-index)
         return self._retornar(y,unidade_y,retornar_como_medidas)
 
@@ -185,7 +185,7 @@ def regressao_polinomial(x_medidas:np.ndarray,y_medidas:np.ndarray,grau:int) -> 
     medidas_coeficientes=[]
     for index in range(len(p)):
         unidade= str((y_medidas[0]._nominal/x_medidas[0]._nominal**(grau-index)).units)
-        medidas_coeficientes.append(Medida(p[index],erros[index],unidade))
+        medidas_coeficientes.append(Medida(p[index],unidade,erros[index]))
     return MPolinomio(np.array(medidas_coeficientes))
 
 @obrigar_tipos

@@ -6,7 +6,7 @@ import LabIFSC2 as lab
 
 
 def test_MExponencial_valores():
-    a,k,base=lab.Medida(1,0.1,''),lab.Medida(3,0.01,''),np.exp(1)
+    a,k,base=lab.Medida(1,'',0.1),lab.Medida(3,'',0.01),np.exp(1)
     exponencial=lab._regressões.MExponencial(a,k,base)
     assert exponencial.cte_multiplicativa.nominal("")==a.nominal("")
     assert exponencial.expoente.nominal("")==k.nominal("")
@@ -17,9 +17,9 @@ def test_MExponencial_valores():
     assert base_armazenado==base
     
 def test_MExponencial_amostrar():
-    a,k,base=lab.Medida(1,0.001,''),lab.Medida(3,0.01,''),np.exp(1)
+    a,k,base=lab.Medida(1,'',0.001),lab.Medida(3,'',0.01),np.exp(1)
     exponencial=lab._regressões.MExponencial(a,k,base)
-    x=lab.Medida(2,0.1,'')
+    x=lab.Medida(2,'',0.1)
     exponencial.amostrar(x,'')
     x_array=lab.linspaceM(0,1,10,'',0.1)
     exponencial.amostrar(x_array,'')
@@ -41,8 +41,8 @@ def test_equivalencia_com_scipy(a, k):
     popt, pcov = curve_fit(exponencial_np, x_dados, y_dados, p0=[a, k])  
     a_scipy, k_scipy = popt
     perr = np.sqrt(np.diag(pcov))
-    a_scipy = lab.Medida(a_scipy, perr[0], '')
-    k_scipy = lab.Medida(k_scipy, perr[1], '')
+    a_scipy = lab.Medida(a_scipy, '',perr[0])
+    k_scipy = lab.Medida(k_scipy, '',perr[1])
 
     x_dados = lab.linspaceM(3, 10, 100, '',0.01)
     y_dados = exponencial_np(x_dados, a, k) * ruido

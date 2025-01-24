@@ -49,8 +49,8 @@ def test_regressao_polinomial_basic():
     assert polinomio.grau == grau
 
 def test_regressao_polinomial_medida():
-    x_dados = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, ''), Medida(4, 0.1, ''), Medida(5, 0.1, '')])
-    y_dados = np.array([Medida(1, 0.1, ''), Medida(4, 0.1, ''), Medida(9, 0.1, ''), Medida(16, 0.1, ''), Medida(25, 0.1, '')])
+    x_dados = np.array([Medida(1, '', 0.1), Medida(2, '', 0.1), Medida(3, '', 0.1), Medida(4, '', 0.1), Medida(5, '', 0.1)])
+    y_dados = np.array([Medida(1, '', 0.1), Medida(4, '', 0.1), Medida(9, '', 0.1), Medida(16, '', 0.1), Medida(25, '', 0.1)])
     grau = 2
     
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
@@ -80,16 +80,16 @@ def test_regressao_polinominal_tipos_errados():
 
 def test_MPolinomio_call():
     # Coeficientes do polinômio: 2x^2 + 3x + 4
-    coeficientes = np.array([Medida(2, 0.001, ''), Medida(3, 0.001, ''), Medida(4, 0.001, '')])
+    coeficientes = np.array([Medida(2, '', 0.001), Medida(3, '', 0.001), Medida(4, '', 0.001)])
     polinomio = lab2._regressões.MPolinomio(coeficientes)
     polinomio_number=lambda x: 2*x**2+3*x+4
     # Teste de chamada com um número
-    x = Medida(1, 0.001, '')
+    x = Medida(1, '', 0.001)
     resultado = polinomio.amostrar(x,'')
     np.isclose(resultado, polinomio_number(1), rtol=1e-3)
     
     # Teste de chamada com um array
-    x_array = np.array([Medida(1, 0.1, ''), Medida(2, 0.1, ''), Medida(3, 0.1, '')])
+    x_array = np.array([Medida(1, '', 0.1), Medida(2, '', 0.1), Medida(3, '', 0.1)])
     resultado_array = polinomio.amostrar(x_array,'')
     for x in range(1,3+1):
         np.isclose(resultado_array[x-1], polinomio_number(x), rtol=1e-3)
