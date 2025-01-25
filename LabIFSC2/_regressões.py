@@ -9,7 +9,6 @@ import pint
 from numpy import exp, log, power
 from numpy.polynomial import Polynomial
 
-from ._arrays import arrayM, incertezas, nominais
 from ._medida import Medida, ureg
 from ._tipagem_forte import obrigar_tipos
 
@@ -38,24 +37,22 @@ em x também precisam ser positivos. Além disso, um valor pode não ser negativ
 def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
     return np.array([Medida(med._nominal.magnitude,unidade,med._incerteza.magnitude,) for med in array_medidas])
 
-class ABCRegressao(ABC):
+class Regressao(ABC):
     
     def __init__(self)->None:
-        self._amostragem_pre_calculada_nominal: np.ndarray = np.array([])
-        self._amostragem_pre_calculada_incerteza: np.ndarray = np.array([])
+        self._amostragem_pre_calculada: np.ndarray = np.array([])
         self._valores: Iterator = iter([])
-        self._sigmas:float=2
     
-    def _retornar(self,y:np.ndarray|Medida,unidade_y:str)->np.ndarray|Medida:
-        if isinstance(y,Medida): y=np.array([y])
-        self._amostragem_pre_calculada_nominal=nominais(y,unidade_y)
-        self._amostragem_pre_calculada_incerteza=incertezas(y,unidade_y)
-        if y.size==1: y=y[0]
-        return self._amostragem_pre_calculada_nominal
+    def _retornar(self,y:np.ndarray,unidade_y:str)->np.ndarray:
+        for y_medida in y:
+            y_medida._histograma=None
+        self._amostragem_pre_calculada=y
+        
+        resultado:np.ndarray=np.array([x.nominal(unidade_y) for x in self._amostragem_pre_calculada],dtype=float)
+        return resultado
     
-    def _verificar_tipo_de_x(self,x:np.ndarray|Medida)->None:
-        if isinstance(x,np.ndarray):
-            if not isinstance(x[0],Medida):
+    def _verificar_tipo_de_x(self,x:np.ndarray)->None:
+        if not isinstance(x[0],Medida):
                 raise TypeError("x precisa ser um array de medidas ou uma medida \
 mesmo que com incerteza 0, pois precisamos das unidades")
         return None
@@ -64,7 +61,7 @@ mesmo que com incerteza 0, pois precisamos das unidades")
     def __repr__(self)->str:...
 
     @abstractmethod
-    def amostrar(self, x:np.ndarray|Medida,unidade_y:str) -> np.ndarray|Medida:...
+    def amostrar(self, x:np.ndarray,unidade_y:str) -> np.ndarray:...
 
     def __iter__(self)->Iterator[object]:
         return self._valores
@@ -84,43 +81,9 @@ mesmo que com incerteza 0, pois precisamos das unidades")
 
         self._sigmas=float(sigmas)
 
-    @property
-    def curva_min(self)->np.ndarray:
-        """
-        Calcula a curva mínima da regressão.
-        A curva mínima é calculada subtraindo-se o produto dos sigmas pela incerteza da amostragem pré-calculada nominal.
-        
-        Returns:
-            np.ndarray: A curva mínima calculada.
-        
-        Raises:
-            ValueError: Se a amostragem pré-calculada nominal não estiver disponível.
-        """
-
-        if not self._amostragem_pre_calculada_nominal.size:
-            raise ValueError('É necessário amostrar a regressão antes de calcular a curva min')
-        y:np.ndarray=self._amostragem_pre_calculada_nominal-self._sigmas*self._amostragem_pre_calculada_incerteza
-        return y
-    
-    @property
-    def curva_max(self)->np.ndarray:
-        """
-        Calcula a curva máxima da regressão.
-        A curva máxima é calculada somando o produto dos sigmas pela incerteza da amostragem pré-calculada nominal.
-        
-        Returns:
-            np.ndarray: A curva máxima calculada.
-        
-        Raises:
-            ValueError: Se a amostragem pré-calculada nominal não estiver disponível.
-        """
-        if not self._amostragem_pre_calculada_incerteza.size:
-            raise ValueError('É necessaŕio amostrar a regressão antes de calcular a curva min')
-        y:np.ndarray=self._amostragem_pre_calculada_nominal+self._sigmas*self._amostragem_pre_calculada_incerteza
-        return y
 
 
-class MPolinomio(ABCRegressao):
+class MPolinomio(Regressao):
     @obrigar_tipos
     def __init__(self,coeficientes:np.ndarray):
         if not (isinstance(coeficientes[0],Medida)):
@@ -133,22 +96,24 @@ class MPolinomio(ABCRegressao):
         self.grau=len(coeficientes)-1
     
     @obrigar_tipos
-    def amostrar(self:'MPolinomio', x:np.ndarray | Medida,unidade_y:str) -> np.ndarray | Medida:
+    def amostrar(self:'MPolinomio', x:np.ndarray,unidade_y:str) -> np.ndarray:
         """
-        Gera uma amostra de valores y a partir de um conjunto de valores x utilizando os coeficientes do polinômio.
-        
+        Calcula os valores de um polinômio para um conjunto de entradas x.
         Args:
-            x (np.ndarray | Medida): Conjunto de valores de entrada.
-            unidade_y (str): Unidade de medida para os valores de saída.
-        
+            x (np.ndarray): Um array de valores nos quais o polinômio será avaliado.
+            unidade_y (str): A unidade de medida para os valores calculados do polinômio.
         Returns:
-            np.ndarray | Medida: Valores de saída calculados a partir do polinômio.
+            np.ndarray: Um array contendo os valores calculados do polinômio nas unidades especificadas.
+        Raises:
+            TypeError: Se o tipo de `x` não for np.ndarray.
         """
 
+
         self._verificar_tipo_de_x(x)
-        y=Medida(0,unidade_y,0)
-        for index,coef in enumerate(self._coeficientes):y+=coef*x**(self.grau-index)
-        return self._retornar(y,unidade_y)
+        y:Any=Medida(0,unidade_y,0)
+        for index,coef in enumerate(self._coeficientes):y+=power(x,self.grau-index)*coef
+        polinomio_calculado:np.ndarray=y
+        return self._retornar(polinomio_calculado,unidade_y)
 
     def __iter__(self) -> Iterator[Medida]:
         return iter(self._coeficientes)
@@ -158,7 +123,7 @@ class MPolinomio(ABCRegressao):
 
 
 
-class MExponencial(ABCRegressao):
+class MExponencial(Regressao):
     '''Classe para modelar uma função exponencial
     y = a * base^(kx)
     '''
@@ -171,26 +136,26 @@ class MExponencial(ABCRegressao):
         self._valores=iter((a,k,base))
     
     @obrigar_tipos
-    def amostrar(self:'MExponencial', x:np.ndarray|Medida,unidade_y:str)->np.ndarray|Medida:
+    def amostrar(self:'MExponencial', x:np.ndarray,unidade_y:str)->np.ndarray:
         """
-        Gera uma amostra exponencial baseada nos parâmetros fornecidos.
-        
+        Gera uma amostra de valores exponenciais com base nos parâmetros fornecidos.
         Args:
-            x (np.ndarray | Medida): O valor ou array de valores para os quais a amostra será gerada.
-        
+            x (np.ndarray): Um array de valores de entrada.
+            unidade_y (str): A unidade dos valores de saída.
         Returns:
-            np.ndarray | Medida: A amostra gerada, no mesmo formato do parâmetro de entrada `x`.
-
+            np.ndarray: Um array de valores calculados com base na função exponencial.
+        Raises:
+            TypeError: Se o tipo de `x` não for np.ndarray.
         """
 
         self._verificar_tipo_de_x(x)
-        y:np.ndarray|Medida=np.power(float(self.base),(self.expoente*x))*self.cte_multiplicativa
+        y:np.ndarray=np.power(float(self.base),(self.expoente*x))*self.cte_multiplicativa
         return self._retornar(y,unidade_y)
     
     def __repr__(self)->str:
         return f'MExponencial(cte_multiplicativa={self.cte_multiplicativa},expoente={self.expoente},base={self.base})'
 
-class MLeiDePotencia(ABCRegressao):    
+class MLeiDePotencia(Regressao):    
     @obrigar_tipos
     def __init__(self, a: Medida, n: Medida,y_unidade:pint.Quantity):
         super().__init__()
@@ -200,20 +165,19 @@ class MLeiDePotencia(ABCRegressao):
         self._y_unidade=y_unidade
     
     @obrigar_tipos
-    def amostrar(self:'MLeiDePotencia', x:np.ndarray|Medida,unidade_y:str) -> np.ndarray|Medida:
+    def amostrar(self:'MLeiDePotencia', x:np.ndarray,unidade_y:str) -> np.ndarray:
         """
-        Amostra valores com base na lei de potência.
-        
+        Amostra valores baseados na lei de potência.
         Args:
-            x (np.ndarray | Medida): Valores de entrada para amostragem.
-            unidade_y (str): Unidade da medida de saída.
-        
+            x (np.ndarray): Array de valores de entrada.
+            unidade_y (str): Unidade da variável dependente y.
         Returns:
-            np.ndarray | Medida: Valores amostrados com a unidade especificada.
+            np.ndarray: Array de valores amostrados com a unidade especificada.
+        Raises:
+            ValueError: Se a unidade de x não for compatível com a unidade esperada.
         """
 
         self._verificar_tipo_de_x(x)
-        if isinstance(x,Medida):x=np.array([x])
         unidade_expoente=str((x[0]._nominal**self.potencia._nominal).units)
         x=_forcar_troca_de_unidade(x,'')    
         expoente=x**self.potencia

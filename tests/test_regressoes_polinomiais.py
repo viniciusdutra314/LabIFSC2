@@ -83,10 +83,6 @@ def test_MPolinomio_call():
     coeficientes = np.array([Medida(2, '', 0.001), Medida(3, '', 0.001), Medida(4, '', 0.001)])
     polinomio = lab2._regressões.MPolinomio(coeficientes)
     polinomio_number=lambda x: 2*x**2+3*x+4
-    # Teste de chamada com um número
-    x = Medida(1, '', 0.001)
-    resultado = polinomio.amostrar(x,'')
-    np.isclose(resultado, polinomio_number(1), rtol=1e-3)
     
     # Teste de chamada com um array
     x_array = np.array([Medida(1, '', 0.1), Medida(2, '', 0.1), Medida(3, '', 0.1)])

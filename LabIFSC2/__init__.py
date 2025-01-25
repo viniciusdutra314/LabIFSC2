@@ -7,7 +7,8 @@ Documentação completa em https://viniciusdutra314.github.io/LabIFSC2/
 
 MCSamples=100_000
 
-from ._arrays import arrayM, incertezas, linspaceM, nominais
+from ._arrays import (arrayM, curva_max, curva_min, incertezas, linspaceM,
+                      nominais)
 from ._medida import (Comparacao, Medida, alterar_monte_carlo_samples,
                       comparar_medidas)
 from ._regressões import (regressao_exponencial, regressao_linear,

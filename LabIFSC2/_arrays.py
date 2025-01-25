@@ -5,6 +5,7 @@ from typing import Any
 import numpy as np
 
 from ._medida import Medida
+from ._regressões import Regressao
 from ._tipagem_forte import obrigar_tipos
 
 
@@ -55,6 +56,64 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     else:
         return np.array([medida._incerteza.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
+@obrigar_tipos
+def _curva_min_max(arrayMedidas : np.ndarray| Regressao,op:str,unidade_y:str,sigmas:float | int) -> np.ndarray:
+    if isinstance(arrayMedidas,np.ndarray):
+        if not (isinstance(arrayMedidas[0],Medida)):
+            raise TypeError('Os valores do array não são Medidas')
+        elif op=='min':
+            minima:np.ndarray=nominais(arrayMedidas,unidade_y)-sigmas*incertezas(arrayMedidas,unidade_y)
+            return minima
+        elif op=='max':
+            maxima:np.ndarray=nominais(arrayMedidas,unidade_y)+sigmas*incertezas(arrayMedidas,unidade_y)
+            return maxima
+    else:
+        if arrayMedidas._amostragem_pre_calculada is None:
+            raise ValueError('A regressão não amostrada ainda')
+        elif op=='min':
+            resultado_min:np.ndarray=nominais(arrayMedidas._amostragem_pre_calculada,unidade_y)-sigmas*incertezas(arrayMedidas._amostragem_pre_calculada,unidade_y)
+            return resultado_min
+        elif op=='max':
+            resultado_max:np.ndarray=nominais(arrayMedidas._amostragem_pre_calculada,unidade_y)+sigmas*incertezas(arrayMedidas._amostragem_pre_calculada,unidade_y)
+            return resultado_max
+    return np.array([])
+
+@obrigar_tipos
+def curva_min(arrayMedidas:np.ndarray | Regressao,unidade_y:str,sigmas:float | int=2) -> np.ndarray:
+    """
+    Calcula a curva mínima de uma série de medidas.
+    
+    Args:
+        arrayMedidas (np.ndarray | Regressao): Array de objetos Medida ou objeto Regressao.
+        unidade_y (str): Unidade da variável dependente.
+        sigmas (float | int): Número de sigmas para a curva mínima.
+    
+    Returns:
+        np.ndarray: Array de valores da curva mínima.
+    
+    Raises:
+        TypeError: Se algum dos valores no array não for um objeto Medida.
+    """
+    resultado:np.ndarray= _curva_min_max(arrayMedidas,'min',unidade_y,sigmas)
+    return resultado
+
+def curva_max(arrayMedidas:np.ndarray | Regressao, unidade_y:str,sigmas:float | int=2) -> np.ndarray:
+    """
+    Calcula a curva máxima de uma série de medidas.
+    
+    Args:
+        arrayMedidas (np.ndarray | Regressao): Array de objetos Medida ou objeto Regressao.
+        unidade_y (str): Unidade da variável dependente.
+        sigmas (float | int): Número de sigmas para a curva máxima.
+    
+    Returns:
+        np.ndarray: Array de valores da curva máxima.
+    
+    Raises:
+        TypeError: Se algum dos valores no array não for um objeto Medida.
+    """
+    resultado:np.ndarray= _curva_min_max(arrayMedidas,'max',unidade_y,sigmas)
+    return resultado
 
 @obrigar_tipos
 def linspaceM(a:Real,b:Real,n : int,unidade:str,incertezas:Real) -> np.ndarray:

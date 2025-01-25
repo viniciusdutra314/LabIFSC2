@@ -21,9 +21,9 @@ def test_call():
     with pytest.raises(TypeError):
         polinomio(0)
     pontos=lab.linspaceM(0,2,3,'',0)
-    assert np.isclose(polinomio.amostrar(pontos[0],''), 3)
-    assert np.isclose(polinomio.amostrar(pontos[1],''),6)
-    assert np.isclose(polinomio.amostrar(pontos[2],''), 11)
+    assert np.isclose(polinomio.amostrar(np.array([pontos[0]]),''), 3)
+    assert np.isclose(polinomio.amostrar(np.array([pontos[1]]),''),6)
+    assert np.isclose(polinomio.amostrar(np.array([pontos[2]]),''), 11)
 
 
 

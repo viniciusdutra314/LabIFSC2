@@ -19,8 +19,6 @@ def test_MExponencial_valores():
 def test_MExponencial_amostrar():
     a,k,base=lab.Medida(1,'',0.001),lab.Medida(3,'',0.01),np.exp(1)
     exponencial=lab._regressões.MExponencial(a,k,base)
-    x=lab.Medida(2,'',0.1)
-    exponencial.amostrar(x,'')
     x_array=lab.linspaceM(0,1,10,'',0.1)
     exponencial.amostrar(x_array,'')
 

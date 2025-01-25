@@ -1,7 +1,8 @@
 import numpy as np
 import pytest
 
-from LabIFSC2 import Medida, arrayM, incertezas, linspaceM, nominais
+from LabIFSC2 import (Medida, arrayM, curva_max, curva_min, incertezas,
+                      linspaceM, nominais)
 
 
 def test_nominal():
@@ -27,6 +28,15 @@ def test_incerteza_array():
         incertezas(np.arange(10),'')
         
 
+def test_curvamin():
+    t=np.array([Medida(5,'',0.1),Medida(9,'',2),Medida(11,'',0.5)])
+    curva_min(t,'')
+    assert np.array_equal(curva_min(t,''),np.array([4.8,5,10]))
+    assert np.array_equal(curva_min(t,'',3),np.array([4.7,3,9.5]))  
+def test_curvamax():
+    t=np.array([Medida(5,'',0.1),Medida(9,'',2),Medida(11,'',0.5)])
+    assert np.array_equal(curva_max(t,''),np.array([5.2,13,12]))
+    assert np.array_equal(curva_max(t,'',3),np.array([5.3,15,12.5]))      
 
 
 def test_linspace():

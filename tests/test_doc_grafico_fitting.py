@@ -31,8 +31,8 @@ def test_doc_grafico_fitting():
     print(time.time()-tempo)
     tempo=time.time()
     plt.fill_between(x=nominais(x,unidade_x),
-                    y1=fitting.curva_min,
-                    y2=fitting.curva_max,
+                    y1=curva_min(fitting,unidade_y),
+                    y2=curva_max(fitting,unidade_y),
                     color='blue',alpha=0.3)
     print(time.time()-tempo)
     plt.legend()
