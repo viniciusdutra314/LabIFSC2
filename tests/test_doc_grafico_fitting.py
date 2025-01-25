@@ -12,8 +12,8 @@ def test_doc_grafico_fitting():
     unidade_x='cm'
     unidade_y='muT'
 
-    regressao=regressao_potencia(distancias,campo_magnético)
-    print(regressao) 
+    fitting=regressao_potencia(distancias,campo_magnético)
+    print(fitting) 
     #MLeiDePotencia(a=(2,0 ± 0,1)x10² cm⁰⋅⁹⁸⁶³⁵⁵·µT, b=(-9,9 ± 0,3)x10⁻¹ )
     plt.style.use('ggplot')
     plt.errorbar(x=nominais(distancias,unidade_x),
@@ -25,14 +25,14 @@ def test_doc_grafico_fitting():
     x=linspaceM(1,10,100,unidade_x,0)
     tempo=time.time()
     plt.plot(nominais(x,unidade_x),
-            regressao.amostrar(x,unidade_y),
+            fitting.amostrar(x,unidade_y),
             color='blue',
             label="Curva teórica")
     print(time.time()-tempo)
     tempo=time.time()
     plt.fill_between(x=nominais(x,unidade_x),
-                    y1=regressao.curva_min,
-                    y2=regressao.curva_max,
+                    y1=fitting.curva_min,
+                    y2=fitting.curva_max,
                     color='blue',alpha=0.3)
     print(time.time()-tempo)
     plt.legend()

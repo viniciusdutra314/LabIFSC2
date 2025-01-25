@@ -1,16 +1,7 @@
 
-## Instalação em ambiente virtual
+# Instalação em ambiente virtual
 
 O ecossistema Python é cheio de gerenciadores de pacotes/ambientes ([pipx](https://github.com/pypa/pipx), [poetry](https://python-poetry.org/), [uv](https://astral.sh/blog/uv), [miniconda](https://docs.anaconda.com/miniconda/), etc.). Sinta-se livre para escolher o de sua preferência. Caso seja um iniciante no assunto, recomendamos testar o [uv](https://astral.sh/blog/uv).
-
-### Global
-
-Caso queira utilizar o LabIFSC2 para todos os projetos, faça:
-```bash
-pip install LabIFSC2
-```
-
-### Local
 
 Iremos descrever aqui como uma instalação local é feita usando somente as ferramentas nativas do Python (pip, venv).
 

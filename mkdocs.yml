@@ -10,7 +10,6 @@ nav:
   - Formataçõs/LaTeX: formatacoes_latex.md
   - Como erros são propagados?: propagacao_de_erros.md
   - API Completa: api.md
-  - Como contribuir: contribuir.md
 
 repo_url: https://github.com/viniciusdutra314/LabIFSC2
 theme:

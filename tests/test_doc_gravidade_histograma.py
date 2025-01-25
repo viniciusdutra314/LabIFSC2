@@ -60,3 +60,4 @@ def test_doc_histograma():
     # Ajustando o layout
     plt.tight_layout()
     plt.savefig("docs/images/gravidade_histograma.jpg", dpi=300)
+    plt.close(fig)

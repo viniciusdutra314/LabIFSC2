@@ -53,3 +53,4 @@ with open('../LabIFSC2/constantes/constantes.py','w') as python_arquivo:
     python_arquivo.write('euler=2.7182818284590452353602874713527\n')
     python_arquivo.write('golden_ratio=1.61803398874989484820458\n')
     python_arquivo.write('astronomical_unit=Medida(149_597_870_700,"m",0)\n')
+    python_arquivo.write('solar_mass=Medida(1.988475e30,"kg",0.000092e30)\n') #https://en.wikipedia.org/wiki/Solar_mass

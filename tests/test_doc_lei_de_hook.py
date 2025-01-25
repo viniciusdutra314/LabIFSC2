@@ -9,10 +9,10 @@ def test_doc_lei_de_hook():
     forças=linspaceM(0,10,10,'N',0.1) #variando a força
     deslocamentos=arrayM([0,0.5,1.1,1.6,2,2.3,2.8,3.2,3.7,4],'cm',0.01) #medindo deslocamentos
 
-    linha=regressao_linear(deslocamentos,forças)
-    print(linha)
+    reta=regressao_linear(deslocamentos,forças)
+    print(reta)
     #MPolinomio(coefs=[(2,51 ± 0,06) N/cm, (-3 ± 2)x10⁻¹ N],grau=1)
-    print(f"Constante da mola {linha.a:si}") 
+    print(f"Constante da mola {reta.a:si}") 
     #Constante da mola (2,51 ± 0,06)x10² kg/s²
 
     unidade_x='cm'
@@ -28,7 +28,7 @@ def test_doc_lei_de_hook():
     x=linspaceM(0,4,100,unidade_x,0)
 
     plt.plot(nominais(x,unidade_x),
-            linha.amostrar(x,unidade_y),
+            reta.amostrar(x,unidade_y),
             label='Regressão linear',
             color='blue')
 
@@ -37,3 +37,4 @@ def test_doc_lei_de_hook():
 
     plt.legend()
     plt.savefig('teste.jpg',dpi=300)
+    plt.cla()

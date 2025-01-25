@@ -12,6 +12,7 @@ import LabIFSC2 as lab
 ```
 
 ## Classe Medida
+
 A principal classe da biblioteca é a `Medida`. Ela recebe 3 argumentos para sua inicialização[^1]:
 
 - Nominal (\(\mu\)): Valor(es) medido(s).
@@ -21,7 +22,6 @@ A principal classe da biblioteca é a `Medida`. Ela recebe 3 argumentos para sua
 Para um exemplo prático, consideraremos um tipo de medida comum, o IMC (Índice de Massa Corporal), não confundir com (ICMC). Suponhamos que uma pessoa foi medida (valores fictícios) com uma fita métrica e temos certeza apenas na casa de 1 cm de sua altura e usamos uma balança com precisão de 100 g para medir a sua massa.
 
 Com o LabIFSC2, podemos fazer os cálculos assim:
-
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_imc.py:5:8"
 ```

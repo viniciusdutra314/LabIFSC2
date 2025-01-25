@@ -21,6 +21,8 @@ A biblioteca está disponível no PyPI(Python Package Index), então ela pode se
 ```bash
 pip install LabIFSC2
 ```
+Recomendamos você instalar o LabIFSC2 é um ambiente virtual, caso não saiba o que é isso, por favor 
+leia essa [secção](_instalacao.md)
 
 ## Escopo de aplicação
 A biblioteca tem a intenção de agilizar cálculos dos laboratórios de física do IFSC da USP de São Carlos:

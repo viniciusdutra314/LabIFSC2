@@ -20,3 +20,4 @@ def test_doc_grafico_scatter():
     plt.xlabel(f"Distancia ({unidade_x})")
     plt.ylabel(f"Campo magnético ({unidade_y})")
     plt.savefig('docs/images/graficos_scatter.jpg',dpi=300) 
+    plt.cla()

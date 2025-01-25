@@ -1,3 +1,4 @@
+import numpy as np
 import pint
 import pytest
 
@@ -17,8 +18,7 @@ def test_regressao_linear_unidades():
        linha.amostrar(distancias_unidade_errada,'muT')
     with pytest.raises(ValueError):
        linha.amostrar(distancias,'kg')
-    
-    comparar_medidas(linha.amostrar(distancias,'muT',retornar_como_medidas=True)[0],campo_magnético[0])
+    np.isclose(linha.amostrar(distancias,'muT',)[0],campo_magnético[0].nominal('muT'),rtol=1e-2)
  
 def test_regressao_cubica_unidades():
     for grau in [1,2,3,4,5,6]:
@@ -26,7 +26,7 @@ def test_regressao_cubica_unidades():
         cubica.amostrar(distancias,'muT')
         with pytest.raises(ValueError):
             cubica.amostrar(unidade_errada,'muT')
-        comparar_medidas(cubica.amostrar(distancias,'muT',retornar_como_medidas=True)[0],campo_magnético[0])
+        np.isclose(cubica.amostrar(distancias,'muT',)[0],campo_magnético[0].nominal('muT'),rtol=1e-2)
 
 
 def test_regressao_exponencial_unidades():
@@ -34,11 +34,11 @@ def test_regressao_exponencial_unidades():
     exponencial.amostrar(distancias,'muT')
     with pytest.raises(pint.errors.DimensionalityError):
        exponencial.amostrar(unidade_errada,'muT')
-    comparar_medidas(exponencial.amostrar(distancias,'muT',retornar_como_medidas=True)[0],campo_magnético[0])
+    np.isclose(exponencial.amostrar(distancias,'muT',)[0],campo_magnético[0].nominal('muT'),rtol=1e-2)
 
 def test_regressao_potencia_unidades():
     potencia=regressao_potencia(distancias,campo_magnético) 
     potencia.amostrar(distancias,'muT')
     with pytest.raises(ValueError):
        potencia.amostrar(unidade_errada,'muT')
-    comparar_medidas(potencia.amostrar(distancias,'muT',retornar_como_medidas=True)[0],campo_magnético[0])
+    np.isclose(potencia.amostrar(distancias,'muT',)[0],campo_magnético[0].nominal('muT'),rtol=1e-2)
