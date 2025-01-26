@@ -1,5 +1,5 @@
 ## Importação
-Como a biblioteca é em português e a maioria das bibliotecas são em inglês, acho muito difícil haver algum tipo de conflito de nomes. Então, sinta-se à vontade para fazer:
+Como a biblioteca é em português e a maioria das bibliotecas são em inglês, é muito difícil haver algum tipo de conflito de nomes. Então, sinta-se à vontade para fazer:
 
 ```py
 from LabIFSC2 import *
@@ -34,7 +34,7 @@ Você pode acessar o valor nominal e a incerteza fazendo `medida.nominal(unidade
 ```
 
 ## Várias medições
-Podemos também criar uma medida baseada em várias medições, imagine que você está medindo o diâmetro de um fio levemente irregular. Você pode preencher o valor nominal como sendo uma lista de medições, a biblioteca irá considerar o valor nominal como a média dos valores.
+Podemos também criar uma medida baseada em várias medições. Imagine que você está medindo o diâmetro de um fio levemente irregular. Você pode preencher o valor nominal como sendo uma lista de medições, a biblioteca irá considerar o valor nominal como a média dos valores.
 
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_medida_lista.py:7:8"
@@ -43,19 +43,13 @@ Caso o desvio padrão das medições seja maior do que a incerteza experimental,
 
 Mas se a incerteza experimental for maior que o desvio padrão, então não temos certeza se essa variação é devido ao fio ter um formato irregular ou por efeitos aleatórios de medição, a incerteza então é a incerteza experimental. 
 
-
 Esse comportamento pode ser visto nesse exemplo, preste atenção nas incertezas:
 
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_medida_lista.py:7:10"
 ```
 ## Medidas sem incerteza
-É possível criar medidas com incerteza zero, nesse caso, a biblioteca somente realizará as 
-conversões de unidade. Isso é interessante para um conjunto grande de medidas em que a incerteza
-é muito pequena, por exemplo, as medidas de voltagem de um osciloscópio, em que a precisão tempo 
-é enorme, é possível tratar os tempos como exatos, assim um grande ganho em performance é observado,
-visto que
-
+É possível criar medidas com incerteza zero. Nesse caso, a biblioteca somente realizará as conversões de unidade. Isso é interessante para um conjunto grande de medidas em que a incerteza é muito pequena, por exemplo, as medidas de voltagem de um osciloscópio, em que a precisão de tempo é enorme. É possível tratar os tempos como exatos, assim um grande ganho em performance é observado, visto que não ocorrerá nenhuma simulação Monte Carlo
 
 
 ## Comparando Medidas
@@ -82,12 +76,9 @@ O critério usado é o da apostila:
 Intuitivamente, a comparação é feita pelo quanto os valores nominais são diferentes e quanta incerteza temos nas medidas.
 
 ## Ordenando Medidas
-Em alguns momentos nós queremos usar o `max` ou `min` de um conjunto de medidas, imagine que você quer por exemplo
-determinar a voltagem/corrente máxima atingida por um circuito.
+Em alguns momentos nós queremos usar o `max` ou `min` de um conjunto de medidas. Imagine que você quer, por exemplo, determinar a voltagem/corrente máxima atingida por um circuito.
 
-Mesmo que existam incertezas, geralmente o que você se refere como min,max é em relação ao valor nominal, então
-a classe `Medida` implementa comparações < <= > >=, referentes aos valores nominais, assim é possível usar 
-funções do tipo `max`,`min` e `sort` de maneira direta.
+Mesmo que existam incertezas, geralmente o que você se refere como min,max é em relação ao valor nominal. Então a classe `Medida` implementa comparações < <= > >=, referentes aos valores nominais, assim é possível usar funções do tipo `max`,`min` e `sort` de maneira direta.
 
 ```py 
 --8<-- "tests/test_doc_sorted_list.py:5:13"
@@ -114,18 +105,14 @@ Um exemplo concreto se encontra abaixo:
 
 ```py title="Conversão de unidades Medida"
 --8<-- "tests/test_doc_imc_cm.py:10:14"
-
 ```
 
-
 ## Dimensão
-Como unidades só são uma característica do print de uma medida, e não algo intrínseco, uma forma independente de unidade
-para caracterizar o que uma medida é de fato é sua dimensão. Uma velocidade por exemplo, independente se está em
-\(km/h\) ou \(m/s\), é um comprimento divido por um tempo. Você pode acessar esse atributo com `medida.dimensao`
+Como unidades só são uma característica do print de uma medida, e não algo intrínseco, uma forma independente de unidade para caracterizar o que uma medida é de fato é sua dimensão. Uma velocidade, por exemplo, independente se está em \(km/h\) ou \(m/s\), é um comprimento dividido por um tempo. Você pode acessar esse atributo com `medida.dimensao`.
 
 ```py
 --8<-- "tests/test_doc_dimensao.py:5:6"
 ```
 
 [^1]:
-    Perceba que o LabIFSC2 tem uma diferença de ordem de argumentos na criação de uma `Medida` em relação ao LabIFSC. Eu decidi colocar as unidades no meio da declaração pois, pessoalmente, acho que uma unidade no meio dos argumentos torna a leitura dos valores nominal e incerteza mais simples. Isso fica mais evidente em funções como `lab.linspaceM` e `lab.arrayM` em que temos muitos valores numéricos nos seus construtores.
+    Perceba que o LabIFSC2 tem uma diferença de ordem de argumentos na criação de uma `Medida` em relação ao LabIFSC. Eu decidi colocar as unidades no meio da declaração pois, pessoalmente, acho que uma unidade no meio dos argumentos torna a leitura dos valores nominais e incerteza mais simples. Isso fica mais evidente em funções como `lab.linspaceM` e `lab.arrayM` em que temos muitos valores numéricos nos seus construtores.

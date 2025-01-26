@@ -26,7 +26,7 @@ def test_doc_regressoes_construir():
                 4e-3 ,2e-3 ,1e-3],'kg',0)
     exponencial=regressao_exponencial(tempos,massa,base=2)
     print(exponencial)
-    #MExponencial(a=(9,3 ± 0,2)x10⁻¹ kg,k=(-9,89 ± 0,04)x10⁻¹ 1/a,base=2)
+    #MExponencial(cte_multiplicativa=(9,3 ± 0,2)x10⁻¹ kg,expoente=(-9,89 ± 0,04)x10⁻¹ 1/a,base=2)
     M_0=exponencial.cte_multiplicativa
     meia_vida=-1/exponencial.expoente
     print(f"{M_0:E0}") #(0,93 ± 0,02) kg

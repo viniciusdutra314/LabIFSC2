@@ -77,3 +77,9 @@ def test_doc_kepler():
     plt.legend()
     plt.savefig('docs/images/kepler.jpg',dpi=300)
     plt.cla()
+
+
+    print(curva_min(fitting,'years')[0:5])
+    #[0 0.16563505 0.46786682 0.85881466 1.3214152 ]
+    print(curva_max(fitting,'years')[0:5])
+    #[0  0.16875531 0.47653809 0.87467204 1.34582704]

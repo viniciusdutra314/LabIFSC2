@@ -1,13 +1,11 @@
+
 !!! warning
-    Mesmo que as funções de regressão da biblioteca recebam Medidas, a regressão é feita **sem considerar as
-    incertezas nas medições**, é passado arrays de Medidas somente para a conversão de unidades ser feita.
-    Para os erros serem considerados teríamos que usar algum método de [Total least square](https://en.wikipedia.org/wiki/Total_least_squares) que envolveria escolher alguma função peso para cada medida, o que faria as regressões
-    serem mais corretas porém incompatíveis com a apostila
+    Mesmo que as funções de regressão da biblioteca recebam Medidas, a regressão é feita **sem considerar as incertezas nas medições**. Os arrays de Medidas são passados somente para a conversão de unidades. Para que os erros sejam considerados, teríamos que usar algum método de [Total least squares](https://en.wikipedia.org/wiki/Total_least_squares), que envolveria escolher uma função peso para cada medida. Isso tornaria as regressões mais precisas, porém incompatíveis com a apostila.
 
 
 # Regressão Linear
 
-Quando temos uma equação física que prevê a relação entre duas ou mais variáveis, geralmente tentamos encontrar a  curva teórica prevista pela equação que mais se encaixe com os dados experimentais. Um exemplo é a lei de Hooke:
+Quando temos uma equação física que prevê a relação entre duas ou mais variáveis, geralmente tentamos encontrar a curva teórica prevista pela equação que mais se encaixe com os dados experimentais. Um exemplo é a lei de Hooke:
 
 $$\vec{F}=-k\vec{x}$$
 
@@ -23,13 +21,13 @@ Na prática, a relação não é totalmente linear entre os dados, então precis
 
 $$S=\sum (y_{real}-y_{teórico})^2 = \sum (y_{real}-ax-b)^2$$
 
-Para encontrar esse mínimo, podemos pensar no desvio como sendo uma função da nossa curva teórica \(S(a,b)\). Existe um conjunto de coeficientes angular e linear que minimiza essa função. Nesse ponto, temos[^2]:
+Para encontrar esse mínimo, podemos pensar no desvio como sendo uma função da nossa curva teórica \(S(a,b)\). Existe um conjunto (coeficiente angular, coeficiente linear) que minimiza essa função. Nesse ponto, temos[^2]:
 
 $$\frac{\partial S}{\partial a} = \frac{\partial S}{\partial b} = 0$$
 
 Comecemos com a equação do coeficiente linear:
 
-$$\frac{\partial}{\partial b} \left(\sum (y_{real}-ax-b)^2\right) = -2\sum (y_{real}-ax-b) = 0 \rightarrow a\overline{x} + b = \sum y_{real}$$
+$$\frac{\partial}{\partial b} \left(\sum (y_{real}-ax-b)^2\right) = -2\sum (y_{real}-ax-b) = 0 \rightarrow a\overline{x} + b = \overline{y}_{real}$$
 
 Podemos fazer um raciocínio análogo para o coeficiente angular:
 
@@ -42,7 +40,7 @@ $$a\sum x^2 + b\sum x = \sum xy_{real}$$
 Perceba que temos um **sistema linear em \(a\) e \(b\)**:
 
 $$a\sum x^2 + b\sum x = \sum xy_{real}$$
-$$a\overline{x} + b = \sum y_{real}$$
+$$a\overline{x} + b = \overline{y}_{real}$$
 
 Como \(x\) e \(y\) são conhecidos, podemos inverter a matriz desse sistema linear e achar \(a\) e \(b\). Esta é uma demonstração das fórmulas do livro.
 
@@ -54,17 +52,13 @@ O desvio seria \(S=\sum (y-ax^2-bx-c)^2\), faríamos então:
 
 $$\frac{\partial S}{\partial a} = \frac{\partial S}{\partial b} = \frac{\partial S}{\partial c}= 0$$
 
-
-A grande sacada é perceber que as equações são lineares nos coeficientes e não em \(x\). Claramente, uma regressão de uma parábola terá termos quadráticos em \(x\), mas as equações da minimização são lineares em \(a\), \(b\) e \(c\). 
-
-
+A grande sacada é perceber que as equações são lineares nos coeficientes e não em \(x\). Claramente, uma regressão de uma parábola terá termos quadráticos em \(x\), mas as equações da minimização são lineares em \(a\), \(b\) e \(c\).
 
 No fim, você chegará a uma equação matricial que te dá os coeficientes do polinômio para qualquer grau \(N\)[^3]:
 
 $$\text{coeficientes} = (A^T A)^{-1} A^T y$$
 
-Em que a matriz A é matrix de [Vandermonde](https://en.wikipedia.org/wiki/Vandermonde_matrix), definida como \(A_{ij}=x^j_i\)
-É interessante pensar que você, em teoria, pode fazer o método dos mínimos quadrados para um polinômio arbitrário com uma linha de Python.
+Em que a matriz A é a matriz de [Vandermonde](https://en.wikipedia.org/wiki/Vandermonde_matrix), definida como \(A_{ij}=x^j_i\). É interessante pensar que você, em teoria, pode fazer o método dos mínimos quadrados para um polinômio arbitrário com uma linha de Python.
 
 Caso queiram ver mais sobre, recomendo este [artigo](https://www.researchgate.net/publication/337103890_Linear_Least_Squares_Versatile_Curve_and_Surface_Fitting_CDT-17) do Luciano da Fontoura Costa. Ele é um pesquisador do IFSC que, além dos seus artigos de pesquisa, também publica vários materiais interessantes a nível de graduação chamados de CDT (Costa’s Didactic Texts).
 
@@ -82,7 +76,7 @@ $$Y = kx + B$$
 
 Agora creio que seja fácil ver que é de fato linear a menos de uma transformação de variável.
 
-## Regressão Lei de Potência
+# Regressão Lei de Potência
 
 Uma lei de potência segue o mesmo truque:
 

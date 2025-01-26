@@ -1,10 +1,6 @@
-Eu particularmente sempre achei que o método dos mínimos quadrados era dado de maneira muito rápida na graduação,
-não mostrando como que o método é uma aplicação direta de cálculo I e algebra linear, eu espero nessa secção mostrar
-um pouco disso aos leitores.
+Eu, particularmente, sempre achei que o método dos mínimos quadrados era apresentado de maneira muito rápida na graduação, não mostrando como o método é uma aplicação direta de Cálculo I e Álgebra Linear. Espero, nesta seção, mostrar um pouco disso aos leitores.
 
-Para não misturar o uso da biblioteca com a teoria por trás, estou aqui dividindo explicitamente essa
-secção em duas
+Para não misturar o uso da biblioteca com a teoria por trás, estou dividindo explicitamente esta seção em duas partes:
 
-#[Teoria dos mínimos quadrados](regressoes_teoria.md)
-#[Uso na biblioteca](regressao_pratica.md)
-
+- [Teoria dos mínimos quadrados](regressões_teoria.md)
+- [Uso na biblioteca](regressão_prática.md)

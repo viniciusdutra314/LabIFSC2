@@ -1,10 +1,7 @@
 !!! warning
-    A leitura dessa parte da documentação não é obrigatória para o uso da biblioteca, caso sinta que a matemática/estatística é muito complexa, sinta-se livre para pular. Mas caso queira realmente entender como as coisas funcionam por baixo dos panos essa secção é pra você.
+    A leitura desta parte da documentação não é obrigatória para o uso da biblioteca. Caso sinta que a matemática/estatística é muito complexa, sinta-se livre para pular. Mas, se quiser realmente entender como as coisas funcionam por baixo dos panos, esta seção é para você.
 
-
-
-
-Nesta seção, explicarei em mais detalhes como a biblioteca propaga incertezas, o método usado é mais geral, mas ainda assim compatível com o da apostila. Nos testes unitários da biblioteca, comparamos os erros calculados pelo LabIFSC2 com as bibliotecas [uncertainties](https://pythonhosted.org/uncertainties/) e [LabIFSC](https://github.com/gjvnq/LabIFSC), chegando a um acordo geralmente de \(10^{-3}\) para erros pequenos, onde os métodos devem ser equivalentes.
+Nesta seção, explicarei em mais detalhes como a biblioteca propaga incertezas. O método usado é mais geral, mas ainda assim compatível na **maioria dos casos com o da apostila** (ler [secção](index.md#escopo) do sobre ). Nos testes unitários da biblioteca, comparamos os erros calculados pelo LabIFSC2 com as bibliotecas [uncertainties](https://pythonhosted.org/uncertainties/) e [LabIFSC](https://github.com/gjvnq/LabIFSC), chegando a um acordo geralmente de \(10^{-3}\) para erros pequenos em uma variável, onde os métodos devem ser equivalentes.
 
 ## Apostila
 A apostila se baseia principalmente no GUM (Guide to the Expression of Uncertainty in Measurement)[^1]. O método é uma propagação linear baseada em uma série de Taylor.
@@ -15,7 +12,7 @@ $$f(\mathbf{x}+\Delta \mathbf{x})\approx f(\mathbf{x})+\sum_{i} \frac{\partial f
 
 $$(f(\mathbf{x}+\Delta \mathbf{x})-f(\mathbf{x}))²\approx (\sum_{i} \frac{\partial f}{\partial x_{i}}\Delta x_{i})²$$
 
-Note que o lado esquerdo nada mais é que a variação da função \(\Delta f\). Se pegarmos o valor esperado, teremos a variância de \(f\) (\(\sigma²_{f}\)):
+Note que o lado esquerdo nada mais é que o quadrado da variação da função \((\Delta f)^2\). Se pegarmos o valor esperado, teremos a variância de \(f\) (\(\sigma²_{f}\)):
 
 $$\mathbb{E}[(f(\mathbf{x}+\Delta \mathbf{x})-f(\mathbf{x}))²]\approx \mathbb{E}[(\sum_{i} \frac{\partial f}{\partial x_{i}}\Delta x_{i})²]$$
 
@@ -46,7 +43,7 @@ O interessante desse método é que o histograma de \(y\) não necessariamente �
 
 - Ser usado como PDF para outra propagação de incerteza
 - Cálculo do intervalo de confiança
-- A média e o desvio padrão da PDF são usados no `print(medida)`
+- A média e o desvio padrão da PDF são respectivamente o valor nominal e a incerteza.
 
 ### Exemplo com a gravidade
 Retornando ao exemplo da estimativa da gravidade usando um pêndulo, mas agora com incertezas maiores em \(T\) e \(L\) (para que os efeitos fiquem mais visíveis).
@@ -63,13 +60,8 @@ Repare como \(T\) e \(L\) são gaussianas (\(\mu_L=15cm\), \(\sigma_L=1cm\)) e (
 
 Já o histograma de \(g\) é centralizado em \(10m/s²\), mas observe que ele possui uma cauda para a direita. A distribuição não é simétrica, logo, não é gaussiana. Se usássemos \(g\) para outros cálculos, esse desvio de uma gaussiana provavelmente iria se amplificando. Esse fato não é observado no método GUM, que assume linearidade e basicamente tudo é uma gaussiana.
 
-
 !!! tip
-    Por padrão a biblioteca utiliza \(N=10^5\) amostras, acredito que esse seja um número que vá satisfazer a maioria das aplicações e não trazer problemas de performance para a biblioteca, mas caso queira alterar esse número é só usar
-    `alterar_monte_carlo_sample`, por enquanto Medidas com N diferentes não se interagem corretamente (pense o que isso significa), então se quiser mudar esse número é recomendado alterar no começo do código ou as varíaveis usadas só terem escopo dentro dessa alteração do N
-
-
-
+    Por padrão, a biblioteca utiliza \(N=10^5\) amostras. Acredito que esse seja um número que vá satisfazer a maioria das aplicações e não trazer problemas de performance para a biblioteca. Mas, caso queira alterar esse número, é só usar `alterar_monte_carlo_sample`. Por enquanto, Medidas com N diferentes não interagem corretamente (pense o que isso significa), então se quiser mudar esse número é recomendado alterar no começo do código ou as variáveis usadas só terem escopo dentro dessa alteração do N.
 
 [^1]: O método GUM é amplamente utilizado em metrologia e calibragem de equipamentos. Existem diversas referências para quem quiser aprender mais. Eu, pessoalmente, achei um material introdutório e interessante em:
     
