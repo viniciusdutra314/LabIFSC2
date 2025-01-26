@@ -38,6 +38,10 @@ theme:
       primary: teal
       accent: lime
 
+extra_css:
+  - css/custom.css
+
+
 use_directory_urls: false
 plugins:
   - search

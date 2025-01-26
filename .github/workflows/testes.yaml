@@ -36,7 +36,7 @@ jobs:
         run: poetry install --without docs
 
       - name: Testing code with pytest
-        run: poetry run pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
+        run: mkdir -p docs/images/ && poetry run pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
 
       - name: Mypy
         run: poetry run python -m mypy LabIFSC2/
