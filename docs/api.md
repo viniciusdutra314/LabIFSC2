@@ -16,6 +16,6 @@ leia a secção [introdução](introducao.md)
     options:
       members_order: alphabetical
 
-::: LabIFSC2._regressões
+::: LabIFSC2._regressoes
     options:
       members_order: alphabetical

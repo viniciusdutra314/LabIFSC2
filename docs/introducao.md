@@ -49,6 +49,14 @@ Esse comportamento pode ser visto nesse exemplo, preste atenção nas incertezas
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_medida_lista.py:7:10"
 ```
+## Medidas sem incerteza
+É possível criar medidas com incerteza zero, nesse caso, a biblioteca somente realizará as 
+conversões de unidade. Isso é interessante para um conjunto grande de medidas em que a incerteza
+é muito pequena, por exemplo, as medidas de voltagem de um osciloscópio, em que a precisão tempo 
+é enorme, é possível tratar os tempos como exatos, assim um grande ganho em performance é observado,
+visto que
+
+
 
 ## Comparando Medidas
 Se uma segunda pessoa afirmar que seu IMC é de (25 ± 0.1), podemos dizer que seus IMCs são equivalentes? Mesmo que \(25 \ne 24.5\), pela incerteza nas medidas podemos dizer que essa diferença está na margem de erro do experimento.
@@ -73,6 +81,18 @@ O critério usado é o da apostila:
 
 Intuitivamente, a comparação é feita pelo quanto os valores nominais são diferentes e quanta incerteza temos nas medidas.
 
+## Ordenando Medidas
+Em alguns momentos nós queremos usar o `max` ou `min` de um conjunto de medidas, imagine que você quer por exemplo
+determinar a voltagem/corrente máxima atingida por um circuito.
+
+Mesmo que existam incertezas, geralmente o que você se refere como min,max é em relação ao valor nominal, então
+a classe `Medida` implementa comparações < <= > >=, referentes aos valores nominais, assim é possível usar 
+funções do tipo `max`,`min` e `sort` de maneira direta.
+
+```py 
+--8<-- "tests/test_doc_sorted_list.py:5:13"
+```
+
 ## Intervalo de Confiança
 Como estamos falando de medidas experimentais, falamos de **intervalos** e não valores exatos. Objetos da classe `Medida` possuem um método chamado `intervalo_de_confiança`. Com ele, podemos especificar uma probabilidade `p` de estarmos representando os valores possíveis das Medidas.
 
@@ -94,6 +114,17 @@ Um exemplo concreto se encontra abaixo:
 
 ```py title="Conversão de unidades Medida"
 --8<-- "tests/test_doc_imc_cm.py:10:14"
+
+```
+
+
+## Dimensão
+Como unidades só são uma característica do print de uma medida, e não algo intrínseco, uma forma independente de unidade
+para caracterizar o que uma medida é de fato é sua dimensão. Uma velocidade por exemplo, independente se está em
+\(km/h\) ou \(m/s\), é um comprimento divido por um tempo. Você pode acessar esse atributo com `medida.dimensao`
+
+```py
+--8<-- "tests/test_doc_dimensao.py:5:6"
 ```
 
 [^1]:
