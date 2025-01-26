@@ -7,7 +7,7 @@ import LabIFSC2 as lab
 
 def test_MExponencial_valores():
     a,k,base=lab.Medida(1,'',0.1),lab.Medida(3,'',0.01),np.exp(1)
-    exponencial=lab._regressões.MExponencial(a,k,base)
+    exponencial=lab._regressoes.MExponencial(a,k,base)
     assert exponencial.cte_multiplicativa.nominal("")==a.nominal("")
     assert exponencial.expoente.nominal("")==k.nominal("")
     assert exponencial.base==base
@@ -18,7 +18,7 @@ def test_MExponencial_valores():
     
 def test_MExponencial_amostrar():
     a,k,base=lab.Medida(1,'',0.001),lab.Medida(3,'',0.01),np.exp(1)
-    exponencial=lab._regressões.MExponencial(a,k,base)
+    exponencial=lab._regressoes.MExponencial(a,k,base)
     x_array=lab.linspaceM(0,1,10,'',0.1)
     exponencial.amostrar(x_array,'')
 

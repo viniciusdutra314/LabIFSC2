@@ -40,7 +40,7 @@ def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
 class Regressao(ABC):
     
     def __init__(self)->None:
-        self._amostragem_pre_calculada: np.ndarray = np.array([])
+        self._amostragem_pre_calculada: np.ndarray | None=None 
         self._valores: Iterator = iter([])
     
     def _retornar(self,y:np.ndarray,unidade_y:str)->np.ndarray:
@@ -66,26 +66,13 @@ mesmo que com incerteza 0, pois precisamos das unidades")
     def __iter__(self)->Iterator[object]:
         return self._valores
 
-    def mudar_intervalo_de_confianca(self,sigmas:Real)->None:
-        """
-        Altera o intervalo de confiança para o valor especificado.
-        
-        Args:
-            sigmas (Real): O novo valor do intervalo de confiança.
-        
-        Returns:
-            None
-        """
-        if sigmas<0:
-            raise ValueError('O intervalo de confiança precisa ser um valor positivo')
-
-        self._sigmas=float(sigmas)
 
 
 
 class MPolinomio(Regressao):
     @obrigar_tipos
     def __init__(self,coeficientes:np.ndarray):
+        super().__init__()
         if not (isinstance(coeficientes[0],Medida)):
             raise TypeError('Os valores do array não são Medidas')
     
@@ -130,6 +117,7 @@ class MExponencial(Regressao):
     __slots__ = ['cte_multiplicativa', 'expoente', 'base','_valores']
     @obrigar_tipos
     def __init__(self,a:Medida,k:Medida,base:Real):
+        super().__init__()
         self.cte_multiplicativa=a
         self.base=base
         self.expoente=k

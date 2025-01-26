@@ -45,7 +45,7 @@ def test_regressao_polinomial_basic():
     y_dados = lab2.arrayM([1, 4, 9, 16, 25],'',0)
     grau = 2
     polinomio = regressao_polinomial(x_dados, y_dados, grau)
-    assert isinstance(polinomio, lab2._regressões.MPolinomio)
+    assert isinstance(polinomio, lab2._regressoes.MPolinomio)
     assert polinomio.grau == grau
 
 def test_regressao_polinomial_medida():
@@ -81,7 +81,7 @@ def test_regressao_polinominal_tipos_errados():
 def test_MPolinomio_call():
     # Coeficientes do polinômio: 2x^2 + 3x + 4
     coeficientes = np.array([Medida(2, '', 0.001), Medida(3, '', 0.001), Medida(4, '', 0.001)])
-    polinomio = lab2._regressões.MPolinomio(coeficientes)
+    polinomio = lab2._regressoes.MPolinomio(coeficientes)
     polinomio_number=lambda x: 2*x**2+3*x+4
     
     # Teste de chamada com um array

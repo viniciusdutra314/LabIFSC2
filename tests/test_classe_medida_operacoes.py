@@ -7,6 +7,11 @@ import LabIFSC2 as lab
 def test_soma():
     
     x, y = lab.Medida(0, '', 0.1), lab.Medida(5, '', 0.3)
+
+    assert (y+3).nominal('')==8
+    assert (y-3).nominal('')==2
+    assert (y-3.13).nominal('')==5-3.13
+
     assert (x + y).nominal("") == 5
     assert (x + y).incerteza("") == np.sqrt(0.1**2 + 0.3**2)
 

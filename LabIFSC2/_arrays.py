@@ -5,7 +5,7 @@ from typing import Any
 import numpy as np
 
 from ._medida import Medida
-from ._regressões import Regressao
+from ._regressoes import Regressao
 from ._tipagem_forte import obrigar_tipos
 
 
@@ -58,6 +58,9 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
 
 @obrigar_tipos
 def _curva_min_max(arrayMedidas : np.ndarray| Regressao,op:str,unidade_y:str,sigmas:float | int) -> np.ndarray:
+    if sigmas<=0:
+        raise ValueError('O número de sigmas deve ser positivo')
+    
     if isinstance(arrayMedidas,np.ndarray):
         if not (isinstance(arrayMedidas[0],Medida)):
             raise TypeError('Os valores do array não são Medidas')

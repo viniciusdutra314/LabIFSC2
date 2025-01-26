@@ -44,7 +44,7 @@ disallow_any_generics = false
 exclude = 'tests/.*'
 
 [tool.taskipy.tasks]
-testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html "}
+testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
 docs="mkdocs serve"
 
 [build-system]

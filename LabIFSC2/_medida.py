@@ -220,13 +220,55 @@ class Medida:
             func=getattr(np,func_name)
             def funcao_recebe_medida() -> Any: return montecarlo(func, self)
             return funcao_recebe_medida
+    
+    '''Essas funções de comparação são necessárias para que max,min ou
+    np.max,np.min funcionem com medidas do jeito esperado (comparar o valor nominal)
+    Repare que não há implementação == e !=, use a função comparar_medidas.
+    '''
+    def __eq__(self:'Medida',outro:Any)-> bool:
+       raise TypeError('"Como a comparação entre Medidas pode gerar três resultados \
+    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"')
+    
+    def __ne__(self:'Medida',outro:Any)-> bool:
+        raise TypeError('"Como a comparação entre Medidas pode gerar três resultados \
+    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"')
+    
+    def __le__(self:'Medida',outro:Any) -> bool:
+        if not isinstance(outro,Medida):
+            return NotImplemented
+        else:
+            return bool(self._nominal<=outro._nominal)
+    
+    def __lt__(self:'Medida',outro:Any) -> bool:
+        if not isinstance(outro,Medida):
+            return NotImplemented
+        else:
+            return bool(self._nominal<outro._nominal)
+    def __ge__(self:'Medida',outro:Any) -> bool:
+        if not isinstance(outro,Medida):
+            return NotImplemented
+        else:
+            return bool(self._nominal>=outro._nominal)
+    
+    def __gt__(self:'Medida',outro:Any) -> bool:
+        if not isinstance(outro,Medida):
+            return NotImplemented
+        else:
+            return bool(self._nominal>outro._nominal)
+
+
     def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):
             return NotImplemented
         if isinstance(outro,Real):
-            self._nominal+=outro
-            self._histograma+=outro
-            return self
+            if positivo:
+                nova_medida=Medida(self._nominal.magnitude+outro,str(self._nominal.units),self._incerteza.magnitude)
+            else:
+                nova_medida=Medida(self._nominal.magnitude-outro,str(self._nominal.units),self._incerteza.magnitude)
+            nova_medida._histograma=self._histograma
+            return nova_medida
 
         if self._nominal.is_compatible_with(outro._nominal):
             if self is outro:
@@ -295,27 +337,8 @@ class Medida:
     def __rpow__(self:'Medida',outro:Any) -> 'Medida':
         if isinstance(outro,Real):
             return montecarlo(lambda x: np.pow(float(outro),x),self)
-        elif isinstance(outro,Medida):
-            return montecarlo(lambda x,y: x**y,self,outro)
         else:
             return NotImplemented
-    def __eq__(self:'Medida',outro:Any)->bool:
-        if self is outro:
-            return True
-        else:
-            raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
-    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
-    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
-    não use !=,==,<=,<,>,>= diretamente com Medidas")
-    def __ne__(self:'Medida',outro:Any)->bool:
-        if self is outro:
-            return False
-        else:
-            raise TypeError("Como a comparação entre Medidas pode gerar três resultados \
-    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
-    chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo], por favor \
-    não use !=,==,<=,<,>,>= diretamente com Medidas")
-
 
     __radd__=__add__
     __rsub__=__sub__
