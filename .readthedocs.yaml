@@ -17,3 +17,4 @@ build:
       - poetry install
       - mkdir -p docs/images/
       - poetry run pytest
+      - pip install mkdocs-material pymdown-extensions python-markdown-math mkdocstrings mkdocstrings-python 
