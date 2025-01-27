@@ -32,17 +32,17 @@ O LabIFSC2 é uma modernização da biblioteca [LabIFSC](https://github.com/gjvn
 
 Mesmo que a interface seja intencionalmente parecida, a implementação é totalmente nova. Para resumir as melhorias, estamos fazendo esta tabela:
 
-| Feature         | LabIFSC       | LabIFSC2      |
-|-----------------|---------------|---------------|
-| Propagação de erros | Linear      | Arbitrária (Monte Carlo)          |
-| Regressões        |   Linear    |  Linear, polinomial, exponencial e lei de potência | 
-| Unidades | Implementação autoral | Baseado no famoso [pint](https://pint.readthedocs.io/)
-| Constantes da natureza| ❌ | +350 definidas pela [CODATA(2022)](https://codata.org/initiatives/data-science-and-stewardship/fundamental-physical-constants/)
-| Operações com arrays| ❌ | Suportadas pelo Numpy 
-| Segurança de tipos (mypy)| ❌ | ✅ 
-| Docstrings em funções | ❌ | ✅
-| Suporte         | ❌ | Ativo         |
-| Documentação    | Parcial      | Completa      |
+| Feature                   | LabIFSC               | LabIFSC2                                                                                                                        |
+| ------------------------- | --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Propagação de erros       | Linear                | Arbitrária (Monte Carlo)                                                                                                        |
+| Regressões                | Linear                | Linear, polinomial, exponencial e lei de potência                                                                               |
+| Unidades                  | Implementação autoral | Baseado no famoso [pint](https://pint.readthedocs.io/)                                                                          |
+| Constantes da natureza    | ❌                     | +350 definidas pela [CODATA(2022)](https://codata.org/initiatives/data-science-and-stewardship/fundamental-physical-constants/) |
+| Operações com arrays      | ❌                     | Suportadas pelo Numpy                                                                                                           |
+| Segurança de tipos (mypy) | ❌                     | ✅                                                                                                                               |
+| Docstrings em funções     | ❌                     | ✅                                                                                                                               |
+| Suporte                   | ❌                     | Ativo                                                                                                                           |
+| Documentação              | Parcial               | Completa                                                                                                                        |
 
 ## Instalação
 A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python igual ou superior a 3.10. Para descobrir a versão do seu Python, digite `python --version` no terminal:
@@ -52,4 +52,4 @@ pip install LabIFSC2
 ```
 
 ## Documentação Completa
-A documentação completa se encontra tanto no site readthedocs quanto no [github pages](https://viniciusdutra314.github.io/LabIFSC2/) do projeto
+A documentação completa se encontra tanto no site [readthedocs](https://labifsc2.readthedocs.io/) quanto no [github pages](https://viniciusdutra314.github.io/LabIFSC2/) do projeto

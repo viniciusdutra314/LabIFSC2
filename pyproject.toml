@@ -1,11 +1,34 @@
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
 [tool.poetry]
-name = "labifsc2"
+name = "LabIFSC2"
 version = "0.1.0"
-description = ""
+description = "Cálculos de laboratório com Python, realize propagação de incertezas e conversão de medidas automaticamente"
 authors = ["viniciusdutra314 <dutravinisousa2@usp.br>"]
 license = "GNU General Public License v3.0"
 readme = "README.md"
-package-mode = false
+packages=[{include = "LabIFSC2"}]
+classifiers=[
+    "Development Status :: 5 - Production/Stable",
+    "Natural Language :: Portuguese (Brazilian)",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Typing :: Typed",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+]
+keywords=["LabIFSC","montecarlo","error_propagation","unit_conversion"]
+
+[tool.poetry.urls]
+"Documentation" = "https://labifsc2.readthedocs.io/pt-br/latest/"
+"Github" = "https://github.com/viniciusdutra314/LabIFSC2"
+"Issue Tracker"="https://github.com/viniciusdutra314/LabIFSC2/issues"
 
 [tool.poetry.dependencies]
 python = "^3.10"
@@ -47,6 +70,3 @@ exclude = 'tests/.*'
 testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
 docs="mkdocs serve"
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
