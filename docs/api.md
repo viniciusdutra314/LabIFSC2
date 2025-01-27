@@ -5,7 +5,7 @@ aqui documentados.
 Eu só recomendo dar uma olhada nisso aquelas pessoas que estão já muito
 acostumados com a biblioteca e querem encontrar algum detalhe que
 não está tão bem explicado na documentação, caso contrário, por favor
-leia a secção [introdução](introducao.md)
+leia a seção [introdução](introducao.md)
 
 
 ::: LabIFSC2._medida

@@ -34,7 +34,3 @@ def test_doc_lei_de_hook():
 
     plt.xlabel(f'Deslocamento ({unidade_x})')
     plt.ylabel(f'Força ({unidade_y})')
-
-    plt.legend()
-    plt.savefig('teste.jpg',dpi=300)
-    plt.cla()

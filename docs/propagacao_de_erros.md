@@ -1,7 +1,7 @@
 !!! warning
     A leitura desta parte da documentação não é obrigatória para o uso da biblioteca. Caso sinta que a matemática/estatística é muito complexa, sinta-se livre para pular. Mas, se quiser realmente entender como as coisas funcionam por baixo dos panos, esta seção é para você.
 
-Nesta seção, explicarei em mais detalhes como a biblioteca propaga incertezas. O método usado é mais geral, mas ainda assim compatível na **maioria dos casos com o da apostila** (ler [secção](index.md#escopo) do sobre ). Nos testes unitários da biblioteca, comparamos os erros calculados pelo LabIFSC2 com as bibliotecas [uncertainties](https://pythonhosted.org/uncertainties/) e [LabIFSC](https://github.com/gjvnq/LabIFSC), chegando a um acordo geralmente de \(10^{-3}\) para erros pequenos em uma variável, onde os métodos devem ser equivalentes.
+Nesta seção, explicarei em mais detalhes como a biblioteca propaga incertezas. O método usado é mais geral, mas ainda assim compatível na **maioria dos casos com o da apostila** (ler [seção](index.md#escopo) do sobre ). Nos testes unitários da biblioteca, comparamos os erros calculados pelo LabIFSC2 com as bibliotecas [uncertainties](https://pythonhosted.org/uncertainties/) e [LabIFSC](https://github.com/gjvnq/LabIFSC), chegando a um acordo geralmente de \(10^{-3}\) para erros pequenos em uma variável, onde os métodos devem ser equivalentes.
 
 ## Apostila
 A apostila se baseia principalmente no GUM (Guide to the Expression of Uncertainty in Measurement)[^1]. O método é uma propagação linear baseada em uma série de Taylor.

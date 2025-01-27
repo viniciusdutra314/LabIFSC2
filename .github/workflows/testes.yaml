@@ -36,9 +36,13 @@ jobs:
         run: poetry install --without docs
 
       - name: Testing code with pytest
+        env:
+          PYTHONIOENCODING: utf-8
         run: mkdir -p docs/images/ && poetry run pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
 
       - name: Mypy
+        env:
+            PYTHONIOENCODING: utf-8
         run: poetry run python -m mypy LabIFSC2/
 
       - name: Upload coverage reports to Codecov

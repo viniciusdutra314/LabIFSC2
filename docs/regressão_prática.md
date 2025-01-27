@@ -55,7 +55,7 @@ No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no interv
 
 <img src="./images/kepler.jpg" width=600>
 
-Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para ler mais sobre gráficos, vá para a secção [Gráficos](graficos.md).
+Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para ler mais sobre gráficos, vá para a seção [Gráficos](graficos.md).
 
 ```py 
 --8<-- "tests/test_doc_kepler.py:64:79"
