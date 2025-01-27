@@ -32,7 +32,7 @@ with file_like_object as txt:
         if incerteza_str=="(exact)": incerteza=float(0)
         else: incerteza=float(incerteza_str)
         unidade=line[110:].strip()
-        constantes_dict[name]=[nominal,incerteza_str,unidade]
+        constantes_dict[name]=[nominal,incerteza,unidade]
 
 with open('../LabIFSC2/constantes/constantes.py','w') as python_arquivo:
     python_arquivo.write("'''Aqui são guardadas as constantes da natureza usadas no LabIFSC2 ,\n \
@@ -46,10 +46,11 @@ with open('../LabIFSC2/constantes/constantes.py','w') as python_arquivo:
     encontrar a constante (toda essa tabela é baseada na CODATA2022)'''\n"
     )
 
-    python_arquivo.write('from LabIFSC2 import Medida\n')
+    python_arquivo.write('from .._medida import Medida\n')
     for name, values in constantes_dict.items():
-        python_arquivo.write(f'{name}=Medida{values[0],values[1],values[2]}\n')
+        python_arquivo.write(f'{name}=Medida{values[0],values[2],values[1]}\n')
     python_arquivo.write('pi=3.14159265358979323846\n')
     python_arquivo.write('euler=2.7182818284590452353602874713527\n')
     python_arquivo.write('golden_ratio=1.61803398874989484820458\n')
-    python_arquivo.write('astronomical_unit=Medida(149_597_870_700,0,"m")\n')
+    python_arquivo.write('astronomical_unit=Medida(149_597_870_700,"m",0)\n')
+    python_arquivo.write('solar_mass=Medida(1.988475e30,"kg",0.000092e30)\n') #https://en.wikipedia.org/wiki/Solar_mass

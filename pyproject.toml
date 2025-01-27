@@ -34,13 +34,17 @@ taskipy = "^1.14.1"
 isort = "^5.13.2"
 mypy = "1.14.1"
 
+
+[tool.poetry.group.testes.dependencies]
+matplotlib = "^3.10.0"
+
 [tool.mypy]
 strict = true
 disallow_any_generics = false
 exclude = 'tests/.*'
 
 [tool.taskipy.tasks]
-testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=html "}
+testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
 docs="mkdocs serve"
 
 [build-system]

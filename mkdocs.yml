@@ -1,14 +1,15 @@
 site_name: LabIFSC2
 nav:
   - Sobre: index.md
-  - Instalação: instalacao.md
   - Introdução: introducao.md
-  - LabIFSC vs LabIFSC2: labifsc.md
-  - Constantes da Natureza: Constantes/constantes da natureza.md
+  - Constantes: constantes da natureza.md
+  - Funções Matemáticas: funcoes_matematicas.md
   - Arrays: arrays.md
-  - Regressões (Fitting): Regressões (fitting)/linear.md
-
-
+  - Mínimos quadrados: regressoes_menu.md
+  - Gráficos: graficos.md
+  - Formataçõs/LaTeX: formatacoes_latex.md
+  - Como erros são propagados?: propagacao_de_erros.md
+  - API Completa: api.md
 
 repo_url: https://github.com/viniciusdutra314/LabIFSC2
 theme:
@@ -37,6 +38,10 @@ theme:
       primary: teal
       accent: lime
 
+extra_css:
+  - css/custom.css
+
+
 use_directory_urls: false
 plugins:
   - search
@@ -45,7 +50,9 @@ extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML
 markdown_extensions:
   - pymdownx.highlight:
+  - admonition
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
   - mdx_math
+  - footnotes
