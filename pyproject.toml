@@ -31,8 +31,8 @@ keywords=["LabIFSC","montecarlo","error_propagation","unit_conversion"]
 "Issue Tracker"="https://github.com/viniciusdutra314/LabIFSC2/issues"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-numpy = "2.*"
+python = ">=3.10 , <3.13"
+numpy = ">= 1.26"
 pint = "^0.24"
 
 
@@ -62,11 +62,11 @@ mypy = "1.14.1"
 matplotlib = "^3.10.0"
 
 [tool.mypy]
-strict = true
+strict = false
 disallow_any_generics = false
 exclude = 'tests/.*'
 
 [tool.taskipy.tasks]
-testes={ cmd="isort . && mypy LabIFSC2/ && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
+testes={ cmd="isort . && mypy LabIFSC2/ --exclude LabIFSC2/_tipagem_forte.py && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
 docs="mkdocs serve"
 

@@ -37,7 +37,7 @@ def test_multiplicacao_medidas():
     y = lab.Medida(0, '', 0.1)
     correlacionado = x * x
     nao_correlacionado = lab._medida.montecarlo(lambda a, b: a * b, x, y)
-    assert not (np.any(correlacionado) < 0)
+    assert not (np.any(correlacionado.histograma) < 0)
     assert np.any(nao_correlacionado.histograma > 0) and np.any(nao_correlacionado.histograma < 0)
     assert not (correlacionado._histograma is None and nao_correlacionado._histograma is None)
     w = lab.Medida(0, '', 0.1)

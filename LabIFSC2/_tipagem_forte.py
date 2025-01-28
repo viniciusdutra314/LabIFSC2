@@ -1,5 +1,6 @@
 from collections.abc import Callable
 from copy import copy
+from functools import wraps
 from types import UnionType
 from typing import Any, get_args, get_origin
 
@@ -39,8 +40,9 @@ def remover_self_dentro_de_classe(annotations:dict[str,Any], args:tuple[Any,...]
 
     return args_para_analisar, annotations
 
-def obrigar_tipos(func:Callable) -> Callable:
-    def wrapper(*args:Any, **kwargs:Any) -> Any:
+def obrigar_tipos(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs) -> Any:
         args_para_analisar,annotations=remover_self_dentro_de_classe(func.__annotations__, args)
         
         #checar entrada, devido a usar zip, o return não é considerado
@@ -55,5 +57,4 @@ def obrigar_tipos(func:Callable) -> Callable:
             checar_argumento(result,'return',annotations['return'],func.__name__)
             
         return result
-    wrapper.__name__ = func.__name__ #mensagens de erro bonitinhas
     return wrapper

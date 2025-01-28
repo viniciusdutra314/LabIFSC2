@@ -39,7 +39,7 @@ Podemos também criar uma medida baseada em várias medições. Imagine que voc�
 ```py title="Cálculo de IMC"
 --8<-- "tests/test_doc_medida_lista.py:7:8"
 ```
-Caso o desvio padrão das medições seja maior do que a incerteza experimental, então a incerteza é o desvio padrão. Intuitivamente, podemos pensar que o fio é objetivamente irregular e não existe exatamente um raio que o define. 
+Caso o desvio padrão[^2] das medições seja maior do que a incerteza experimental, então a incerteza é o desvio padrão. Intuitivamente, podemos pensar que o fio é objetivamente irregular e não existe exatamente um raio que o define. 
 
 Mas se a incerteza experimental for maior que o desvio padrão, então não temos certeza se essa variação é devido ao fio ter um formato irregular ou por efeitos aleatórios de medição, a incerteza então é a incerteza experimental. 
 
@@ -116,3 +116,5 @@ Como unidades só são uma característica do print de uma medida, e não algo i
 
 [^1]:
     Perceba que o LabIFSC2 tem uma diferença de ordem de argumentos na criação de uma `Medida` em relação ao LabIFSC. Eu decidi colocar as unidades no meio da declaração pois, pessoalmente, acho que uma unidade no meio dos argumentos torna a leitura dos valores nominais e incerteza mais simples. Isso fica mais evidente em funções como `lab.linspaceM` e `lab.arrayM` em que temos muitos valores numéricos nos seus construtores.
+[^2]:
+    A convenção de desvio padrão é a mesma da apostila, ou seja, dividimos os desvios quadráticos por \(N-1\) e **NÃO** por \(N\). Isso é chamado de correção de [Bessel](https://en.wikipedia.org/wiki/Bessel%27s_correction). Esse detalhe só tem efeito visível para valores pequenos de \(N\), mas produz um resultado não enviesado para o desvio padrão.

@@ -23,7 +23,7 @@ print(f"{gravidade:si_latex}")
 \frac{\mathrm{m}}{\mathrm{s}^{2}}'''
 ```
 
-$g=(9,73 \, \pm \, 0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}}$
+$g=(9,73  \pm  0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}}$
 
 Podemos copiar o resultado em formato $\LaTeX$ e adicioná-lo em nosso relatório!
 

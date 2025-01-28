@@ -3,6 +3,7 @@ import re
 from collections.abc import Callable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
+from importlib.metadata import version
 from numbers import Real
 from statistics import NormalDist
 from string import Template
@@ -33,7 +34,12 @@ def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
         x_samples[index]=parametro.histograma
     histograma=func(*x_samples)
     mean=np.mean(histograma)
-    std=np.std(histograma,mean=mean)
+    
+    if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
+        std=np.std(histograma,mean=mean)
+    else:
+        std=np.std(histograma)
+
     if (isinstance(histograma,Quantity)):
         resultado=Medida(mean.magnitude,str(histograma.units),std.magnitude)
     else:
@@ -64,7 +70,7 @@ class Medida:
             if len(nominal)<2:
                 raise ValueError("Lista de medidas deve ter pelo menos 2 elementos")
             mean=np.average(nominal)
-            std=np.std(nominal,mean=mean)
+            std=np.std(nominal,ddof=1)
             self._nominal= ureg.Quantity(mean,unidade).to_reduced_units()
             if std>incerteza:
                 self._incerteza=ureg.Quantity(std,unidade).to_reduced_units()
@@ -329,14 +335,14 @@ class Medida:
 
     def __pow__(self:'Medida',outro:Any) -> 'Medida':
         if isinstance(outro,Real):
-            return montecarlo(lambda x: np.pow(x,float(outro)),self)
+            return montecarlo(lambda x: np.power(x,float(outro)),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
         else:
             return NotImplemented
     def __rpow__(self:'Medida',outro:Any) -> 'Medida':
         if isinstance(outro,Real):
-            return montecarlo(lambda x: np.pow(float(outro),x),self)
+            return montecarlo(lambda x: np.power(float(outro),x),self)
         else:
             return NotImplemented
 

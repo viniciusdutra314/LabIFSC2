@@ -95,17 +95,17 @@ def test_trignometria():
 
         x = umath.asin(ufloat(value , incerteza))
         x_lab1 = lab1.arc_sin(lab1.Medida((value , incerteza), ''))
-        x_lab2 = np.asin(lab2.Medida(value ,'', incerteza))
+        x_lab2 = np.arcsin(lab2.Medida(value ,'', incerteza))
         comparar_relativo_ufloat_lab1_lab2(x, x_lab1, x_lab2)
 
         x = umath.acos(ufloat(value , incerteza))
         x_lab1 = lab1.arc_cos(lab1.Medida((value , incerteza), ''))
-        x_lab2 = np.acos(lab2.Medida(value ,'', incerteza))
+        x_lab2 = np.arccos(lab2.Medida(value ,'', incerteza))
         comparar_relativo_ufloat_lab1_lab2(x, x_lab1, x_lab2)
 
         x = umath.atan(ufloat(value, incerteza))
         x_lab1 = lab1.arc_tan(lab1.Medida((value, incerteza), ''))
-        x_lab2 = np.atan(lab2.Medida(value,'', incerteza))
+        x_lab2 = np.arctan(lab2.Medida(value,'', incerteza))
         comparar_relativo_ufloat_lab1_lab2(x, x_lab1, x_lab2,precisao=1)
 
 def test_hiperbolicas():
@@ -124,15 +124,15 @@ def test_hiperbolicas():
         comparar_ufloat_lab2(x, x_lab2)
 
         x = umath.asinh(ufloat(value, incerteza))
-        x_lab2 = np.asinh(lab2.Medida(value,'', incerteza))
+        x_lab2 = np.arcsinh(lab2.Medida(value,'', incerteza))
         comparar_ufloat_lab2(x, x_lab2)
 
         x = umath.acosh(ufloat(value + 1, incerteza))  # value + 1 to ensure it's in the domain of acosh
-        x_lab2 = np.acosh(lab2.Medida(value + 1, '',incerteza))
+        x_lab2 = np.arccosh(lab2.Medida(value + 1, '',incerteza))
         comparar_ufloat_lab2(x, x_lab2)
 
         x = umath.atanh(ufloat(value / 2, incerteza))  # value / 2 to ensure it's in the domain of atanh
-        x_lab2 = np.atanh(lab2.Medida(value / 2,'', incerteza))
+        x_lab2 = np.arctanh(lab2.Medida(value / 2,'', incerteza))
         comparar_ufloat_lab2(x, x_lab2)
 
 
@@ -141,12 +141,12 @@ def test_power():
     for value in np.linspace(1,3,100):
         x = umath.pow(ufloat(value, incerteza), 2)
         x_lab1 = lab1.Medida((value, incerteza), '')**2
-        x_lab2 = np.pow(lab2.Medida(value,'', incerteza), 2)
+        x_lab2 = np.power(lab2.Medida(value,'', incerteza), 2)
         comparar_relativo_ufloat_lab1_lab2(x, x_lab1, x_lab2)
 
         x = umath.pow(ufloat(value, incerteza), 3)
         x_lab1 = lab1.Medida((value, incerteza), '')**3
-        x_lab2 = np.pow(lab2.Medida(value,'', incerteza), 3)
+        x_lab2 = np.power(lab2.Medida(value,'', incerteza), 3)
         comparar_relativo_ufloat_lab1_lab2(x, x_lab1, x_lab2)
 
         x = umath.sqrt(ufloat(value, incerteza))
