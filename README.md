@@ -23,7 +23,7 @@ print(f"{gravidade:si_latex}")
 \frac{\mathrm{m}}{\mathrm{s}^{2}}'''
 ```
 
-$g=(9,73  \pm  0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}}$
+$g=(9,73  \pm  0,07) \frac{\mathrm{m}}{\mathrm{s}^{2}}$
 
 Podemos copiar o resultado em formato $\LaTeX$ e adicioná-lo em nosso relatório!
 
@@ -45,11 +45,11 @@ Mesmo que a interface seja intencionalmente parecida, a implementação é total
 | Documentação              | Parcial               | Completa                                                                                                                        |
 
 ## Instalação
-A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python igual ou superior a 3.10. Para descobrir a versão do seu Python, digite `python --version` no terminal:
+A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python entre 3.10 e 3.12. Para descobrir a versão do seu Python, digite `python --version` no terminal:
 
 ```bash
 pip install LabIFSC2
 ```
 
 ## Documentação Completa
-A documentação completa se encontra tanto no site [readthedocs](https://labifsc2.readthedocs.io/) quanto no [github pages](https://viniciusdutra314.github.io/LabIFSC2/) do projeto
+A documentação completa se encontra no site [readthedocs](https://labifsc2.readthedocs.io)

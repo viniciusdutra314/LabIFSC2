@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "LabIFSC2"
-version = "0.1.0"
+version = "0.1.1"
 description = "Cálculos de laboratório com Python, realize propagação de incertezas e conversão de medidas automaticamente"
 authors = ["viniciusdutra314 <dutravinisousa2@usp.br>"]
 license = "GNU General Public License v3.0"
