@@ -2,8 +2,10 @@
 <div style="display: flex; gap: 10px;">
     <img src="https://img.shields.io/pypi/pyversions/LabIFSC2">
     <img src="https://img.shields.io/codecov/c/github/viniciusdutra314/LabIFSC2">
+    <img src="https://img.shields.io/pypi/dm/LabIFSC2">
     <img src="https://github.com/viniciusdutra314/LabIFSC2/actions/workflows/testes.yaml/badge.svg">
     <img src="https://img.shields.io/github/license/viniciusdutra314/LabIFSC2">
+
 
 </div>
 
