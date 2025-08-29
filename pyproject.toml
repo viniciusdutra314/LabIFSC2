@@ -2,21 +2,21 @@
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-
-[tool.poetry]
+[project]
 name = "LabIFSC2"
 version = "0.1.1"
 description = "Cálculos de laboratório com Python, realize propagação de incertezas e conversão de medidas automaticamente"
-authors = ["viniciusdutra314 <dutravinisousa2@usp.br>"]
+authors = [{name="viniciusdutra314",email="dutravinisousa2@usp.br"},]
 license = "GNU General Public License v3.0"
 readme = "README.md"
 packages=[{include = "LabIFSC2"}]
+requires-python = ">=3.11"
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Natural Language :: Portuguese (Brazilian)",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
     "Operating System :: OS Independent",
@@ -24,16 +24,16 @@ classifiers=[
     "Intended Audience :: Developers",
 ]
 keywords=["LabIFSC","montecarlo","error_propagation","unit_conversion"]
+dependencies=[
+    "numpy >= 2.0",
+    "pint >=0.25"
+]
 
-[tool.poetry.urls]
+
+[project.urls]
 "Documentation" = "https://labifsc2.readthedocs.io/pt-br/latest/"
 "Github" = "https://github.com/viniciusdutra314/LabIFSC2"
 "Issue Tracker"="https://github.com/viniciusdutra314/LabIFSC2/issues"
-
-[tool.poetry.dependencies]
-python = ">=3.10 , <3.13"
-numpy = ">= 1.26"
-pint = "^0.24"
 
 
 [tool.poetry.group.docs.dependencies]
@@ -53,7 +53,6 @@ scipy = "^1.15.1"
 
 
 [tool.poetry.group.linter.dependencies]
-taskipy = "^1.14.1"
 isort = "^5.13.2"
 mypy = "1.14.1"
 
@@ -66,7 +65,24 @@ strict = false
 disallow_any_generics = false
 exclude = 'tests/.*'
 
-[tool.taskipy.tasks]
-testes={ cmd="isort . && mypy LabIFSC2/ --exclude LabIFSC2/_tipagem_forte.py && pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html "}
-docs="mkdocs serve"
+#all tasks 
+
+[tool.poetry.requires-plugins]
+poethepoet = ">=0.35"
+
+[tool.poe.tasks.tests]
+help="Run the unit tests (pytest), a type checker (mypy) and a test coverage (ptytest-cov)"
+sequence = ["type-checking","unit-tests"]
+
+[tool.poe.tasks.type-checking]
+help="Run a type checker (mypy)"
+cmd="mypy LabIFSC2/ --exclude LabIFSC2/_tipagem_forte.py"
+
+[tool.poe.tasks.unit-tests]
+help="Run the unit tests (pytest)"
+cmd = "pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html"
+
+[tool.poe.tasks.docs]
+help="Create the documentation"
+cmd="mkdocs serve"
 

@@ -15,9 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"] # versões que recebem suporte oficial do Python,
-        # que possuem os recursos de typing que eu preciso para obrigar_tipos
-        # 3.13 não incluída pois o pint ainda não suporta ela
+        python-version: ["3.11", "3.12", "3.13"] 
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -28,22 +26,24 @@ jobs:
         uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
+      
+      - name : Install Poetry
+        uses: Gr1N/setup-poetry@v8
+        with:
+          poetry-version: "2.1.4"
 
-      - name: Install Poetry
-        run: pip install poetry
-    
       - name: Install dependencies
-        run: poetry install --without docs
+        run: poetry self add poethepoet@0.37 && poetry install --without docs --no-root
 
       - name: Testing code with pytest
         env:
           PYTHONIOENCODING: utf-8
-        run: mkdir -p docs/images/ && poetry run pytest -vv -x -s --cov LabIFSC2/ --no-cov-on-fail --cov-branch --cov-report=xml
+        run: poetry poe unit-tests
 
-      - name: Mypy
+      - name: mypy
         env:
             PYTHONIOENCODING: utf-8
-        run: poetry run python -m mypy LabIFSC2/
+        run: poetry poe type-checking
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

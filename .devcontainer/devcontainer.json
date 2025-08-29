@@ -1,9 +1,7 @@
 {
-	"name": "poetry3-poetry-pyenv",
-	"build": {
-		"dockerfile": "Dockerfile"
-	},
-	
+	"name": "Python-Poetry",
+	"image": "debian:trixie",
+
 	"customizations": {
         "vscode": {
             "extensions":[
@@ -12,8 +10,15 @@
 				"matangover.mypy",
 				"streetsidesoftware.code-spell-checker-portuguese-brazilian",
 				"yzhang.markdown-all-in-one",
-				"ritwickdey.LiveServer"
+				"ritwickdey.LiveServer",
+				"twixes.pypi-assistant",
+				"GitHub.vscode-github-actions"
 			]
             }
+		},
+		"features": {
+			"ghcr.io/devcontainers/features/python:1": {},
+			"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {},
+			"ghcr.io/devcontainers-extra/features/poetry:2": {}
 		}
 }
