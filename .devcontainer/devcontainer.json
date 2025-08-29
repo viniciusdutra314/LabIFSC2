@@ -17,8 +17,10 @@
             }
 		},
 		"features": {
-			"ghcr.io/devcontainers/features/python:1": {},
+			"ghcr.io/devcontainers/features/python:1": {"version": 3.11},
 			"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {},
 			"ghcr.io/devcontainers-extra/features/poetry:2": {}
-		}
+		},
+	"postCreateCommand": "poetry self add poethepoet@0.37 && poetry install --no-root"
+
 }
