@@ -14,10 +14,9 @@ from pint import Quantity, UnitRegistry
 from pint.util import UnitsContainer
 
 from . import MCSamples
-from ._tipagem_forte import obrigar_tipos
 
 
-@obrigar_tipos
+
 def alterar_monte_carlo_samples(novo_valor:int) -> None:
     global MCSamples
     if novo_valor<=0:
@@ -49,8 +48,8 @@ def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
 
 class Medida:
 
-    @obrigar_tipos
-    def __init__(self,nominal:Real | list,unidade : str,incerteza : Real):
+    
+    def __init__(self,nominal:float | list,unidade : str,incerteza : float):
         """
         Inicializa uma instância da classe com valores nominais, unidade e incerteza.
         
@@ -83,7 +82,7 @@ class Medida:
         self._nominal.ito_reduced_units
         self._incerteza.ito_reduced_units
 
-    @obrigar_tipos
+    
     def nominal(self:'Medida',unidade:str) -> float:
         """
         Retorna o valor nominal da medida na unidade especificada.
@@ -99,7 +98,7 @@ class Medida:
             return float(self._nominal.to_base_units().magnitude)
         else:
             return float(self._nominal.to(unidade).magnitude)
-    @obrigar_tipos
+    
     def incerteza(self:'Medida',unidade:str) -> float:
         """
         Retorna a incerteza da medida na unidade especificada.
@@ -131,7 +130,7 @@ class Medida:
                 self._histograma=self._nominal
         return self._histograma
 
-    @obrigar_tipos
+    
     def __format__(self, format_spec:str) -> str:
 
 
@@ -369,8 +368,8 @@ class Medida:
     def __pos__(self) -> 'Medida':
         return self
 
-    @obrigar_tipos
-    def probabilidade_de_estar_entre(self,a:Real,b:Real,unidade:str) -> float:
+    
+    def probabilidade_de_estar_entre(self,a:float,b:float,unidade:str) -> float:
         """
         Calcula a probabilidade de uma medida estar entre dois valores especificados.
         
@@ -402,8 +401,8 @@ class Medida:
             probabilidade= np.mean((self._histograma >= a_quantidade) & (self._histograma <= b_quantidade),dtype=float)
             return float(probabilidade)
 
-    @obrigar_tipos
-    def intervalo_de_confiança(self:'Medida',p:Real,unidade:str) -> list:
+    
+    def intervalo_de_confiança(self:'Medida',p:float,unidade:str) -> list:
         """
         Calcula o intervalo de confiança para a medida.
         
@@ -454,7 +453,7 @@ class Comparacao(Enum):
     DIFERENTES = "diferentes"
     INCONCLUSIVO = "inconclusivo"
 
-@obrigar_tipos
+
 def comparar_medidas(medida1: Medida, medida2: Medida, sigma_inferior: float = 2, sigma_superior: float = 3) -> Comparacao:
     """
     Compara duas medidas considerando suas incertezas e retorna o resultado da comparação.

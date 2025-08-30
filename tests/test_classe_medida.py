@@ -6,11 +6,6 @@ import LabIFSC2 as lab
 def test_inicializacao():
     with pytest.raises(ValueError):
         lab.Medida(5, '', -1)
-    inicializacoes_erradas=[lambda: lab.Medida("1", '', 3),
-                            lambda: lab.Medida(5, '', "0.1"),]
-    for inicializacao_errada in inicializacoes_erradas:
-        with pytest.raises(TypeError):
-            inicializacao_errada()
     try:
         lab.Medida(5, 'mm', 0.1)
     except Exception as exc:

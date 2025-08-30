@@ -10,10 +10,9 @@ from numpy import exp, log, power
 from numpy.polynomial import Polynomial
 
 from ._medida import Medida, ureg
-from ._tipagem_forte import obrigar_tipos
 
 
-@obrigar_tipos
+
 def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
         array_medidas:np.ndarray,lab_func:Callable)->np.ndarray:
     '''
@@ -33,7 +32,7 @@ exponenciais, todos os valores de y precisam ser positivos. No caso da regressã
 em x também precisam ser positivos. Além disso, um valor pode não ser negativo, mas devido à incerteza associada, ele pode assumir valores negativos.')
         medidas_novas.append(Medida(nominal,unidade,incerteza))
     return np.array(medidas_novas)
-@obrigar_tipos
+
 def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
     return np.array([Medida(med._nominal.magnitude,unidade,med._incerteza.magnitude,) for med in array_medidas])
 
@@ -70,7 +69,7 @@ mesmo que com incerteza 0, pois precisamos das unidades")
 
 
 class MPolinomio(Regressao):
-    @obrigar_tipos
+    
     def __init__(self,coeficientes:np.ndarray):
         super().__init__()
         if not (isinstance(coeficientes[0],Medida)):
@@ -82,7 +81,7 @@ class MPolinomio(Regressao):
             setattr(self,string.ascii_lowercase[index],coef)
         self.grau=len(coeficientes)-1
     
-    @obrigar_tipos
+    
     def amostrar(self:'MPolinomio', x:np.ndarray,unidade_y:str) -> np.ndarray:
         """
         Calcula os valores de um polinômio para um conjunto de entradas x.
@@ -115,15 +114,15 @@ class MExponencial(Regressao):
     y = a * base^(kx)
     '''
     __slots__ = ['cte_multiplicativa', 'expoente', 'base','_valores']
-    @obrigar_tipos
-    def __init__(self,a:Medida,k:Medida,base:Real):
+    
+    def __init__(self,a:Medida,k:Medida,base:float):
         super().__init__()
         self.cte_multiplicativa=a
         self.base=base
         self.expoente=k
         self._valores=iter((a,k,base))
     
-    @obrigar_tipos
+    
     def amostrar(self:'MExponencial', x:np.ndarray,unidade_y:str)->np.ndarray:
         """
         Gera uma amostra de valores exponenciais com base nos parâmetros fornecidos.
@@ -144,7 +143,7 @@ class MExponencial(Regressao):
         return f'MExponencial(cte_multiplicativa={self.cte_multiplicativa},expoente={self.expoente},base={self.base})'
 
 class MLeiDePotencia(Regressao):    
-    @obrigar_tipos
+    
     def __init__(self, a: Medida, n: Medida,y_unidade:pint.Quantity):
         super().__init__()
         self.cte_multiplicativa = a
@@ -152,7 +151,7 @@ class MLeiDePotencia(Regressao):
         self._valores=iter([a,n])
         self._y_unidade=y_unidade
     
-    @obrigar_tipos
+    
     def amostrar(self:'MLeiDePotencia', x:np.ndarray,unidade_y:str) -> np.ndarray:
         """
         Amostra valores baseados na lei de potência.
@@ -180,7 +179,7 @@ class MLeiDePotencia(Regressao):
 
 
 
-@obrigar_tipos
+
 def regressao_polinomial(x_medidas:np.ndarray,y_medidas:np.ndarray,grau:int) -> MPolinomio:
     """
     Realiza uma regressão polinomial nos dados fornecidos.
@@ -215,7 +214,7 @@ def regressao_polinomial(x_medidas:np.ndarray,y_medidas:np.ndarray,grau:int) -> 
         medidas_coeficientes.append(Medida(p[index],unidade,erros[index]))
     return MPolinomio(np.array(medidas_coeficientes))
 
-@obrigar_tipos
+
 def regressao_linear(x_medidas:np.ndarray,
                      y_medidas:np.ndarray) -> MPolinomio:
     """
@@ -234,9 +233,9 @@ def regressao_linear(x_medidas:np.ndarray,
     reta:MPolinomio=regressao_polinomial(x_medidas,y_medidas,1)
     return reta
 
-@obrigar_tipos
+
 def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
-                          base:Real=np.exp(1)) -> MExponencial:
+                          base:float=np.exp(1)) -> MExponencial:
     """
     y=ae^{kx}
     Realiza uma regressão exponencial nos dados fornecidos.
@@ -266,7 +265,7 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
     a=_forcar_troca_de_unidade(np.array([a]),str(y_medidas[0]._nominal.units))
     return MExponencial(a[0],k[0],base)
 
-@obrigar_tipos
+
 def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePotencia:
     """
     y=a*x^n

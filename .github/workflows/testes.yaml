@@ -35,15 +35,15 @@ jobs:
       - name: Install dependencies
         run: poetry self add poethepoet@0.37 && poetry install --without docs --no-root
 
-      - name: Testing code with pytest
-        env:
-          PYTHONIOENCODING: utf-8
-        run: poetry poe unit-tests
-
       - name: mypy
         env:
             PYTHONIOENCODING: utf-8
         run: poetry poe type-checking
+
+      - name: Testing code with pytest
+        env:
+          PYTHONIOENCODING: utf-8
+        run: poetry poe unit-tests
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

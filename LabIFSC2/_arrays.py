@@ -6,10 +6,9 @@ import numpy as np
 
 from ._medida import Medida
 from ._regressoes import Regressao
-from ._tipagem_forte import obrigar_tipos
 
 
-@obrigar_tipos
+
 def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     """
         Converte um array de objetos Medida para um array de valores nominais em uma unidade especificada.
@@ -33,7 +32,7 @@ def nominais(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     else:
         return np.array([medida._nominal.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
-@obrigar_tipos
+
 def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     """
         Converte um array de objetos Medida para um array de incertezas em uma unidade especificada.
@@ -56,7 +55,7 @@ def incertezas(arrayMedidas : np.ndarray,unidade:str) -> np.ndarray:
     else:
         return np.array([medida._incerteza.to(unidade).magnitude for medida in arrayMedidas],dtype=float)
 
-@obrigar_tipos
+
 def _curva_min_max(arrayMedidas : np.ndarray| Regressao,op:str,unidade_y:str,sigmas:float | int) -> np.ndarray:
     if sigmas<=0:
         raise ValueError('O número de sigmas deve ser positivo')
@@ -81,7 +80,7 @@ def _curva_min_max(arrayMedidas : np.ndarray| Regressao,op:str,unidade_y:str,sig
             return resultado_max
     return np.array([])
 
-@obrigar_tipos
+
 def curva_min(arrayMedidas:np.ndarray | Regressao,unidade_y:str,sigmas:float | int=2) -> np.ndarray:
     """
     Calcula a curva mínima de uma série de medidas.
@@ -118,8 +117,8 @@ def curva_max(arrayMedidas:np.ndarray | Regressao, unidade_y:str,sigmas:float | 
     resultado:np.ndarray= _curva_min_max(arrayMedidas,'max',unidade_y,sigmas)
     return resultado
 
-@obrigar_tipos
-def linspaceM(a:Real,b:Real,n : int,unidade:str,incertezas:Real) -> np.ndarray:
+
+def linspaceM(a:float,b:float,n : int,unidade:str,incertezas:float) -> np.ndarray:
     """Gera um array de Medidas com valores igualmente espaçados.
     
     Args:
@@ -135,8 +134,8 @@ def linspaceM(a:Real,b:Real,n : int,unidade:str,incertezas:Real) -> np.ndarray:
     return np.array([Medida(i,unidade,incertezas) for i in np.linspace(float(a),float(b),n)],dtype=object)
         
 
-@obrigar_tipos
-def arrayM(nominais:np.ndarray | Sequence ,unidade:str,incerteza:Real) ->np.ndarray:
+
+def arrayM(nominais:np.ndarray | Sequence ,unidade:str,incerteza:float) ->np.ndarray:
     """
     Cria um array de objetos Medida a partir de valores nominais, unidade e incerteza.
     
