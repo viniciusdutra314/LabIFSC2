@@ -95,6 +95,7 @@ class Medida:
         Returns:
             float: O valor nominal da medida na unidade especificada.
         """
+
         if unidade.lower()=='si':
             return float(self._nominal.to_base_units().magnitude)
         else:
@@ -207,11 +208,9 @@ class Medida:
                                            potencia=potencia_bonita,unidade=unidade)
     
     def __str__(self) -> str:
-        printado:str=self.__format__('')
-        return printado
+        return self.__format__('')
     def __repr__(self) -> str:
-        representacao:str=self.__format__('')
-        return representacao
+        return self.__format__('')
     
     '''O método abaixo faz a magia que basicamente qualquer função do numpy possa
     ser aplicada diretamente em uma medida
@@ -242,27 +241,16 @@ class Medida:
     chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"')
     
     def __le__(self:Medida,outro:Any) -> bool:
-        if not isinstance(outro,Medida):
-            return NotImplemented
-        else:
-            return bool(self._nominal<=outro._nominal)
+        return bool(self._nominal<=outro._nominal) if isinstance(outro,Medida) else NotImplemented
     
     def __lt__(self:Medida,outro:Any) -> bool:
-        if not isinstance(outro,Medida):
-            return NotImplemented
-        else:
-            return bool(self._nominal<outro._nominal)
+        return bool(self._nominal<outro._nominal) if isinstance(outro,Medida) else NotImplemented
+        
     def __ge__(self:Medida,outro:Any) -> bool:
-        if not isinstance(outro,Medida):
-            return NotImplemented
-        else:
-            return bool(self._nominal>=outro._nominal)
+        return bool(self._nominal>=outro._nominal) if isinstance(outro,Medida) else NotImplemented    
     
     def __gt__(self:Medida,outro:Any) -> bool:
-        if not isinstance(outro,Medida):
-            return NotImplemented
-        else:
-            return bool(self._nominal>outro._nominal)
+        return bool(self._nominal>=outro._nominal) if isinstance(outro,Medida) else NotImplemented        
 
 
     def _adicao_subtracao(self,outro: Medida,positivo:bool) -> Medida:
@@ -367,7 +355,12 @@ class Medida:
         return resultado
 
     def __pos__(self) -> Medida:
-        return self
+        resultado=Medida(self._nominal.magnitude,
+                         str(self._nominal.units),
+                         self._incerteza.magnitude,)
+        if self._histograma is not None:
+            resultado._histograma=self._histograma
+        return resultado
 
     
     def probabilidade_de_estar_entre(self,a:float,b:float,unidade:str) -> float:
