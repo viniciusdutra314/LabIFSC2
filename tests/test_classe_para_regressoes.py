@@ -6,8 +6,6 @@ import LabIFSC2 as lab
 
 def test_initialization():
     coeficientes = lab.linspaceM(1,3,3,'',0)
-    with pytest.raises(TypeError):
-        lab._regressoes.MPolinomio(np.array([1, 2, 3]))
     polinomio=lab._regressoes.MPolinomio(coeficientes)
     assert polinomio.grau == 2
     assert polinomio.a.nominal("") == 1

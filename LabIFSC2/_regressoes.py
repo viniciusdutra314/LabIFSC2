@@ -1,6 +1,6 @@
 import string
 from abc import ABC, abstractmethod
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator,Iterable
 from numbers import Real
 from typing import Any
 
@@ -33,8 +33,8 @@ em x também precisam ser positivos. Além disso, um valor pode não ser negativ
         medidas_novas.append(Medida(nominal,unidade,incerteza))
     return np.array(medidas_novas)
 
-def _forcar_troca_de_unidade(array_medidas:np.ndarray,unidade:str)-> np.ndarray:
-    return np.array([Medida(med._nominal.magnitude,unidade,med._incerteza.magnitude,) for med in array_medidas])
+def _forcar_troca_de_unidade(medidas:Iterable[Medida],unidade:str)-> np.ndarray:
+    return np.array([Medida(med._nominal.magnitude,unidade,med._incerteza.magnitude,) for med in medidas])
 
 class Regressao(ABC):
     
@@ -70,17 +70,16 @@ mesmo que com incerteza 0, pois precisamos das unidades")
 
 class MPolinomio(Regressao):
     
-    def __init__(self,coeficientes:np.ndarray):
+    def __init__(self,coeficientes:Iterable[Medida]):
         super().__init__()
-        if not (isinstance(coeficientes[0],Medida)):
-            raise TypeError('Os valores do array não são Medidas')
-    
-        self._coeficientes:list[Medida]=[]
-        for index,coef in enumerate(coeficientes):
-            self._coeficientes.append(coef)
-            setattr(self,string.ascii_lowercase[index],coef)
-        self.grau=len(coeficientes)-1
-    
+        self._coeficientes:list[Medida]=[coef for coef in coeficientes]
+        self.grau=len(self._coeficientes)-1
+    def __getattr__(self,name:str)-> Medida:
+        if name in string.ascii_lowercase:
+            index=string.ascii_lowercase.index(name)
+            if index<=self.grau:
+                return self._coeficientes[index]
+        raise AttributeError(f"'MPolinomio' object has no attribute '{name}'")
     
     def amostrar(self:'MPolinomio', x:np.ndarray,unidade_y:str) -> np.ndarray:
         """
@@ -259,10 +258,10 @@ def regressao_exponencial(x_medidas:np.ndarray,y_medidas:np.ndarray,
     pegar_log=lambda x: log(x)/log(float(base))
     log_y_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(y_medidas,pegar_log) 
     polinomio=regressao_linear(x_medidas,log_y_medidas)
-    k=polinomio.a
+    k_coef=polinomio.a
     a=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(np.array([polinomio.b]),exp)[0]
-    k=_forcar_troca_de_unidade(np.array([k]),str((1/x_medidas[0]._nominal).units))
-    a=_forcar_troca_de_unidade(np.array([a]),str(y_medidas[0]._nominal.units))
+    k=_forcar_troca_de_unidade([k_coef],str((1/x_medidas[0]._nominal).units))
+    a=_forcar_troca_de_unidade([a],str(y_medidas[0]._nominal.units))
     return MExponencial(a[0],k[0],base)
 
 
@@ -291,7 +290,7 @@ def regressao_potencia(x_medidas:np.ndarray, y_medidas:np.ndarray) -> MLeiDePote
     log_x_medidas=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(x_medidas,log)
     polinomio=regressao_linear(log_x_medidas,log_y_medidas)
     a=_aplicar_funcao_sem_passar_pelo_sistema_de_unidades(np.array([polinomio.b]),exp)[0]
-    n=polinomio.a
-    a=_forcar_troca_de_unidade(np.array([a]),str((y_medidas[0]._nominal/x_medidas[0]._nominal**n._nominal.magnitude).units))
-    n=_forcar_troca_de_unidade(np.array([n]),"dimensionless")
+    n_coef=polinomio.a
+    a=_forcar_troca_de_unidade(np.array([a]),str((y_medidas[0]._nominal/x_medidas[0]._nominal**n_coef._nominal.magnitude).units))
+    n=_forcar_troca_de_unidade([n_coef],"dimensionless")
     return MLeiDePotencia(a[0],n[0],y_medidas[0]._nominal)
