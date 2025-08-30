@@ -8,8 +8,12 @@ def test_inicializacao():
         lab.Medida(5, '', -1)
     try:
         lab.Medida(5, 'mm', 0.1)
+        lab.Medida(5, 'mm')
+        lab.Medida(5, 'mm',0)
     except Exception as exc:
         assert False, "Não deveria levantar um erro"
+
+
 
 
 def test_comparacoes():

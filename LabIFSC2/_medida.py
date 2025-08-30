@@ -1,17 +1,19 @@
+from __future__ import annotations
 import math
 import re
 from collections.abc import Callable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
-from importlib.metadata import version
 from numbers import Real
 from statistics import NormalDist
 from string import Template
-from typing import Any
-
+from typing import Any,overload
 import numpy as np
 from pint import Quantity, UnitRegistry
 from pint.util import UnitsContainer
+from collections.abc import Sequence
+
+
 
 from . import MCSamples
 
@@ -27,17 +29,14 @@ def alterar_monte_carlo_samples(novo_valor:int) -> None:
 ureg = UnitRegistry()
 
 
-def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
+def montecarlo(func : Callable,*parametros : Medida,) -> Medida:
     x_samples=np.empty(len(parametros),dtype=Quantity)
     for index,parametro in enumerate(parametros):
         x_samples[index]=parametro.histograma
     histograma=func(*x_samples)
     mean=np.mean(histograma)
     
-    if np.lib.NumpyVersion(np.__version__) >= '2.0.0':
-        std=np.std(histograma,mean=mean)
-    else:
-        std=np.std(histograma)
+    std=np.std(histograma,mean=mean)
 
     if (isinstance(histograma,Quantity)):
         resultado=Medida(mean.magnitude,str(histograma.units),std.magnitude)
@@ -48,8 +47,14 @@ def montecarlo(func : Callable,*parametros : 'Medida',) -> 'Medida':
 
 class Medida:
 
-    
-    def __init__(self,nominal:float | list,unidade : str,incerteza : float):
+    @overload
+    def __init__(self,nominal:float,unidade : str,incerteza:float=0):...
+
+    @overload
+    def __init__(self,nominal:Sequence[float],unidade : str,incerteza:float=0):...
+
+
+    def __init__(self,nominal:float | Sequence[float],unidade : str,incerteza : float=0):
         """
         Inicializa uma instância da classe com valores nominais, unidade e incerteza.
         
@@ -62,19 +67,15 @@ class Medida:
             ValueError: Se a incerteza for negativa.
             ValueError: Se a lista de medidas tiver menos de 2 elementos.
         """
-
+        
         if incerteza<0: raise ValueError("Incerteza não pode ser negativa")
-
-        if isinstance(nominal,list):
+        if isinstance(nominal,Sequence):
             if len(nominal)<2:
                 raise ValueError("Lista de medidas deve ter pelo menos 2 elementos")
             mean=np.average(nominal)
-            std=np.std(nominal,ddof=1)
+            std=np.std(nominal,ddof=1,mean=mean)
             self._nominal= ureg.Quantity(mean,unidade).to_reduced_units()
-            if std>incerteza:
-                self._incerteza=ureg.Quantity(std,unidade).to_reduced_units()
-            else:
-                self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
+            self._incerteza=ureg.Quantity(std if std>incerteza else incerteza,unidade).to_reduced_units()
         else:
             self._nominal=ureg.Quantity(nominal,unidade).to_reduced_units()
             self._incerteza=ureg.Quantity(incerteza,unidade).to_reduced_units()
@@ -83,7 +84,7 @@ class Medida:
         self._incerteza.ito_reduced_units
 
     
-    def nominal(self:'Medida',unidade:str) -> float:
+    def nominal(self:Medida,unidade:str) -> float:
         """
         Retorna o valor nominal da medida na unidade especificada.
         
@@ -99,7 +100,7 @@ class Medida:
         else:
             return float(self._nominal.to(unidade).magnitude)
     
-    def incerteza(self:'Medida',unidade:str) -> float:
+    def incerteza(self:Medida,unidade:str) -> float:
         """
         Retorna a incerteza da medida na unidade especificada.
         
@@ -116,11 +117,11 @@ class Medida:
             return float(self._incerteza.to(unidade).magnitude)
 
     @property
-    def dimensao(self:'Medida') -> UnitsContainer:
+    def dimensao(self:Medida) -> UnitsContainer:
         return self._nominal.dimensionality
 
     @property
-    def histograma(self:'Medida') -> Any:
+    def histograma(self:Medida) -> Any:
         if self._histograma is None:
             if self._incerteza.magnitude!=0:
                 self._histograma=np.random.normal(self._nominal.magnitude,
@@ -230,41 +231,41 @@ class Medida:
     np.max,np.min funcionem com medidas do jeito esperado (comparar o valor nominal)
     Repare que não há implementação == e !=, use a função comparar_medidas.
     '''
-    def __eq__(self:'Medida',outro:Any)-> bool:
+    def __eq__(self:Medida,outro:Any)-> bool:
        raise TypeError('"Como a comparação entre Medidas pode gerar três resultados \
     diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
     chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"')
     
-    def __ne__(self:'Medida',outro:Any)-> bool:
+    def __ne__(self:Medida,outro:Any)-> bool:
         raise TypeError('"Como a comparação entre Medidas pode gerar três resultados \
     diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
     chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"')
     
-    def __le__(self:'Medida',outro:Any) -> bool:
+    def __le__(self:Medida,outro:Any) -> bool:
         if not isinstance(outro,Medida):
             return NotImplemented
         else:
             return bool(self._nominal<=outro._nominal)
     
-    def __lt__(self:'Medida',outro:Any) -> bool:
+    def __lt__(self:Medida,outro:Any) -> bool:
         if not isinstance(outro,Medida):
             return NotImplemented
         else:
             return bool(self._nominal<outro._nominal)
-    def __ge__(self:'Medida',outro:Any) -> bool:
+    def __ge__(self:Medida,outro:Any) -> bool:
         if not isinstance(outro,Medida):
             return NotImplemented
         else:
             return bool(self._nominal>=outro._nominal)
     
-    def __gt__(self:'Medida',outro:Any) -> bool:
+    def __gt__(self:Medida,outro:Any) -> bool:
         if not isinstance(outro,Medida):
             return NotImplemented
         else:
             return bool(self._nominal>outro._nominal)
 
 
-    def _adicao_subtracao(self,outro: 'Medida',positivo:bool) -> 'Medida':
+    def _adicao_subtracao(self,outro: Medida,positivo:bool) -> Medida:
         if not (isinstance(outro,Medida) or isinstance(outro,Real)):
             return NotImplemented
         if isinstance(outro,Real):
@@ -294,12 +295,12 @@ class Medida:
             raise ValueError(f"A soma/subtração entre {self._nominal.dimensionality} e \
 {outro._nominal.dimensionality} não é possível")
 
-    def __add__(self:'Medida',outro:Any) -> 'Medida':
+    def __add__(self:Medida,outro:Any) -> Medida:
         return self._adicao_subtracao(outro,True)
-    def __sub__(self:'Medida',outro:Any)-> 'Medida':
+    def __sub__(self:Medida,outro:Any)-> Medida:
         return self._adicao_subtracao(outro,False)
 
-    def __mul__(self:'Medida',outro:Any)-> 'Medida':
+    def __mul__(self:Medida,outro:Any)-> Medida:
         if self is outro: return montecarlo(lambda x: x**2,self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x*y,self,outro)
@@ -311,7 +312,7 @@ class Medida:
         else:
             return NotImplemented
 
-    def __truediv__(self:'Medida', outro:Any) -> 'Medida':
+    def __truediv__(self:Medida, outro:Any) -> Medida:
         if self is outro: return Medida(1,str(self._nominal.units),0)
         elif isinstance(outro,Real):
             resultado=Medida(self._nominal.magnitude/float(outro),
@@ -326,20 +327,20 @@ class Medida:
         else:
             return NotImplemented
 
-    def __rtruediv__(self:'Medida',outro:Any) -> 'Medida':
+    def __rtruediv__(self:Medida,outro:Any) -> Medida:
         if isinstance(outro,Real):
             return montecarlo(lambda x: outro/x,self)
         else:
             return NotImplemented
 
-    def __pow__(self:'Medida',outro:Any) -> 'Medida':
+    def __pow__(self:Medida,outro:Any) -> Medida:
         if isinstance(outro,Real):
             return montecarlo(lambda x: np.power(x,float(outro)),self)
         elif isinstance(outro,Medida):
             return montecarlo(lambda x,y: x**y,self,outro)
         else:
             return NotImplemented
-    def __rpow__(self:'Medida',outro:Any) -> 'Medida':
+    def __rpow__(self:Medida,outro:Any) -> Medida:
         if isinstance(outro,Real):
             return montecarlo(lambda x: np.power(float(outro),x),self)
         else:
@@ -349,7 +350,7 @@ class Medida:
     __rsub__=__sub__
     __rmul__=__mul__
 
-    def __abs__(self:'Medida') -> 'Medida':
+    def __abs__(self:Medida) -> Medida:
         resultado=Medida(abs(self._nominal.magnitude),
                          str(self._nominal.units),
                          self._incerteza.magnitude,)
@@ -357,7 +358,7 @@ class Medida:
             resultado._histograma=abs(self._histograma)
         return resultado
 
-    def __neg__(self:'Medida') -> 'Medida':
+    def __neg__(self:Medida) -> Medida:
         resultado=Medida(-(self._nominal.magnitude),
                          str(self._nominal.units),
                          self._incerteza.magnitude,)
@@ -365,7 +366,7 @@ class Medida:
             resultado._histograma=-self._histograma
         return resultado
 
-    def __pos__(self) -> 'Medida':
+    def __pos__(self) -> Medida:
         return self
 
     
@@ -402,7 +403,7 @@ class Medida:
             return float(probabilidade)
 
     
-    def intervalo_de_confiança(self:'Medida',p:float,unidade:str) -> list:
+    def intervalo_de_confiança(self:Medida,p:float,unidade:str) -> list:
         """
         Calcula o intervalo de confiança para a medida.
         
