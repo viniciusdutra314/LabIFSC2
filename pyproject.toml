@@ -55,7 +55,6 @@ scipy = "^1.15.1"
 [tool.poetry.group.linter.dependencies]
 isort = "^8.0.1"
 mypy = "^2.2.0"
-data-science-types = "^0.2.23"
 
 
 [tool.poetry.group.testes.dependencies]
