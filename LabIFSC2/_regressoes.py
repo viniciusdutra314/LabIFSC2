@@ -209,7 +209,7 @@ def regressao_polinomial(x_medidas: Sequence[Medida], y_medidas: Sequence[Medida
         raise ValueError("x_dados e y_dados não tem o mesmo tamanho")
     if len(x_medidas) <= grau+1:
         raise ValueError(
-            "Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
+            f"Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
     if not (isinstance(x_medidas[0], Medida) and isinstance(y_medidas[0], Medida)):
         raise TypeError(
             'x_medidas e y_medidas precisam ser sequências de medidas')

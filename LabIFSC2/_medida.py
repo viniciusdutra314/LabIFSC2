@@ -90,8 +90,6 @@ class Medida:
             self._nominal = ureg.Quantity(nominal, unidade).to_reduced_units()
             self._incerteza = ureg.Quantity(incerteza, unidade).to_reduced_units()
         self._histograma: HistogramaType | None = None
-        self._nominal.ito_reduced_units
-        self._incerteza.ito_reduced_units
 
     def nominal(self: Medida, unidade: str) -> float:
         """
@@ -331,14 +329,14 @@ class Medida:
 
     def __ge__(self, outro: object) -> bool:
         return (
-            self._nominal > outro._nominal
+            self._nominal >= outro._nominal
             if isinstance(outro, Medida)
             else NotImplemented
         )
 
     def __gt__(self, outro: object) -> bool:
         return (
-            self._nominal >= outro._nominal
+            self._nominal > outro._nominal
             if isinstance(outro, Medida)
             else NotImplemented
         )
@@ -532,18 +530,8 @@ class Medida:
             ValueError: Se `p` não estiver entre 0 e 1.
         """
 
-        if not 0 < float(p) <= 1:
-            raise ValueError("p deve estar 0 e 1")
-
-        elif p == 1:
-            h = self.histograma
-            h_mag = cast(
-                NDArray[np.float64], h.magnitude if isinstance(h, Quantity) else h
-            )
-            return (
-                float(min(h_mag)),
-                float(max(h_mag)),
-            )
+        if not 0 < float(p) < 1:
+            raise ValueError("p deve estar entre 0 e 1 (exclusivo)")
 
         elif self._histograma is None:
             # estamos resolvendo de maneira analítica

@@ -14,6 +14,23 @@ def test_inicializacao():
         assert False, "Não deveria levantar um erro"
 
 
+def test_gt_ge_lt_le():
+    x = lab.Medida(5, 'm', 0.1)
+    y = lab.Medida(5, 'm', 0.1)
+    assert not (x > y)
+    assert x >= y
+    assert x <= y
+    assert not (x > x)
+    assert not (x < x)
+    assert x >= x
+    assert x <= x
+    
+    z = lab.Medida(6, 'm', 0.1)
+    assert z > x
+    assert not (x > z)
+    assert x < z
+    assert (x <= z)
+    assert not(x >= z)
 
 
 def test_comparacoes():
@@ -43,3 +60,4 @@ def test_igualdades():
 
     with pytest.raises(ValueError):
         lab.comparar_medidas(x,y,sigma_inferior=5,sigma_superior=1) 
+        
