@@ -44,3 +44,14 @@ def test_exceptions():
     with pytest.raises(ValueError):
         lab.regressao_potencia(negativo,negativo)
     lab.regressao_potencia(positivo,positivo)
+
+def test_lei_de_potencia_com_x0():
+    a = 3.0
+    b = 2.0
+    x_dados = lab.linspaceM(1, 10, 100, 'm', 0.01)
+    y_dados = a * (x_dados / lab.Medida(2.0, 'm')) ** b
+    x0 = lab.Medida(2.0, 'm')
+    ajuste = lab.regressao_potencia(x_dados, y_dados, x0=x0)
+    assert np.isclose(ajuste.amplitude.nominal(""), a, rtol=1e-2)
+    assert np.isclose(ajuste.potencia.nominal(""), b, rtol=1e-2)
+    assert np.isclose(ajuste.x0.nominal("m"), 2.0, rtol=1e-5)

@@ -301,19 +301,21 @@ def regressao_exponencial(x_medidas: Sequence[Medida],
 
 
 def regressao_potencia(x_medidas: Sequence[Medida],
-                       y_medidas: Sequence[Medida]) -> AjusteLeiDePotencia:
+                       y_medidas: Sequence[Medida],
+                       x0: Medida | None = None) -> AjusteLeiDePotencia:
     """
     Realiza uma regressão de lei de potência nos dados fornecidos.
 
     Ajusta uma curva da forma y = amplitude * (x / x0)^potencia.
-    A linearização é feita via log(y) = log(amplitude) + potencia * log(x).
+    A linearização é feita via log(y) = log(amplitude) + potencia * log(x/x0).
 
     Args:
         x_medidas (Sequence[Medida]): Sequência de medidas da variável independente (todos positivos).
         y_medidas (Sequence[Medida]): Sequência de medidas da variável dependente (todos positivos).
+        x0 (Medida, opcional): Escala de referência para x. Se None, é adotado 1.0 na unidade SI de x.
 
     Returns:
-        AjusteLeiDePotencia: Objeto contendo amplitude e potência da regressão.
+        AjusteLeiDePotencia: Objeto contendo amplitude, potência e a escala x0 da regressão.
 
     Raises:
         TypeError: Se x_medidas ou y_medidas não forem sequências de Medida.
@@ -325,12 +327,14 @@ def regressao_potencia(x_medidas: Sequence[Medida],
     unidade_x_si = _obter_unidade_si(x_medidas[0])
     unidade_y_si = _obter_unidade_si(y_medidas[0])
 
-    p, erros = _polyfit_com_medidas_e_lineralização(x_medidas, y_medidas, 1, "si", "si", log_x=True, log_y=True, base=np.e)
+    if x0 is None:
+        x0 = Medida(1.0, unidade_x_si)
+    x_scaled_medidas = [x / x0 for x in x_medidas]
+    p, erros = _polyfit_com_medidas_e_lineralização(x_scaled_medidas, y_medidas, 1, "", "si", log_x=True, log_y=True, base=np.e)
     n = Medida(float(p[1]), '', float(erros[1]))
     intercept_medida = Medida(float(p[0]), '', float(erros[0]))
     a_medida = intercept_medida.exp()
     scale_y = Medida(1.0, unidade_y_si)
     a = a_medida * scale_y
 
-    x0 = Medida(1.0, unidade_x_si)
     return AjusteLeiDePotencia(a, n, x0)
