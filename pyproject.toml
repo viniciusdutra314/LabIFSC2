@@ -4,20 +4,19 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "LabIFSC2"
-version = "0.1.1"
+version = "0.1.2"
 description = "Cálculos de laboratório com Python, realize propagação de incertezas e conversão de medidas automaticamente"
 authors = [{name="viniciusdutra314",email="dutravinisousa2@usp.br"},]
 license = "GNU General Public License v3.0"
 readme = "README.md"
 packages=[{include = "LabIFSC2"}]
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Natural Language :: Portuguese (Brazilian)",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering",
     "Typing :: Typed",
     "Operating System :: OS Independent",
@@ -39,34 +38,37 @@ dependencies=[
 
 [tool.poetry.group.docs.dependencies]
 mkdocs-material = "^9.5.4"
-pymdown-extensions = "^10.7"
-python-markdown-math = "^0.8"
-mkdocstrings = "^0.27.0"
-mkdocstrings-python = "^1.13.0"
+pymdown-extensions = "^11.0"
+python-markdown-math = "^0.9"
+mkdocstrings = "^1.0.4"
+mkdocstrings-python = "^2.0.5"
 
 
 [tool.poetry.group.test.dependencies]
 labifsc = "^0.1.13"
 uncertainties = "^3.2.2"
-pytest = "^8.3.4"
-pytest-cov = "^6.0.0"
+pytest = "^9.1.1"
+pytest-cov = "^7.1.0"
 scipy = "^1.15.1"
 
 
 [tool.poetry.group.linter.dependencies]
-isort = "^5.13.2"
-mypy = "1.14.1"
+isort = "^8.0.1"
+mypy = "^2.2.0"
+data-science-types = "^0.2.23"
 
 
 [tool.poetry.group.testes.dependencies]
 matplotlib = "^3.10.0"
 
 [tool.mypy]
-strict = false
-disallow_any_generics = false
+strict = true
+disallow_any_explicit = true
+warn_unused_ignores = true
+warn_redundant_casts = true
 exclude = 'tests/.*'
 
-#all tasks 
+#all tasks
 
 [tool.poetry.requires-plugins]
 poethepoet = ">=0.35"
@@ -77,7 +79,7 @@ sequence = ["type-checking","unit-tests"]
 
 [tool.poe.tasks.type-checking]
 help="Run a type checker (mypy)"
-cmd="mypy LabIFSC2/"
+cmd="mypy LabIFSC2/ tests/"
 
 [tool.poe.tasks.unit-tests]
 help="Run the unit tests (pytest)"
@@ -90,4 +92,3 @@ cmd = "pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-bra
 [tool.poe.tasks.docs]
 help="Create the documentation"
 cmd="mkdocs serve"
-

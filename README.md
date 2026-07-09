@@ -47,7 +47,7 @@ Mesmo que a interface seja intencionalmente parecida, a implementação é total
 | Documentação              | Parcial               | Completa                                                                                                                        |
 
 ## Instalação
-A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python entre 3.10 e 3.12. Para descobrir a versão do seu Python, digite `python --version` no terminal:
+A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python superior a 3.12. Para descobrir a versão do seu Python, digite `python --version` no terminal:
 
 ```bash
 pip install LabIFSC2

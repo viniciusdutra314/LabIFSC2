@@ -2,7 +2,7 @@
 
 Um erro comum que vejo em iniciantes em Python é o uso excessivo de listas. Para resumir o que poderia ser uma longa aula de estruturas de dados, listas podem ter elementos de diferentes tipos e comprimento dinâmico. Essa flexibilidade causa perda de performance. Só use listas se você realmente precisar desses comportamentos. De forma geral, listas não devem ser usadas para representar vetores/matrizes. Nesse caso a estrutura mais eficiente em termos de memória e processamento são **arrays**.
 
-Mesmo que a própria linguagem Python tenha um módulo de [arrays](https://docs.python.org/pt-br/3.13/library/array.html), historicamente a implementação mais usada é a do Numpy. **O uso de arrays numpy é obrigatório no LabIFSC2, usar listas simplesmente retorna erros**[^1]. Eu tomei essa decisão para que os alunos de graduação adquiram familiaridade com talvez a mais importante biblioteca científica do Python, o Numpy.
+Mesmo que a própria linguagem Python tenha um módulo de [arrays](https://docs.python.org/pt-br/3.13/library/array.html), historicamente a implementação mais usada e eficiente é a do Numpy.
 
 ## Operações elementares
 
@@ -52,5 +52,3 @@ De maneira análoga, podemos também pegar as incertezas com `incertezas(array_m
 --8<-- "tests/test_doc_incerteza.py:7:9"
 ```
 
-[^1]:
-    Algumas exceções a essa regra é a criação de uma Medida e o arrayM, que ambos podem receber uma lista. Mas perceba que, no caso do arrayM, a lista está sendo usada diretamente para criar um np.ndarray. Então, na prática, você sempre está lidando com arrays.
