@@ -170,8 +170,8 @@ class Medida:
             nominal_pint = self._nominal
             incerteza_pint = self._incerteza
             unidade = str(self._nominal.units)
-        nominal = Decimal(nominal_pint.magnitude)
-        incerteza = Decimal(incerteza_pint.magnitude)
+        nominal = Decimal(float(nominal_pint.magnitude))
+        incerteza = Decimal(float(incerteza_pint.magnitude))
 
         exato = incerteza == 0
         latex = "latex" in format_spec
@@ -399,7 +399,7 @@ class Medida:
 
     def __truediv__(self: Medida, outro: Medida | float) -> Medida:
         if self is outro:
-            return Medida(1, str(self._nominal.units), 0)
+            return Medida(1, "", 0)
         if isinstance(outro, Medida):
             return montecarlo(lambda x, y: x / y, self, outro)
         elif isinstance(outro, Real):

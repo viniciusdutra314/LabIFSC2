@@ -5,7 +5,6 @@ import numpy as np
 from numpy.typing import NDArray
 
 from ._medida import Medida
-from ._regressoes import Regressao
 
 
 def nominais(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
@@ -23,16 +22,10 @@ def nominais(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
         TypeError: Se algum dos valores não for um objeto Medida.
     """
     try:
-        if unidade == "si":
-            return np.array(
-                [medida._nominal.to_base_units().magnitude for medida in medidas],
-                dtype=float,
-            )
-        else:
-            return np.array(
-                [medida._nominal.to(unidade).magnitude for medida in medidas],
-                dtype=float,
-            )
+        return np.array(
+            [medida.nominal(unidade) for medida in medidas],
+            dtype=float,
+        )
     except AttributeError as e:
         raise TypeError("Os valores do array não são Medidas") from e
 
@@ -52,88 +45,53 @@ def incertezas(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
         TypeError: Se algum dos valores não for um objeto Medida.
     """
     try:
-        if unidade == "si":
-            return np.array(
-                [medida._incerteza.to_base_units().magnitude for medida in medidas],
-                dtype=float,
-            )
-        else:
-            return np.array(
-                [medida._incerteza.to(unidade).magnitude for medida in medidas],
-                dtype=float,
-            )
+        return np.array(
+            [medida.incerteza(unidade) for medida in medidas],
+            dtype=float,
+        )
     except AttributeError as e:
         raise TypeError("Os valores do array não são Medidas") from e
 
-
-def _curva_min_max(
-    medidas: Iterable[Medida] | Regressao, op: str, unidade_y: str, sigmas: float
-) -> NDArray[np.float64]:
-    if sigmas <= 0:
-        raise ValueError("O número de sigmas deve ser positivo")
-
-    if not isinstance(medidas, Regressao):
-        if op == "min":
-            minima: NDArray[np.float64] = nominais(
-                medidas, unidade_y
-            ) - sigmas * incertezas(medidas, unidade_y)
-            return minima
-        elif op == "max":
-            maxima: NDArray[np.float64] = nominais(
-                medidas, unidade_y
-            ) + sigmas * incertezas(medidas, unidade_y)
-            return maxima
-    else:
-        if medidas._amostragem_pre_calculada is None:
-            raise ValueError("A regressão não amostrada ainda")
-        elif op == "min":
-            resultado_min: NDArray[np.float64] = nominais(
-                medidas._amostragem_pre_calculada, unidade_y
-            ) - sigmas * incertezas(medidas._amostragem_pre_calculada, unidade_y)
-            return resultado_min
-        elif op == "max":
-            resultado_max: NDArray[np.float64] = nominais(
-                medidas._amostragem_pre_calculada, unidade_y
-            ) + sigmas * incertezas(medidas._amostragem_pre_calculada, unidade_y)
-            return resultado_max
-    return np.array([], dtype=np.float64)
-
-
 def curva_min(
-    medidas: Iterable[Medida] | Regressao, unidade_y: str, sigmas: float = 2
+    medidas: Iterable[Medida], unidade_y: str, sigmas: float = 2
 ) -> NDArray[np.float64]:
     """
     Calcula a curva mínima de uma série de medidas.
 
+    Para usar com um ajuste, passe o resultado de ``ajuste(x_array)`` como argumento.
+
     Args:
-        medidas (Iterable[Medida] | Regressao): Iterável de objetos Medida ou objeto Regressao.
+        medidas (Iterable[Medida]): Iterável de objetos Medida (e.g. saída de um Ajuste chamável).
         unidade_y (str): Unidade da variável dependente.
         sigmas (float): Número de sigmas para a curva mínima.
 
     Returns:
         NDArray[np.float64]: Array de valores da curva mínima.
     """
-    resultado: NDArray[np.float64] = _curva_min_max(medidas, "min", unidade_y, sigmas)
-    return resultado
+    if sigmas <= 0:
+        raise ValueError("O número de sigmas deve ser positivo")
+    return nominais(medidas, unidade_y) - sigmas * incertezas(medidas, unidade_y)
 
 
 def curva_max(
-    medidas: Iterable[Medida] | Regressao, unidade_y: str, sigmas: float = 2
+    medidas: Iterable[Medida], unidade_y: str, sigmas: float = 2
 ) -> NDArray[np.float64]:
     """
     Calcula a curva máxima de uma série de medidas.
 
+    Para usar com um ajuste, passe o resultado de ``ajuste(x_array)`` como argumento.
+
     Args:
-        medidas (Iterable[Medida] | Regressao): Iterável de objetos Medida ou objeto Regressao.
+        medidas (Iterable[Medida]): Iterável de objetos Medida (e.g. saída de um Ajuste chamável).
         unidade_y (str): Unidade da variável dependente.
         sigmas (float): Número de sigmas para a curva máxima.
 
     Returns:
         NDArray[np.float64]: Array de valores da curva máxima.
     """
-    resultado: NDArray[np.float64] = _curva_min_max(medidas, "max", unidade_y, sigmas)
-    return resultado
-
+    if sigmas <= 0:
+        raise ValueError("O número de sigmas deve ser positivo")
+    return nominais(medidas, unidade_y) + sigmas * incertezas(medidas, unidade_y)
 
 def linspaceM(
     a: float, b: float, n: int, unidade: str, incertezas: float
