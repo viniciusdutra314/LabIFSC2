@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import NamedTuple
+from typing import NamedTuple,Iterator
 import numpy as np
 from numpy.typing import NDArray
 
@@ -24,6 +24,7 @@ def _obter_unidade_si(medida: Medida) -> str:
     return str(ureg.Unit(uc))
 
 
+
 '''
 Resultado de um ajuste exponencial da forma
 y = amplitude * exp(expoente * x)
@@ -44,47 +45,66 @@ class AjusteExponencial(NamedTuple):
 
 '''
 Resultado de um ajuste de lei de potência na forma
-y = amplitude * x ^ potencia
+y = amplitude * (x / x0) ^ potencia
 '''
 class AjusteLeiDePotencia(NamedTuple):
     amplitude: Medida
     potencia: Medida
-    def __call__(self,medidas:Medida | Sequence[Medida])-> Medida | NDArray[np.object_]:
-        if isinstance(medidas,Medida):
-            return self.amplitude * (medidas**self.potencia)
+    x0: Medida
+
+    def __call__(self, medidas: Medida | Sequence[Medida]) -> Medida | NDArray[np.object_]:
+        if isinstance(medidas, Medida):
+            return self.amplitude * (medidas / self.x0) ** self.potencia
         else:
             return np.array(
-                [self.amplitude * (medida**self.potencia) for medida in medidas],
+                [self.amplitude * (m / self.x0) ** self.potencia for m in medidas],
                 dtype=object)
+
+    def __repr__(self) -> str:
+        return f'AjusteLeiDePotencia(amplitude={self.amplitude}, potencia={self.potencia})'
+
+
 '''
 Resultado de um ajuste linear da forma
 y = a*x + b
 '''
 class AjusteLinear(NamedTuple):
-    a:Medida
-    b:Medida
-    def __call__(self,medidas:Medida | Sequence[Medida])-> Medida | NDArray[np.object_]:
-        if isinstance(medidas,Medida):
-            return self.a * medidas+self.b
+    a: Medida
+    b: Medida
+
+    def __call__(self, medidas: Medida | Sequence[Medida]) -> Medida | NDArray[np.object_]:
+        if isinstance(medidas, Medida):
+            return self.a * medidas + self.b
         else:
             return np.array(
-                [self.a * medida +self.b for medida in medidas],
+                [self.a * medida + self.b for medida in medidas],
                 dtype=object)
+
+    def __repr__(self) -> str:
+        return f'AjusteLinear(a={self.a}, b={self.b})'
+
+
 '''
 Resultado de um ajuste quadrático da forma
 y = a*x² + b*x + c
 '''
 class AjusteQuadratico(NamedTuple):
-    a:Medida
-    b:Medida
-    c:Medida
-    def __call__(self,medidas:Medida | Sequence[Medida])-> Medida | NDArray[np.object_]:
-        if isinstance(medidas,Medida):
-            return self.a * (medidas**2) +self.b*medidas + self.c
+    a: Medida
+    b: Medida
+    c: Medida
+
+    def __call__(self, medidas: Medida | Sequence[Medida]) -> Medida | NDArray[np.object_]:
+        if isinstance(medidas, Medida):
+            return self.a * (medidas ** 2) + self.b * medidas + self.c
         else:
             return np.array(
                 [self.a * (medida ** 2) + self.b * medida + self.c for medida in medidas],
                 dtype=object)
+
+    def __repr__(self) -> str:
+        return f'AjusteQuadratico(a={self.a}, b={self.b}, c={self.c})'
+
+
 class AjustePolinomial:
     """
     Resultado de um ajuste polinomial genérico da forma:
@@ -95,21 +115,19 @@ class AjustePolinomial:
         self.coef = list(coeficientes)
         self.grau = len(self.coef) - 1
 
-    def __iter__(self):
-        # Itera em ordem decrescente de grau (coef[n], ..., coef[0])
+    def __iter__(self) -> Iterator[Medida]:
         return iter(reversed(self.coef))
 
     def __repr__(self) -> str:
         return f"AjustePolinomial(grau={self.grau}, coeficientes={self.coef})"
-    def __call__(self,medidas:Medida | Sequence[Medida])-> Medida | NDArray[np.object_]:
-        
-        if isinstance(medidas,Medida):
-            zero=medidas-medidas
-            return sum([coef * (medidas**i) for i, coef in enumerate(self.coef)],start=zero)
+
+    def __call__(self, medidas: Medida | Sequence[Medida]) -> Medida | NDArray[np.object_]:
+        if isinstance(medidas, Medida):
+            zero = medidas - medidas
+            return sum([coef * (medidas ** i) for i, coef in enumerate(self.coef)], start=zero)
         else:
-            
             return np.array(
-                [sum([coef * (medida**i) for i, coef in enumerate(self.coef)]) for medida in medidas],
+                [sum([coef * (medida ** i) for i, coef in enumerate(self.coef)]) for medida in medidas],
                 dtype=object)
 
 
@@ -129,11 +147,26 @@ def _validar_medidas(x: Sequence[Medida], y: Sequence[Medida], *, positivos_x: b
             "Todos os valores de y_medidas devem ser positivos e não nulos.")
 
 
-def _polifit_com_medidas(x: Sequence[Medida], y: Sequence[Medida], grau: int,
-             unidade_x: str, unidade_y: str) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
-    p, cov = np.polyfit([m.nominal(unidade_x) for m in x], [m.nominal(unidade_y) for m in y], grau, cov=True)
+def _polyfit_com_medidas_e_lineralização(
+    x: Sequence[Medida],
+    y: Sequence[Medida],
+    grau: int,
+    unidade_x: str,
+    unidade_y: str,
+    log_x: bool = False,
+    log_y: bool = False,
+    base: float = np.e
+) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    x_float = np.array([m.nominal(unidade_x) for m in x], dtype=float)
+    y_float = np.array([m.nominal(unidade_y) for m in y], dtype=float)
+
+    if log_x:
+        x_float = np.log(x_float) / np.log(base)
+    if log_y:
+        y_float = np.log(y_float) / np.log(base)
+
+    p, cov = np.polyfit(x_float, y_float, grau, cov=True)
     erros = np.sqrt(np.diag(cov))
-    # Retorna em ordem crescente de grau (coef[0] acompanha x^0, coef[grau] acompanha x^grau)
     return p[::-1], erros[::-1]
 
 
@@ -163,7 +196,7 @@ def regressao_polinomial(x_medidas: Sequence[Medida],
     if len(x_medidas) <= grau + 1:
         raise ValueError(
             f"Não há dados suficientes para um polinômio de grau {grau} (overfitting)")
-    p, erros = _polifit_com_medidas(x_medidas, y_medidas, grau, "si", "si")
+    p, erros = _polyfit_com_medidas_e_lineralização(x_medidas, y_medidas, grau, "si", "si")
     unidade_x_si = _obter_unidade_si(x_medidas[0])
     unidade_y_si = _obter_unidade_si(y_medidas[0])
     coefs: list[Medida] = []
@@ -256,18 +289,14 @@ def regressao_exponencial(x_medidas: Sequence[Medida],
     unidade_x_si = _obter_unidade_si(x_medidas[0])
     unidade_y_si = _obter_unidade_si(y_medidas[0])
 
-    x_float = np.array([m.nominal("si") for m in x_medidas], dtype=float)
-    y_float = np.array([m.nominal("si") for m in y_medidas], dtype=float)
-    log_y = np.log(y_float) / np.log(base)
-
-    p, cov = np.polyfit(x_float, log_y, 1, cov=True)
-    erros = np.sqrt(np.diag(cov))
+    p, erros = _polyfit_com_medidas_e_lineralização(x_medidas, y_medidas, 1, "si", "si", log_y=True, base=base)
     unidade_expoente = _obter_unidade_si(1 / Medida(1.0, unidade_x_si))
-    k = Medida(float(p[0]), unidade_expoente, float(erros[0]))
+    k = Medida(float(p[1]), unidade_expoente, float(erros[1]))
 
-    a_val = float(base ** p[1])
-    a_err = abs(a_val * np.log(base) * erros[1])
-    a = Medida(a_val, unidade_y_si, a_err)
+    intercept_medida = Medida(float(p[0]), '', float(erros[0]))
+    a_medida = base ** intercept_medida
+    scale_y = Medida(1.0, unidade_y_si)
+    a = a_medida * scale_y
     return AjusteExponencial(a, k)
 
 
@@ -276,7 +305,7 @@ def regressao_potencia(x_medidas: Sequence[Medida],
     """
     Realiza uma regressão de lei de potência nos dados fornecidos.
 
-    Ajusta uma curva da forma y = amplitude * x^potencia.
+    Ajusta uma curva da forma y = amplitude * (x / x0)^potencia.
     A linearização é feita via log(y) = log(amplitude) + potencia * log(x).
 
     Args:
@@ -296,17 +325,12 @@ def regressao_potencia(x_medidas: Sequence[Medida],
     unidade_x_si = _obter_unidade_si(x_medidas[0])
     unidade_y_si = _obter_unidade_si(y_medidas[0])
 
-    x_float = np.array([m.nominal("si") for m in x_medidas], dtype=float)
-    y_float = np.array([m.nominal("si") for m in y_medidas], dtype=float)
-    log_x = np.log(x_float)
-    log_y = np.log(y_float)
+    p, erros = _polyfit_com_medidas_e_lineralização(x_medidas, y_medidas, 1, "si", "si", log_x=True, log_y=True, base=np.e)
+    n = Medida(float(p[1]), '', float(erros[1]))
+    intercept_medida = Medida(float(p[0]), '', float(erros[0]))
+    a_medida = intercept_medida.exp()
+    scale_y = Medida(1.0, unidade_y_si)
+    a = a_medida * scale_y
 
-    p, cov = np.polyfit(log_x, log_y, 1, cov=True)
-    erros = np.sqrt(np.diag(cov))
-
-    n_val = float(p[0])
-    n = Medida(n_val, '', float(erros[0]))
-    a_val = float(np.exp(p[1]))
-    a_err = abs(a_val * erros[1])
-    a = Medida(a_val, unidade_y_si, a_err)
-    return AjusteLeiDePotencia(a, n, unidade_x_si, unidade_y_si)
+    x0 = Medida(1.0, unidade_x_si)
+    return AjusteLeiDePotencia(a, n, x0)

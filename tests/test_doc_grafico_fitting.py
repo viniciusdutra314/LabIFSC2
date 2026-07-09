@@ -23,6 +23,7 @@ def test_doc_grafico_fitting():
         fmt='o',label='Dados experimentais',color='red')
 
     x=linspaceM(1,10,100,unidade_x,0)
+    amostragem = fitting(x)
     plt.plot(
         nominais(x,unidade_x),
         nominais(amostragem, unidade_y),

@@ -17,6 +17,7 @@
 - Use Google-style docstrings with `Args`, `Returns`, and `Raises` sections, written in Portuguese
 - Whenever a bug it's found, the bug should be corrected and a unit test should be added that would otherwise trigger that bug, so we don't have regressions.
 - Avoid to break encapsulation of classes/methods/modules and so on.
+- Don't add unnecessary comments, code in 99% of the cases should be self explanatory be choosing good variables/function names, and following good coding practices. Use comments only for very complicated or non-obvious code.
 
 ## Performance Considerations
 

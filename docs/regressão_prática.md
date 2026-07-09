@@ -7,7 +7,7 @@ Temos 4 tipos de regressões possíveis:
 - `regressao_exponencial(x_medidas, y_medidas, base)`
 - `regressao_potencia(x_medidas, y_medidas)`
 
-O resultado é armazenado respectivamente em um objeto `MPolinomio`, `MExponencial` e `MPotencia`. Essas classes são todas herdadas de uma mesma classe abstrata, então elas compartilham a mesma interface. Na prática, essas classes são irrelevantes, você provavelmente só vai pensar que está lidando com uma regressão.
+O resultado é armazenado respectivamente em um objeto `AjusteLinear`, `AjusteQuadratico`, `AjustePolinomial`, `AjusteExponencial` ou `AjusteLeiDePotencia`. Esses objetos são chamáveis e agem como funções para avaliar o ajuste em novos pontos. na prática, você só precisará chamá-los passando suas variáveis independentes.
 
 !!! warning
     Lembre-se que, para regressões exponenciais, todos os valores de y precisam ser positivos. No caso da regressão de lei de potência, os valores de x também precisam ser positivos. Além disso, um valor pode não ser negativo, mas devido à incerteza associada, ele pode assumir valores negativos.
@@ -41,11 +41,12 @@ A regressão de lei de potência encontra parâmetros como a constante multiplic
 ```
 Perceba como essa lei de fato aproxima muito bem os dados. Essa 'lei' na verdade é uma aproximação que só considera a atração gravitacional do sol, então é esperado observar alguns pequenos desvios visto que o sistema solar não é composto só pelo sol, mas um sistema complexo de dezenas de milhares de corpos massivos.
 
-## Amostrar
+## Avaliar / Amostrar
 
-Quando queremos fazer o gráfico de uma curva, precisamos amostrar essa curva em um conjunto de pontos. Para isso, precisamos especificar em que intervalo queremos calcular a curva e em que unidades esse cálculo deve retornar.
+Para avaliar um ajuste em um conjunto de pontos, basta chamá-lo como uma função. O objeto do ajuste receberá uma `Medida` ou uma sequência de `Medida` e retornará o resultado calculado com propagação de incerteza correspondente. Para obter os valores numéricos em uma unidade específica (por exemplo, para plotar com o matplotlib), use as funções `nominais` e `incertezas`.
 
-- `amostrar(intervalo_em_x, unidade_y)`
+- `ajuste(x)` -> Retorna o(s) valor(es) ajustado(s) como `Medida` ou array de `Medida`.
+
 
 No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no intervalo de distâncias dos planetas do sistema solar ([0,30] unidades astronômicas), e pedimos para ele retornar esse resultado em anos.
 
@@ -62,9 +63,9 @@ Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para le
 ```
 
 !!! warning
-    Visto que a biblioteca realiza uma simulação Monte Carlo para cada ponto da curva, usar muitos pontos de amostragem provavelmente irá causar uma lentidão no seu código. No meu notebook, eu tive uma boa experiência amostrando a regressão em **100 pontos**. Recomendo você começar com esse valor, se a curva ficar pouco definida, aumente esse valor.
+    Visto que as operações matemáticas com `Medida` realizam simulação Monte Carlo por baixo dos panos, avaliar a regressão em muitos pontos de amostragem pode causar uma lentidão no seu código. Uma boa prática é avaliar a regressão em cerca de **100 pontos**. Recomendo começar com esse valor.
 
-    Outra dica: caso tenha que usar a amostragem mais de uma vez, salve o array em uma variável, assim não irá precisar calcular duas vezes. Eu fiz isso no código de exemplo, eu queria printar a amostragem e também usá-la no matplotlib. Isso é uma dica geral de programação, tente sempre calcular as coisas só uma vez.
+    Outra dica: caso tenha que usar a amostragem mais de uma vez, salve o array em uma variável, assim não precisará calcular duas vezes. Eu fiz isso no código de exemplo, salvando o resultado de `fitting(x)` em uma variável.
 
 ## curva_min e curva_max
 

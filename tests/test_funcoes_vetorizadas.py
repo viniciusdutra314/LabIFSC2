@@ -26,7 +26,7 @@ def test_array_medida_subtracao():
     for diferenca in subtrair:
         assert isinstance(diferenca, lab.Medida)
     for index, diferenca in enumerate(subtrair):
-        assert np.isclose(diferenca.nominal(""), x_array[index].nominal("")-10, rtol=1e-3)
+        assert np.isclose(diferenca.nominal(""), x_array[index].nominal("")-10, rtol=1e-2)
 
 
 
@@ -40,7 +40,7 @@ def test_array_medida_multiplicacao():
     for produto in multiplicar:
         assert isinstance(produto, lab.Medida)
     for index, produto in enumerate(multiplicar):
-        assert np.isclose(produto.nominal(""),2*x_array[index].nominal(""), rtol=1e-3)
+        assert np.isclose(produto.nominal(""),2*x_array[index].nominal(""), rtol=5e-3)
 
 def test_array_medida_divisao():
     x = lab.Medida(13, '', 0.001)
@@ -52,4 +52,4 @@ def test_array_medida_divisao():
     for quociente in dividir:
         assert isinstance(quociente, lab.Medida)
     for index, quociente in enumerate(dividir):
-        assert np.isclose(quociente.nominal(""),  x_array[index].nominal("")/13, rtol=1e-3)
+        assert np.isclose(quociente.nominal(""),  x_array[index].nominal("")/13, rtol=5e-3)

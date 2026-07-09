@@ -10,9 +10,7 @@ def test_doc_regressoes_construir():
     parabola=regressao_polinomial(tempos,alturas,2)
     
     print(parabola)
-    a=parabola.a
-    b=parabola.b
-    c=parabola.c
+    a, b, c = parabola
     print(f"gravidade {a*2}")
     print(f"velocidade inicial {b:E0}")
     print(f"altura inicial {c:E0}")
