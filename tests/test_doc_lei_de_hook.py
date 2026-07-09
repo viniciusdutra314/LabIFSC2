@@ -28,7 +28,7 @@ def test_doc_lei_de_hook():
     x=linspaceM(0,4,100,unidade_x,0)
 
     plt.plot(nominais(x,unidade_x),
-            reta.amostrar(x,unidade_y),
+            nominais(reta(x), unidade_y),
             label='Regressão linear',
             color='blue')
 

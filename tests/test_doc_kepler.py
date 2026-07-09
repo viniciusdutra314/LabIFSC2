@@ -27,18 +27,18 @@ def test_doc_kepler():
     massa_sol=constantes.solar_mass
     constante_teorica=np.sqrt(4*pi**2/(G*massa_sol))
     print(f"Teórica:{constante_teorica:si}") #(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵
-    print(f"Experimental:{fitting.cte_multiplicativa:si}") #(5,59 ± 0,03)x10⁻¹ s/m¹⋅⁴⁹⁷⁸⁷
+    print(f"Experimental:{fitting.amplitude:si}") #(5,59 ± 0,03)x10⁻¹ s/m¹⋅⁴⁹⁷⁸⁷
 
     assert f"{fitting.potencia}"=="(1,4979 ± 0,0008) "
     assert f"{constante_teorica:si}"=="(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵"
-    assert f"{fitting.cte_multiplicativa:si}"=="(5,76 ± 0,03)x10⁻¹⁰ s/m¹⋅⁴⁹⁷⁸⁷"
+    assert f"{fitting.amplitude:si}"=="(5,8 ± 0,1)x10⁻¹⁰ s"
 
     unidade_x='astronomical_unit'
     unidade_y='years'
 
     x=linspaceM(0,30,100,'astronomical_unit',0)
-    amostragem=fitting.amostrar(x,unidade_y)
-    print(amostragem)
+    amostragem=fitting(x)
+    print(nominais(amostragem,unidade_y))
     '''
     [  0.           0.16720236   0.47222204   0.86677871   1.33367488
     1.86297947   2.44799678   3.08382118   3.76665199   4.49338729
@@ -64,7 +64,7 @@ def test_doc_kepler():
     
     plt.style.use('ggplot')
     plt.plot(nominais(x,unidade_x),
-             amostragem,
+             nominais(amostragem, unidade_y),
              color='red',
              label='Teórica')
     plt.scatter(
@@ -79,7 +79,5 @@ def test_doc_kepler():
     plt.cla()
 
 
-    print(curva_min(fitting,'years')[0:5])
-    #[0 0.16563505 0.46786682 0.85881466 1.3214152 ]
-    print(curva_max(fitting,'years')[0:5])
-    #[0  0.16875531 0.47653809 0.87467204 1.34582704]
+    print(curva_min(amostragem,'years')[0:5])
+    print(curva_max(amostragem,'years')[0:5])

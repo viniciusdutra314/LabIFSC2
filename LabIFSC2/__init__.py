@@ -14,5 +14,6 @@ from ._medida import (Comparacao, Medida, alterar_monte_carlo_samples,
 from ._regressoes import (AjusteExponencial, AjusteLeiDePotencia,
                           AjusteLinear, AjustePolinomial, AjusteQuadratico,
                           regressao_exponencial, regressao_linear,
-                          regressao_polinomial, regressao_potencia)
+                          regressao_polinomial, regressao_potencia,
+                          regressao_quadratica)
 from .constantes import constantes

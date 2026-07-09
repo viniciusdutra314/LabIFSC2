@@ -59,24 +59,22 @@ def test_curva_max_regressao():
     x=np.array([Medida(1,'cm',0.1),Medida(2,'cm',0.1),Medida(3,'cm',0.1),Medida(4,'cm',0.1),Medida(5,'cm',0.1)])
     y=x
     linha=regressao_linear(x,y)
-    with pytest.raises(ValueError):
-        curva_max(linha,'')
-    linha.amostrar(x,'cm')
-    valores_nominais=nominais(linha._amostragem_pre_calculada,'m')
-    valores_incertezas=incertezas(linha._amostragem_pre_calculada,'m')
-    curva_maxima=curva_max(linha,'si')
-    curva_minima=curva_min(linha,'si')
+    amostragem = linha(x)   
+    valores_nominais = nominais(amostragem,'m')
+    valores_incertezas = incertezas(amostragem,'m')
+    curva_maxima=curva_max(amostragem,'si')
+    curva_minima=curva_min(amostragem,'si')
     assert np.array_equal(valores_nominais+2*valores_incertezas,curva_maxima)
     assert np.array_equal(valores_nominais-2*valores_incertezas,curva_minima)
-    curva_maxima=curva_max(linha,'si',3)
-    curva_minima=curva_min(linha,'si',3)
+    curva_maxima=curva_max(amostragem,'si',3)
+    curva_minima=curva_min(amostragem,'si',3)
 
     assert np.array_equal(valores_nominais+3*valores_incertezas,curva_maxima)
     assert np.array_equal(valores_nominais-3*valores_incertezas,curva_minima)
     with pytest.raises(ValueError):
-        curva_max(linha,'si',0)
+        curva_max(amostragem,'si',0)
     with pytest.raises(ValueError):
-        curva_max(linha,'si',-1)
+        curva_max(amostragem,'si',-1)
         
 def test_linspace():
     a=1 ; b=20 ; N=20
