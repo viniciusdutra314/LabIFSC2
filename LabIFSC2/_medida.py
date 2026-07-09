@@ -5,8 +5,8 @@ import re
 from collections.abc import Callable, Sequence
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
-from numbers import Real
 from statistics import NormalDist
+from numbers import Real
 from string import Template
 from typing import cast, overload
 
@@ -39,7 +39,6 @@ def montecarlo(  # type: ignore[explicit-any]
     histograma = func(*x_samples)
     mean = np.mean(histograma)
     std = np.std(histograma, mean=mean)
-
     if isinstance(histograma, Quantity):
         mean_q = cast(Quantity[float], mean)
         std_q = cast(Quantity[float], std)
@@ -66,13 +65,13 @@ class Medida:
         Inicializa uma instância da classe com valores nominais, unidade e incerteza.
 
         Args:
-            nominal (Float| list): Valor nominal ou uma lista de valores nominais.
+            nominal (float | Sequence[float]): Valor nominal ou uma sequência de valores nominais.
             unidade (str): Unidade de medida.
-            incerteza (Real): Incerteza associada ao valor nominal.
+            incerteza (float): Incerteza associada ao valor nominal.
 
         Raises:
             ValueError: Se a incerteza for negativa.
-            ValueError: Se a lista de medidas tiver menos de 2 elementos.
+            ValueError: Se a sequência de medidas tiver menos de 2 elementos.
         """
 
         if incerteza < 0:
@@ -344,36 +343,24 @@ class Medida:
             else NotImplemented
         )
 
-    def _adicao_ou_subtracao(self, outro: Medida | float, positivo: bool) -> Medida:
+    def __add__(self: Medida, outro: Medida | float) -> Medida:
         if isinstance(outro, Real):
-            if positivo:
-                nova_medida = Medida(
-                    self._nominal.magnitude + outro,
-                    str(self._nominal.units),
-                    self._incerteza.magnitude,
-                )
-            else:
-                nova_medida = Medida(
-                    self._nominal.magnitude - outro,
-                    str(self._nominal.units),
-                    self._incerteza.magnitude,
-                )
-            nova_medida._histograma = self._histograma
+            nova_medida = Medida(
+                self._nominal.magnitude + outro,
+                str(self._nominal.units),
+                self._incerteza.magnitude,
+            )
+            if self._histograma is not None:
+                nova_medida._histograma = self._histograma + (outro * self._nominal.units)
             return nova_medida
         elif isinstance(outro, Medida):
             if self._nominal.is_compatible_with(outro._nominal):
                 if self is outro:
-                    return (
-                        2 * self if positivo else Medida(0, str(self._nominal.units), 0)
-                    )
-
+                    return 2 * self
                 elif self._histograma is None and outro._histograma is None:
-                    # Como existe solução analítica da soma/subtração entre duas gaussianas
+                    # Como existe solução analítica da soma entre duas gaussianas
                     # iremos usar esse resultado para otimizar o código
-                    if positivo:
-                        media = self._nominal + outro._nominal
-                    else:
-                        media = self._nominal - outro._nominal
+                    media = self._nominal + outro._nominal
                     desvio_padrao = (self._incerteza**2 + outro._incerteza**2) ** (
                         1 / 2
                     )
@@ -382,27 +369,23 @@ class Medida:
                         media.magnitude, str(media.units), desvio_padrao.magnitude
                     )
                 else:
-                    if positivo:
-                        return montecarlo(lambda x, y: x + y, self, outro)
-                    else:
-                        return montecarlo(lambda x, y: x - y, self, outro)
+                    return montecarlo(lambda x, y: x + y, self, outro)
             else:
                 raise ValueError(
-                    f"A soma/subtração entre {self._nominal.dimensionality} e \ {outro._nominal.dimensionality} não é possível"
+                    f"A soma entre {self._nominal.dimensionality} e {outro._nominal.dimensionality} não é possível"
                 )
         else:
-            return NotImplemented  # type: ignore[no-any-return]
-
-    def __add__(self: Medida, outro: Medida | float) -> Medida:
-        return self._adicao_ou_subtracao(outro, True)
+            return NotImplemented
 
     def __sub__(self: Medida, outro: Medida | float) -> Medida:
-        return self._adicao_ou_subtracao(outro, False)
+        if self is outro:
+            return Medida(0, str(self._nominal.units), 0)
+        return self + (-outro)
 
     def __mul__(self: Medida, outro: Medida | float) -> Medida:
         if self is outro:
             return montecarlo(lambda x: x**2, self)
-        elif isinstance(outro, Medida):
+        if isinstance(outro, Medida):
             return montecarlo(lambda x, y: x * y, self, outro)
         elif isinstance(outro, Real):
             resultado = Medida(
@@ -411,7 +394,7 @@ class Medida:
                 abs(self._incerteza.magnitude * outro),
             )
             if self._histograma is not None:
-                resultado._histograma = cast(HistogramaType, self._histograma * outro)
+                resultado._histograma = self._histograma * outro
             return resultado
         else:
             return NotImplemented
@@ -419,19 +402,19 @@ class Medida:
     def __truediv__(self: Medida, outro: Medida | float) -> Medida:
         if self is outro:
             return Medida(1, str(self._nominal.units), 0)
+        if isinstance(outro, Medida):
+            return montecarlo(lambda x, y: x / y, self, outro)
         elif isinstance(outro, Real):
             resultado = Medida(
-                self._nominal.magnitude / float(outro),
+                self._nominal.magnitude / outro,
                 str(self._nominal.units),
-                self._incerteza.magnitude / abs(float(outro)),
+                self._incerteza.magnitude / abs(outro),
             )
             if self._histograma is not None:
                 resultado._histograma = cast(
-                    HistogramaType, self._histograma / float(outro)
+                    HistogramaType, self._histograma / outro
                 )
             return resultado
-        elif isinstance(outro, Medida):
-            return montecarlo(lambda x, y: x / y, self, outro)
         else:
             return NotImplemented
 
@@ -442,16 +425,16 @@ class Medida:
             return NotImplemented
 
     def __pow__(self: Medida, outro: Medida | float) -> Medida:
-        if isinstance(outro, Real):
-            return montecarlo(lambda x: np.power(x, float(outro)), self)
-        elif isinstance(outro, Medida):
+        if isinstance(outro, Medida):
             return montecarlo(lambda x, y: x**y, self, outro)
+        elif isinstance(outro, Real):
+            return montecarlo(lambda x: np.power(x, outro), self)
         else:
             return NotImplemented
 
     def __rpow__(self: Medida, outro: float) -> Medida:
         if isinstance(outro, Real):
-            return montecarlo(lambda x: np.power(float(outro), x), self)
+            return montecarlo(lambda x: np.power(outro, x), self)
         else:
             return NotImplemented
 
@@ -459,7 +442,7 @@ class Medida:
         return self.__add__(outro)
 
     def __rsub__(self: Medida, outro: Medida | float) -> Medida:
-        return self.__sub__(outro)
+        return (-self) + outro
 
     def __rmul__(self: Medida, outro: Medida | float) -> Medida:
         return self.__mul__(outro)
@@ -499,8 +482,8 @@ class Medida:
         Calcula a probabilidade de uma medida estar entre dois valores especificados.
 
         Args:
-            a (Real): O valor inferior do intervalo.
-            b (Real): O valor superior do intervalo.
+            a (float): O valor inferior do intervalo.
+            b (float): O valor superior do intervalo.
             unidade (str): A unidade de medida dos valores a e b.
 
         Returns:
@@ -539,7 +522,7 @@ class Medida:
         Calcula o intervalo de confiança para a medida.
 
         Args:
-            p (Real): Probabilidade associada ao intervalo de confiança. Deve estar entre 0 e 1.
+            p (float): Probabilidade associada ao intervalo de confiança. Deve estar entre 0 e 1.
             unidade (str): Unidade de medida para o intervalo de confiança.
 
         Returns:

@@ -15,6 +15,7 @@
 - Always prefer to thrown an error instead of returning `None` or `False`.
 - Follow the PEP8 style guide.
 - Use Google-style docstrings with `Args`, `Returns`, and `Raises` sections, written in Portuguese
+- Whenever a bug it's found, the bug should be corrected and a unit test should be added that would otherwise trigger that bug, so we don't have regressions.
 
 ## Performance Considerations
 

@@ -1,16 +1,15 @@
 import string
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Iterator, Sequence
-from numbers import Real
 from typing import cast
 from numpy.typing import NDArray
 
 import numpy as np
 import pint
-from numpy import exp, log, power
+from numpy import  log, power
 from numpy.polynomial import Polynomial
 
-from ._medida import Medida, ureg
+from ._medida import Medida
 
 
 def _aplicar_funcao_sem_passar_pelo_sistema_de_unidades(
@@ -89,11 +88,11 @@ class MPolinomio(Regressao):
         Calcula os valores de um polinômio para um conjunto de entradas x.
 
         Args:
-            x (np.ndarray): Um array de valores nos quais o polinômio será avaliado.
+            x (NDArray[np.object_]): Um array de valores nos quais o polinômio será avaliado.
             unidade_y (str): A unidade de medida para os valores calculados do polinômio.
 
         Returns:
-            np.ndarray: Um array contendo os valores calculados do polinômio nas unidades especificadas.
+            NDArray[np.float64]: Um array contendo os valores calculados do polinômio nas unidades especificadas.
 
         Raises:
             TypeError: Se o tipo de ``x`` não for um array de Medida.
@@ -131,11 +130,11 @@ class MExponencial(Regressao):
         Gera uma amostra de valores exponenciais com base nos parâmetros fornecidos.
 
         Args:
-            x (np.ndarray): Um array de valores de entrada.
+            x (NDArray[np.object_]): Um array de valores de entrada.
             unidade_y (str): A unidade dos valores de saída.
 
         Returns:
-            np.ndarray: Um array de valores calculados com base na função exponencial.
+            NDArray[np.float64]: Um array de valores calculados com base na função exponencial.
 
         Raises:
             TypeError: Se o tipo de ``x`` não for um array de Medida.
@@ -164,11 +163,11 @@ class MLeiDePotencia(Regressao):
         Amostra valores baseados na lei de potência.
 
         Args:
-            x (np.ndarray): Array de valores de entrada.
+            x (NDArray[np.object_]): Array de valores de entrada.
             unidade_y (str): Unidade da variável dependente y.
 
         Returns:
-            np.ndarray: Array de valores amostrados com a unidade especificada.
+            NDArray[np.float64]: Array de valores amostrados com a unidade especificada.
 
         Raises:
             ValueError: Se a unidade de x não for compatível com a unidade esperada.

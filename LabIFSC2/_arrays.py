@@ -17,7 +17,7 @@ def nominais(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
         unidade (str): Unidade para a conversão dos valores nominais. Use 'si' para unidades do Sistema Internacional.
 
     Returns:
-        np.ndarray: Array de valores nominais convertidos para a unidade especificada.
+        NDArray[np.float64]: Array de valores nominais convertidos para a unidade especificada.
 
     Raises:
         TypeError: Se algum dos valores não for um objeto Medida.
@@ -46,7 +46,7 @@ def incertezas(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
         unidade (str): Unidade para a conversão das incertezas. Use 'si' para unidades do Sistema Internacional.
 
     Returns:
-        np.ndarray: Array de incertezas convertidas para a unidade especificada.
+        NDArray[np.float64]: Array de incertezas convertidas para a unidade especificada.
 
     Raises:
         TypeError: Se algum dos valores não for um objeto Medida.
@@ -111,7 +111,7 @@ def curva_min(
         sigmas (float): Número de sigmas para a curva mínima.
 
     Returns:
-        np.ndarray: Array de valores da curva mínima.
+        NDArray[np.float64]: Array de valores da curva mínima.
     """
     resultado: NDArray[np.float64] = _curva_min_max(medidas, "min", unidade_y, sigmas)
     return resultado
@@ -129,7 +129,7 @@ def curva_max(
         sigmas (float): Número de sigmas para a curva máxima.
 
     Returns:
-        np.ndarray: Array de valores da curva máxima.
+        NDArray[np.float64]: Array de valores da curva máxima.
     """
     resultado: NDArray[np.float64] = _curva_min_max(medidas, "max", unidade_y, sigmas)
     return resultado
@@ -149,7 +149,7 @@ def linspaceM(
         incertezas (float): A incerteza associada a cada medida.
 
     Returns:
-        np.ndarray: Um array de objetos Medida com valores igualmente espaçados.
+        NDArray[np.object_]: Um array de objetos Medida com valores igualmente espaçados.
     """
     return np.array(
         [Medida(i, unidade, incertezas) for i in np.linspace(a, b, n)], dtype=object
@@ -168,10 +168,7 @@ def arrayM(
         incerteza (float): A incerteza associada aos valores nominais.
 
     Returns:
-        np.ndarray: Um array de objetos Medida.
-
-    Raises:
-        TypeError: Se os valores não forem números reais.
+        NDArray[np.object_]: Um array de objetos Medida.
     """
     resultados: list[Medida] = []
     for nominal in valores:

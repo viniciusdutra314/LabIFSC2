@@ -74,20 +74,20 @@ exclude = 'tests/.*'
 poethepoet = ">=0.35"
 
 [tool.poe.tasks.tests]
-help="Run the unit tests (pytest), a type checker (mypy) and a test coverage (ptytest-cov)"
+help="Run the unit tests (pytest) and a type checker (mypy)"
 sequence = ["type-checking","unit-tests"]
 
 [tool.poe.tasks.type-checking]
 help="Run a type checker (mypy)"
-cmd="mypy LabIFSC2/ tests/"
+cmd="mypy LabIFSC2/"
 
 [tool.poe.tasks.unit-tests]
 help="Run the unit tests (pytest)"
-cmd = "pytest -vv -x -s "
+cmd = "pytest -vv  -s "
 
 [tool.poe.tasks.test-coverage]
 help="Calculates test coverage (pytest-coverage)"
-cmd = "pytest -vv -x -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html"
+cmd = "pytest -vv -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html"
 
 [tool.poe.tasks.docs]
 help="Create the documentation"

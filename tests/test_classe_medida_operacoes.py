@@ -111,3 +111,17 @@ def test_potencia():
         lab.Medida(0, '', 0.1) ** '3'
     with pytest.raises(TypeError):
         '3' ** lab.Medida(0, '', 0.1)
+
+
+def test_soma_subtracao_constante_histograma():
+    x = lab.Medida(5, 'm', 0.1)
+    h_x = x.histograma
+    
+    y = x + 3.0
+    h_y = y.histograma
+    
+    z = x - 2.0
+    h_z = z.histograma
+
+    assert np.allclose(h_y.magnitude - h_x.magnitude, 3.0)
+    assert np.allclose(h_z.magnitude - h_x.magnitude, -2.0)
