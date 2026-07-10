@@ -27,23 +27,21 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       
-      - name : Install Poetry
-        uses: Gr1N/setup-poetry@v8
-        with:
-          poetry-version: "2.1.4"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v8
 
       - name: Install dependencies
-        run: poetry self add poethepoet@0.37 && poetry install --without docs --no-root
+        run: uv sync --group test --group linter
 
       - name: mypy
         env:
             PYTHONIOENCODING: utf-8
-        run: poetry poe type-checking
+        run: uv run --group linter mypy LabIFSC2/ tests/
 
       - name: Testing code with pytest
         env:
           PYTHONIOENCODING: utf-8
-        run: poetry poe unit-tests
+        run: uv run --group test pytest -vv -s
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

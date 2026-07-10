@@ -1,16 +1,15 @@
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [project]
 name = "LabIFSC2"
 version = "0.1.2"
 description = "Cálculos de laboratório com Python, realize propagação de incertezas e conversão de medidas automaticamente"
 authors = [{name="viniciusdutra314",email="dutravinisousa2@usp.br"},]
-license = "GNU General Public License v3.0"
+license = "GPL-3.0-only"
 readme = "README.md"
-packages=[{include = "LabIFSC2"}]
-requires-python = ">=3.11"
+requires-python = ">=3.11,<4.0"
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Natural Language :: Portuguese (Brazilian)",
@@ -30,37 +29,34 @@ dependencies=[
     "pint >=0.24"
 ]
 
-
 [project.urls]
 "Documentation" = "https://labifsc2.readthedocs.io/pt-br/latest/"
 "Github" = "https://github.com/viniciusdutra314/LabIFSC2"
 "Issue Tracker"="https://github.com/viniciusdutra314/LabIFSC2/issues"
 
+[tool.hatch.build.targets.wheel]
+packages = ["LabIFSC2"]
 
-[tool.poetry.group.docs.dependencies]
-mkdocs-material = "^9.5.4"
-pymdown-extensions = "^11.0"
-python-markdown-math = "^0.9"
-mkdocstrings = "^1.0.4"
-mkdocstrings-python = "^2.0.5"
-
-
-[tool.poetry.group.test.dependencies]
-labifsc = "^0.1.13"
-uncertainties = "^3.2.2"
-pytest = "^9.1.1"
-pytest-cov = "^7.1.0"
-scipy = "^1.15.1"
-mutmut = "^3.6.0"
-
-
-[tool.poetry.group.linter.dependencies]
-isort = "^8.0.1"
-mypy = "^2.2.0"
-
-
-[tool.poetry.group.testes.dependencies]
-matplotlib = "^3.10.0"
+[dependency-groups]
+docs = [
+    "mkdocs-material >=9.5.4,<10.0.0",
+    "pymdown-extensions >=11.0,<12.0",
+    "python-markdown-math >=0.9,<0.10",
+    "mkdocstrings >=1.0.4,<2.0.0",
+    "mkdocstrings-python >=2.0.5,<3.0.0",
+]
+linter = [
+    "mypy >=2.2.0,<3.0.0",
+]
+test = [
+    "labifsc >=0.1.13,<0.2.0",
+    "uncertainties >=3.2.2,<4.0.0",
+    "pytest >=9.1.1,<10.0.0",
+    "pytest-cov >=7.1.0,<8.0.0",
+    "scipy >=1.15.1,<2.0.0",
+    "mutmut >=3.6.0,<4.0.0",
+    "matplotlib >=3.10.0,<4.0.0",
+]
 
 [tool.mypy]
 strict = true
@@ -68,34 +64,9 @@ disallow_any_explicit = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 
-#all tasks
-
-[tool.poetry.requires-plugins]
-poethepoet = ">=0.35"
-
-[tool.poe.tasks.tests]
-help="Run the unit tests (pytest) and a type checker (mypy)"
-sequence = ["type-checking","unit-tests"]
-
-[tool.poe.tasks.type-checking]
-help="Run a type checker (mypy)"
-cmd="mypy LabIFSC2/ tests/"
-
-[tool.poe.tasks.unit-tests]
-help="Run the unit tests (pytest)"
-cmd = "pytest -vv  -s "
-
-[tool.poe.tasks.test-coverage]
-help="Calculates test coverage (pytest-coverage)"
-cmd = "pytest -vv -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html"
-
-[tool.poe.tasks.test-mutation]
-help="Run mutation tests (mutmut)"
-cmd="mutmut run"
-
-[tool.poe.tasks.docs]
-help="Create the documentation"
-cmd="mkdocs serve"
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = ["mutants"]
 
 [tool.mutmut]
 source_paths = ["LabIFSC2/"]

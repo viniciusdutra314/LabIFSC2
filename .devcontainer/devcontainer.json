@@ -1,5 +1,5 @@
 {
-	"name": "Python-Poetry",
+	"name": "Python-uv",
 	"image": "debian:trixie",
 	"customizations": {
 		"vscode": {
@@ -26,9 +26,8 @@
 			"plugins": "git docker",
 			"desiredLocale": "en_US.UTF-8 UTF-8"
 		},
-		"ghcr.io/devcontainers-extra/features/poetry:2": {
+		"ghcr.io/devcontainers-extra/features/uv:1": {
 			"version": "latest"
 		}
-	},
-	"postCreateCommand": "poetry self add poethepoet@0.37 && poetry lock && poetry install --no-root"
+	}
 }

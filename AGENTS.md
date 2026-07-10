@@ -4,8 +4,8 @@
 
 - **Language**: Python ≥ 3.11 (tested on 3.11, 3.12, 3.13, 3.14)
 - **License**: GPL-3.0
-- **Package Manager / Build System**: [Poetry](https://python-poetry.org/) with `poetry-core` masonry backend
-- **Task Runner**: [Poe the Poet](https://github.com/nat-n/poethepoet) (`poethepoet`)
+- **Package Manager**: [uv](https://docs.astral.sh/uv/)
+- **Build System**: [Hatchling](https://hatch.pypa.io/latest/)
 - **Documentation**: [MkDocs Material](https://squidfunk.github.io/mkdocs-material/)
 - **Human Language**: Brazilian Portuguese — documentation, docstrings, variable names, and error messages are all in Portuguese
 
@@ -51,8 +51,7 @@ The `montecarlo()` function is the propagation engine: it samples histograms fro
 ### Prerequisites
 
 - Python ≥ 3.11
-- [Poetry](https://python-poetry.org/) (v2.1.4+)
-- [poethepoet](https://github.com/nat-n/poethepoet) plugin for Poetry
+- [uv](https://docs.astral.sh/uv/)
 
 ### Installation
 
@@ -61,28 +60,28 @@ The `montecarlo()` function is the propagation engine: it samples histograms fro
 git clone https://github.com/viniciusdutra314/LabIFSC2.git
 cd LabIFSC2
 
-# Install all dependencies (including test and linter groups)
-poetry install --no-root
-
-# Ensure poethepoet is available
-poetry self add poethepoet@0.37
+# Install all dependencies (including docs, tests, and linter groups)
+uv sync --all-groups
 ```
 
 ### Task Commands
 
-All tasks are defined in `pyproject.toml` under `[tool.poe.tasks]`:
+Use uv's native runner for project commands:
 
-| Command                    | Description                                       |
-| -------------------------- | ------------------------------------------------- |
-| `poetry poe tests`         | Run mypy type checking + pytest (full suite)      |
-| `poetry poe type-checking` | Run mypy on `LabIFSC2/`                           |
-| `poetry poe unit-tests`    | Run pytest with verbose output (`-vv -x -s`)      |
-| `poetry poe test-coverage` | Run pytest with branch coverage report (HTML)      |
-| `poetry poe docs`          | Serve documentation locally via `mkdocs serve`    |
+| Command                                                                                  | Description                                  |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s`       | Run mypy type checking + pytest              |
+| `uv run --group linter mypy LabIFSC2/ tests/`                                            | Run mypy on `LabIFSC2/` and `tests/`         |
+| `uv run --group test pytest -vv -s`                                                      | Run pytest with verbose output               |
+| `uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html` | Run pytest with branch coverage report (HTML) |
+| `uv run --group test mutmut run`                                                         | Run mutation tests                           |
+| `uv run --group docs mkdocs serve`                                                       | Serve documentation locally via MkDocs       |
+| `uv format`                                                                              | Format Python code                           |
+| `uv format --check`                                                                      | Check Python formatting                      |
 
 ### DevContainer
 
-A `.devcontainer/` configuration is provided for VS Code, based on Debian with Python 3.11 and Poetry pre-installed.
+A `.devcontainer/` configuration is provided for VS Code, based on Debian with Python 3.11 and uv installed during setup.
 
 ## Important Gotchas
 
