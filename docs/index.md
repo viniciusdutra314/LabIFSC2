@@ -5,7 +5,7 @@
 Eis um exemplo simples de uso da biblioteca. Estamos estimando a gravidade da Terra baseado no período de um pêndulo pela conhecida fórmula \(T=2\pi \sqrt{\frac{L}{g}}\):
 
 ```py title="Estimativa da gravidade (com LabIFSC2)"
---8<-- "tests/test_doc_gravidade_com_LabIFSC2.py:5:13"
+--8<-- "tests/doctest/test_doc_gravidade_com_LabIFSC2.py:5:13"
 ```
 
 \(g=(9,73 \, \pm \, 0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}} \)
@@ -13,7 +13,7 @@ Eis um exemplo simples de uso da biblioteca. Estamos estimando a gravidade da Te
 Podemos copiar o resultado em formato \(\LaTeX\) e adicioná-lo em nosso relatório! Para fins de comparação, este é o código equivalente sem a ajuda da biblioteca. Perceba como, sem a biblioteca, existem muitas possibilidades de erros acidentais:
 
 ```py title="Estimativa da gravidade (sem LabIFSC2)"
---8<-- "tests/test_doc_gravidade_sem_LabIFSC2.py:5:14"
+--8<-- "tests/doctest/test_doc_gravidade_sem_LabIFSC2.py:5:14"
 ```
 
 ## O que há de novo?

@@ -23,4 +23,4 @@ def test_doc_regressoes_construir():
     meia_vida=-1/exponencial.expoente
     assert f"{M_0:E0}"=="(0,95 ± 0,01) kg"
     assert f"{meia_vida:a_E0}"=="(1,011 ± 0,004) a"
-    assert str(exponencial(Medida(3.5,"year"))) == "(2 ± 1)x10⁻⁸⁶ kg"
+    assert str(exponencial(Medida(3.5,"year"))) == "(2,98 ± 0,06)x10⁻² kg"

@@ -64,45 +64,7 @@ class AjusteLeiDePotencia(NamedTuple):
         return f'AjusteLeiDePotencia(amplitude={self.amplitude}, potencia={self.potencia})'
 
 
-'''
-Resultado de um ajuste linear da forma
-y = a*x + b
-'''
-class AjusteLinear(NamedTuple):
-    a: Medida
-    b: Medida
 
-    def __call__(self, medidas: Medida | Iterable[Medida]) -> Medida | NDArray[np.object_]:
-        if isinstance(medidas, Medida):
-            return self.a * medidas + self.b
-        else:
-            return np.array(
-                [self.a * medida + self.b for medida in medidas],
-                dtype=object)
-
-    def __repr__(self) -> str:
-        return f'AjusteLinear(a={self.a}, b={self.b})'
-
-
-'''
-Resultado de um ajuste quadrático da forma
-y = a*x² + b*x + c
-'''
-class AjusteQuadratico(NamedTuple):
-    a: Medida
-    b: Medida
-    c: Medida
-
-    def __call__(self, medidas: Medida | Iterable[Medida]) -> Medida | NDArray[np.object_]:
-        if isinstance(medidas, Medida):
-            return self.a * (medidas ** 2) + self.b * medidas + self.c
-        else:
-            return np.array(
-                [self.a * (medida ** 2) + self.b * medida + self.c for medida in medidas],
-                dtype=object)
-
-    def __repr__(self) -> str:
-        return f'AjusteQuadratico(a={self.a}, b={self.b}, c={self.c})'
 
 
 class AjustePolinomial:
@@ -211,7 +173,7 @@ def regressao_polinomial(x_medidas: Iterable[Medida],
 
 
 def regressao_linear(x_medidas: Iterable[Medida],
-                     y_medidas: Iterable[Medida]) -> AjusteLinear:
+                     y_medidas: Iterable[Medida]) -> AjustePolinomial:
     """
     Calcula a regressão linear para um conjunto de medidas.
 
@@ -222,44 +184,13 @@ def regressao_linear(x_medidas: Iterable[Medida],
         y_medidas (Iterable[Medida]): Coleção contendo as medidas da variável dependente.
 
     Returns:
-        AjusteLinear: Objeto representando a reta de regressão linear ajustada aos dados.
+        AjustePolinomial: Objeto representando a reta de regressão linear ajustada aos dados.
 
     Raises:
         TypeError: Se x_medidas ou y_medidas não forem coleções de Medida.
         ValueError: Se x_medidas e y_medidas não tiverem o mesmo tamanho.
     """
-    x_medidas, y_medidas = _validate_medidas_and_convert_to_list(x_medidas, y_medidas)
-    polinomio = regressao_polinomial(x_medidas, y_medidas, 1)
-    b = polinomio.coef[0]
-    a = polinomio.coef[1]
-    return AjusteLinear(a, b)
-
-
-def regressao_quadratica(x_medidas: Iterable[Medida],
-                         y_medidas: Iterable[Medida]) -> AjusteQuadratico:
-    """
-    Calcula a regressão quadrática para um conjunto de medidas.
-
-    Ajusta uma parábola da forma y = a*x² + b*x + c.
-
-    Args:
-        x_medidas (Iterable[Medida]): Coleção contendo as medidas da variável independente.
-        y_medidas (Iterable[Medida]): Coleção contendo as medidas da variável dependente.
-
-    Returns:
-        AjusteQuadratico: Objeto representando a parábola de regressão quadrática ajustada aos dados.
-
-    Raises:
-        TypeError: Se x_medidas ou y_medidas não forem coleções de Medida.
-        ValueError: Se x_medidas e y_medidas não tiverem o mesmo tamanho.
-        ValueError: Se não houver dados suficientes para o ajuste.
-    """
-    x_medidas, y_medidas = _validate_medidas_and_convert_to_list(x_medidas, y_medidas)
-    polinomio = regressao_polinomial(x_medidas, y_medidas, 2)
-    c = polinomio.coef[0]
-    b = polinomio.coef[1]
-    a = polinomio.coef[2]
-    return AjusteQuadratico(a, b, c)
+    return regressao_polinomial(x_medidas, y_medidas, 1)
 
 
 def regressao_exponencial(x_medidas: Iterable[Medida],

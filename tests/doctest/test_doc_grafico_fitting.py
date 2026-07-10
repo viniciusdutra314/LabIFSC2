@@ -2,8 +2,6 @@ from LabIFSC2 import *
 
 
 def test_doc_grafico_fitting():
-    import time
-
     import matplotlib.pyplot as plt
 
     campo_magnético=arrayM([210,90,70,54,39,32,33,27,22,20],'muT',1)
@@ -13,7 +11,6 @@ def test_doc_grafico_fitting():
     unidade_y='muT'
 
     fitting=regressao_potencia(distancias,campo_magnético)
-    print(fitting) 
     plt.style.use('ggplot')
     plt.errorbar(
         x=nominais(distancias,unidade_x),

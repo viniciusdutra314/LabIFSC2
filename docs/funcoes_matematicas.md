@@ -3,7 +3,7 @@
 A classe `Medida` implementa todas as operações matemáticas elementares. Portanto, operações entre instâncias de `Medida` são idênticas a operações entre números.
 
 ```py
---8<-- "tests/test_doc_operacoes_basicas.py:7:14"
+--8<-- "tests/doctest/test_doc_operacoes_basicas.py:7:14"
 ```
 
 ## Funções Numpy
@@ -11,7 +11,7 @@ A classe `Medida` implementa todas as operações matemáticas elementares. Port
 O LabIFSC2 implementa uma compatibilidade direta com as funções do Numpy (tecnicamente chamadas de [ufunc](https://numpy.org/doc/stable/reference/ufuncs.html)), permitindo que você aplique funções como `np.sin`, `np.sqrt`, `np.arctanh` de forma natural[^1].
 
 ```py
---8<-- "tests/test_doc_sqrt_vetorizado.py:5:9"
+--8<-- "tests/doctest/test_doc_sqrt_vetorizado.py:5:9"
 ```
 
 Veja que as unidades se comportam como o esperado. Outro exemplo interessante é a função seno, em que podemos usar diretamente o resultado em graus, sem precisar converter para radianos.
@@ -19,7 +19,7 @@ Veja que as unidades se comportam como o esperado. Outro exemplo interessante é
 
 
 ```py
---8<-- "tests/test_doc_seno.py:5:7"
+--8<-- "tests/doctest/test_doc_seno.py:5:7"
 ```
 
 [^1]:

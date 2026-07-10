@@ -88,13 +88,3 @@ def test_AjustePolinomial_call():
     resultado_array = lab2.nominais(polinomio(x_array), '')
     for x in range(1, 3+1):
         np.isclose(resultado_array[x-1], polinomio_number(x), rtol=1e-3)
-
-def test_regressao_quadratica():
-    x_dados = lab2.arrayM([1, 2, 3, 4, 5], '', 0)
-    y_dados = lab2.arrayM([1, 4, 9, 16, 25], '', 0)
-    quadratica = lab2.regressao_quadratica(x_dados, y_dados)
-    assert isinstance(quadratica, lab2.AjusteQuadratico)
-    a, b, c = quadratica
-    assert np.isclose(a.nominal(""), 1.0, atol=1e-5)
-    assert np.isclose(b.nominal(""), 0.0, atol=1e-5)
-    assert np.isclose(c.nominal(""), 0.0, atol=1e-5)

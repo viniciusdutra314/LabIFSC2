@@ -9,7 +9,7 @@ Mesmo que a própria linguagem Python tenha um módulo de [arrays](https://docs.
 Com arrays numpy temos a magia da vetorização, ou seja, podemos fazer operações matemáticas entre arrays. O resultado disso são operações elemento a elemento.
 
 ```py
---8<-- "tests/test_doc_operacoes_basicas_arrays.py:5:14"
+--8<-- "tests/doctest/test_doc_operacoes_basicas_arrays.py:5:14"
 ```
 
 Perceba que isso não é possível com listas.
@@ -18,7 +18,7 @@ Perceba que isso não é possível com listas.
 Como discutido na seção de [Funções matemáticas](funcoes_matematicas.md), as funções do Numpy podem atuar diretamente na classe Medida e em arrays de medidas.
 
 ```py 
---8<-- "tests/test_doc_sqrt_vetorizado.py:5:9"
+--8<-- "tests/doctest/test_doc_sqrt_vetorizado.py:5:9"
 ```
 
 
@@ -27,7 +27,7 @@ Como discutido na seção de [Funções matemáticas](funcoes_matematicas.md), a
 Em muitas medidas experimentais fazemos medições igualmente espaçadas. Imagine que você está medindo o campo magnético de um fio em função da sua distância \(\vec{B}(distância)\). Você realiza uma medição a cada 1 cm, por exemplo. O `lab.linspace` recebe o valor da primeira medição, o valor da última, a quantidade de medições entre elas, a unidade e a incerteza da medição. No exemplo abaixo, fizemos 10 medições entre [1 cm, 10 cm], com precisão de 0,05 cm cada.
 
 ```py 
---8<-- "tests/test_doc_linspace.py:5:9"
+--8<-- "tests/doctest/test_doc_linspace.py:5:9"
 ```
 
 A função é o análogo do [np.linspace](https://numpy.org/doc/stable/reference/generated/numpy.linspace.html#numpy-linspace) que recebe medidas.
@@ -37,18 +37,18 @@ A função é o análogo do [np.linspace](https://numpy.org/doc/stable/reference
 Agora que temos as distâncias, medimos o campo magnético para cada distância. Como registramos esses campos? Teríamos que criar 10 objetos `Medida` diretamente? Não, a solução é o lab.arrayM. Ele recebe uma lista/array de valores nominais, a incerteza das medidas e a unidade.
 
 ```py 
---8<-- "tests/test_doc_linspace.py:11:17"
+--8<-- "tests/doctest/test_doc_linspace.py:11:17"
 ```
 
 ## Nominais
 Para obter os valores nominais de um array numpy de medidas, basta usar a função `nominais(array_medida, unidade)`:
 ```py
---8<-- "tests/test_doc_nominal.py:7:9"
+--8<-- "tests/doctest/test_doc_nominal.py:7:9"
 ```
 
 ## Incertezas
 De maneira análoga, podemos também pegar as incertezas com `incertezas(array_medida, unidade)`:
 ```py
---8<-- "tests/test_doc_incerteza.py:7:9"
+--8<-- "tests/doctest/test_doc_incerteza.py:7:9"
 ```
 

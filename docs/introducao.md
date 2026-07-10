@@ -23,21 +23,21 @@ Para um exemplo prático, consideraremos um tipo de medida comum, o IMC (Índice
 
 Com o LabIFSC2, podemos fazer os cálculos assim:
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_imc.py:5:8"
+--8<-- "tests/doctest/test_doc_imc.py:5:8"
 ```
 Calculamos então que o IMC tem valor esperado de \(\mu=24,5 \, kg/m²\) e desvio padrão de \(\sigma=0.3 \, kg/m²\).
 
 Você pode acessar o valor nominal e a incerteza fazendo `medida.nominal(unidade)` ou `medida.incerteza(unidade)`. Repare que é necessário especificar uma unidade, visto que o valor nominal/incerteza são totalmente dependentes dela. É importante notar que somente em casos bem específicos você vai acessar diretamente esses valores. Se você usa muito essas funções, talvez não esteja usando a biblioteca corretamente.
 
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_imc.py:9:10"
+--8<-- "tests/doctest/test_doc_imc.py:9:10"
 ```
 
 ## Várias medições
 Podemos também criar uma medida baseada em várias medições. Imagine que você está medindo o diâmetro de um fio levemente irregular. Você pode preencher o valor nominal como sendo uma lista de medições, a biblioteca irá considerar o valor nominal como a média dos valores.
 
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_medida_lista.py:7:8"
+--8<-- "tests/doctest/test_doc_medida_lista.py:7:8"
 ```
 Caso o desvio padrão[^2] das medições seja maior do que a incerteza experimental, então a incerteza é o desvio padrão. Intuitivamente, podemos pensar que o fio é objetivamente irregular e não existe exatamente um raio que o define. 
 
@@ -46,7 +46,7 @@ Mas se a incerteza experimental for maior que o desvio padrão, então não temo
 Esse comportamento pode ser visto nesse exemplo, preste atenção nas incertezas:
 
 ```py title="Cálculo de IMC"
---8<-- "tests/test_doc_medida_lista.py:7:10"
+--8<-- "tests/doctest/test_doc_medida_lista.py:7:10"
 ```
 ## Medidas sem incerteza
 É possível criar medidas com incerteza zero. Nesse caso, a biblioteca somente realizará as conversões de unidade. Isso é interessante para um conjunto grande de medidas em que a incerteza é muito pequena, por exemplo, as medidas de voltagem de um osciloscópio, em que a precisão de tempo é enorme. É possível tratar os tempos como exatos, assim um grande ganho em performance é observado, visto que não ocorrerá nenhuma simulação Monte Carlo.
@@ -62,7 +62,7 @@ O método que faz essa comparação é `comparar_medidas`, que recebe duas Medid
 - INCONCLUSIVO
 
 ```py title="Comparando IMC"
---8<-- "tests/test_doc_equivalencia.py:5:8"
+--8<-- "tests/doctest/test_doc_equivalencia.py:5:8"
 ```
 
 Perceba que 3 resultados são possíveis, então infelizmente a sintaxe `ìmc1==imc2` ou `ìmc1!=imc2` não é perfeita, porque no caso inconclusivo temos `ìmc1==imc2 (False)` e `ìmc1!=imc2 (False)` ao mesmo tempo, o que creio ser javascript demais pro meu gosto.
@@ -81,14 +81,14 @@ Em alguns momentos nós queremos usar o `max` ou `min` de um conjunto de medidas
 Mesmo que existam incertezas, geralmente o que você se refere como min,max é em relação ao valor nominal. Então a classe `Medida` implementa comparações < <= > >=, referentes aos valores nominais, assim é possível usar funções do tipo `max`,`min` e `sort` de maneira direta.
 
 ```py 
---8<-- "tests/test_doc_sorted_list.py:5:13"
+--8<-- "tests/doctest/test_doc_sorted_list.py:5:13"
 ```
 
 ## Intervalo de Confiança
 Como estamos falando de medidas experimentais, falamos de **intervalos** e não valores exatos. Objetos da classe `Medida` possuem um método chamado `intervalo_de_confiança`. Com ele, podemos especificar uma probabilidade `p` de estarmos representando os valores possíveis das Medidas.
 
 ```py title="Intervalo de confiança IMC"
---8<-- "tests/test_doc_intervalo_de_confianca.py:5:8"
+--8<-- "tests/doctest/test_doc_intervalo_de_confianca.py:5:8"
 ```
 Basicamente, isso significa que estamos 95% certos de que o IMC está entre \(23,91 \le IMC \le 25,08\). Talvez você esteja surpreso que pelo método de medida temos 1 unidade inteira de IMC podendo variar.
 
@@ -104,14 +104,14 @@ print(f"{medida:unidade}")
 Um exemplo concreto se encontra abaixo:
 
 ```py title="Conversão de unidades Medida"
---8<-- "tests/test_doc_imc_cm.py:11:14"
+--8<-- "tests/doctest/test_doc_imc_cm.py:11:14"
 ```
 
 ## Dimensão
 Como unidades só são uma característica do print de uma medida, e não algo intrínseco, uma forma independente de unidade para caracterizar o que uma medida é de fato é sua dimensão. Uma velocidade, por exemplo, independente se está em \(km/h\) ou \(m/s\), é um comprimento dividido por um tempo. Você pode acessar esse atributo com `medida.dimensao`.
 
 ```py
---8<-- "tests/test_doc_dimensao.py:5:6"
+--8<-- "tests/doctest/test_doc_dimensao.py:5:6"
 ```
 
 [^1]:

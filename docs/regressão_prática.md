@@ -1,14 +1,13 @@
 ## Tipos de regressão
 
-Temos 5 tipos de regressões possíveis:
+Temos 4 tipos de regressões possíveis:
 
 - `regressao_linear(x_medidas, y_medidas)`
-- `regressao_quadratica(x_medidas, y_medidas)`
 - `regressao_polinomial(x_medidas, y_medidas, grau)`
 - `regressao_exponencial(x_medidas, y_medidas, base)`
 - `regressao_potencia(x_medidas, y_medidas, x0=None)`
 
-O resultado é armazenado respectivamente em um objeto `AjusteLinear`, `AjusteQuadratico`, `AjustePolinomial`, `AjusteExponencial` ou `AjusteLeiDePotencia`. Esses objetos são chamáveis e agem como funções para avaliar o ajuste em novos pontos. Na prática, você só precisará chamá-los passando suas variáveis independentes.
+O resultado das regressões linear e polinomial é armazenado em um objeto `AjustePolinomial`. Para as regressões exponencial e de lei de potência, os resultados são armazenados em `AjusteExponencial` e `AjusteLeiDePotencia`, respectivamente. Esses objetos são chamáveis e agem como funções para avaliar o ajuste em novos pontos. Na prática, você só precisará chamá-los passando suas variáveis independentes.
 
 !!! warning
     Lembre-se que, para regressões exponenciais, todos os valores de y precisam ser positivos. No caso da regressão de lei de potência, os valores de x também precisam ser positivos. Além disso, um valor pode não ser negativo, mas devido à incerteza associada, ele pode assumir valores negativos.
@@ -16,23 +15,22 @@ O resultado é armazenado respectivamente em um objeto `AjusteLinear`, `AjusteQu
 ## Calcular Regressão
 
 ### Polinomial
-As funções `regressao_linear` e `regressao_quadratica` são casos especiais da **`regressao_polinomial`**, eu criei  
-essas funções auxiliares somente por conveniência.
+A função `regressao_linear` é um caso especial da **`regressao_polinomial`** (com grau=1), criada somente por conveniência.
 
 
 Não há muito segredo nessa parte, as funções recebem os arrays de medidas em \(x\) e \(y\). É importante salientar que essas funções recebem **Medidas**, isso porque queremos os parâmetros da regressão tendo unidades. Como exemplo, estamos imaginando aqui um objeto em queda livre vertical, nós registramos a sua posição na vertical em função do tempo e queremos encontrar a melhor parábola que se encaixa nos dados.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:7:15"
+--8<-- "tests/doctest/test_doc_regressoes_construir.py:7:15"
 ```
-Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Python, igualando os coeficientes ao ajuste/polinômio (igual ao unpacking de uma tupla, retornando em ordem decrescente de grau: do termo de maior grau até o termo constante). Para o caso linear (`AjusteLinear`) e quadrático (`AjusteQuadratico`), também é possível acessar os coeficientes diretamente pelos atributos (`a`, `b`, etc.).
+Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Python, igualando os coeficientes ao ajuste/polinômio (igual ao unpacking de uma tupla, retornando em ordem decrescente de grau: do termo de maior grau até o termo constante).
 
 ### Exponencial
 
 Imagine um experimento em que queremos determinar a meia-vida de um material radioativo. *As escalas de massa e tempo são somente ilustrativas*. Podemos acessar a amplitude do ajuste fazendo `exponencial.amplitude` e o expoente fazendo `exponencial.expoente`.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:17:26"
+--8<-- "tests/doctest/test_doc_regressoes_construir.py:17:26"
 ```
 Repare que a regressão aceita uma base (por padrão base=\(e\)).
 
@@ -47,7 +45,7 @@ $$y = \text{amplitude} \cdot \left(\frac{x}{x_0}\right)^{\text{potência}}$$
 O exemplo abaixo pega dados da NASA para demonstrar experimentalmente a terceira lei de Kepler. Eu peguei as distâncias em milhas justamente para demonstrar como que com o LabIFSC2 você não precisa se preocupar com unidades.
 
 ```py
---8<-- "tests/test_doc_kepler.py:9:28"
+--8<-- "tests/doctest/test_doc_kepler.py:9:28"
 ```
 Perceba como essa lei de fato aproxima muito bem os dados. Essa 'lei' na verdade é uma aproximação que só considera a atração gravitacional do sol, então é esperado observar alguns pequenos desvios visto que o sistema solar não é composto só pelo sol, mas um sistema complexo de dezenas de milhares de corpos massivos.
 
@@ -61,7 +59,7 @@ Para avaliar um ajuste em um conjunto de pontos, basta chamá-lo como uma funç�
 No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no intervalo de distâncias dos planetas do sistema solar ([0,30] unidades astronômicas), e pedimos para ele retornar esse resultado em anos.
 
 ```py hl_lines="36 61"
---8<-- "tests/test_doc_kepler.py:36:63"
+--8<-- "tests/doctest/test_doc_kepler.py:36:63"
 ```
 
 <img src="./images/kepler.jpg" width=600>
@@ -69,7 +67,7 @@ No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no interv
 Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para ler mais sobre gráficos, vá para a seção [Gráficos](graficos.md).
 
 ```py 
---8<-- "tests/test_doc_kepler.py:64:79"
+--8<-- "tests/doctest/test_doc_kepler.py:64:79"
 ```
 
 !!! warning
