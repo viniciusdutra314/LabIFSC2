@@ -27,7 +27,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install --only main,docs
+          poetry install --only main,docs --no-root
 
       - name: Build documentation
         run: |
