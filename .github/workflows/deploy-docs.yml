@@ -4,6 +4,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write
+
 jobs:
   build:
     name: Deploy docs
@@ -17,12 +20,21 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install docs dependencies
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@v8
+        with:
+          poetry-version: "2.1.4"
+
+      - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install mkdocs mkdocs-material mkdocstrings mkdocs-mdx-math
+          poetry install --only main,docs
+
+      - name: Build documentation
+        run: |
+          poetry run mkdocs build
 
       - name: Deploy docs
-        uses: mhausenblas/mkdocs-deploy-gh-pages@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site
