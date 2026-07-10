@@ -10,11 +10,10 @@ authors = [{name="viniciusdutra314",email="dutravinisousa2@usp.br"},]
 license = "GNU General Public License v3.0"
 readme = "README.md"
 packages=[{include = "LabIFSC2"}]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers=[
     "Development Status :: 5 - Production/Stable",
     "Natural Language :: Portuguese (Brazilian)",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",

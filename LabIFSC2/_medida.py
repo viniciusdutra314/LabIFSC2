@@ -44,7 +44,7 @@ def montecarlo(  # type: ignore[explicit-any]
         std_q = cast(Quantity[float], std)
         resultado = Medida(mean_q.magnitude, str(histograma.units), std_q.magnitude)
     else:
-        resultado = Medida(mean, "", std)
+        resultado = Medida(float(mean), "", float(std))
     resultado._histograma = histograma
     return resultado
 
