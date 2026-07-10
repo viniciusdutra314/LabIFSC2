@@ -38,6 +38,9 @@ dependencies=[
 packages = ["LabIFSC2"]
 
 [dependency-groups]
+dev = [
+    "taskipy >=1.14.1,<2.0.0",
+]
 docs = [
     "mkdocs-material >=9.5.4,<10.0.0",
     "pymdown-extensions >=11.0,<12.0",
@@ -71,3 +74,13 @@ norecursedirs = ["mutants"]
 [tool.mutmut]
 source_paths = ["LabIFSC2/"]
 pytest_add_cli_args = ["-x", "--tb=no", "--ignore=tests/doctest"]
+
+[tool.taskipy.tasks]
+tests = "uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s"
+type-checking = "uv run --group linter mypy LabIFSC2/ tests/"
+unit-tests = "uv run --group test pytest -vv -s"
+test-coverage = "uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html"
+test-mutation = "uv run --group test mutmut run"
+docs = "uv run --group docs mkdocs serve"
+format = "uv format"
+format-check = "uv format --check"

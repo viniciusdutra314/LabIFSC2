@@ -66,18 +66,19 @@ uv sync --all-groups
 
 ### Task Commands
 
-Use uv's native runner for project commands:
+Use uv to run the shell tasks defined under `[tool.taskipy.tasks]` in
+`pyproject.toml`:
 
-| Command                                                                                  | Description                                  |
-| ---------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s`       | Run mypy type checking + pytest              |
-| `uv run --group linter mypy LabIFSC2/ tests/`                                            | Run mypy on `LabIFSC2/` and `tests/`         |
-| `uv run --group test pytest -vv -s`                                                      | Run pytest with verbose output               |
-| `uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html` | Run pytest with branch coverage report (HTML) |
-| `uv run --group test mutmut run`                                                         | Run mutation tests                           |
-| `uv run --group docs mkdocs serve`                                                       | Serve documentation locally via MkDocs       |
-| `uv format`                                                                              | Format Python code                           |
-| `uv format --check`                                                                      | Check Python formatting                      |
+| Command                       | Description                                   |
+| ----------------------------- | --------------------------------------------- |
+| `uv run task tests`           | Run mypy type checking + pytest               |
+| `uv run task type-checking`   | Run mypy on `LabIFSC2/` and `tests/`          |
+| `uv run task unit-tests`      | Run pytest with verbose output                |
+| `uv run task test-coverage`   | Run pytest with branch coverage report (HTML) |
+| `uv run task test-mutation`   | Run mutation tests                            |
+| `uv run task docs`            | Serve documentation locally via MkDocs        |
+| `uv run task format`          | Format Python code                            |
+| `uv run task format-check`    | Check Python formatting                       |
 
 ### DevContainer
 

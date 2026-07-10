@@ -36,12 +36,12 @@ jobs:
       - name: mypy
         env:
             PYTHONIOENCODING: utf-8
-        run: uv run --group linter mypy LabIFSC2/ tests/
+        run: uv run task type-checking
 
       - name: Testing code with pytest
         env:
           PYTHONIOENCODING: utf-8
-        run: uv run --group test pytest -vv -s
+        run: uv run task unit-tests
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
