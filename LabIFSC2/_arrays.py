@@ -9,14 +9,17 @@ from ._medida import Medida
 
 def nominais(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
     """
-    Converte um iterável de objetos Medida para um array de valores nominais em uma unidade especificada.
+    Converte um iterável de objetos Medida para um array de valores
+    nominais em uma unidade especificada.
 
     Args:
         medidas (Iterable[Medida]): Iterável de objetos Medida.
-        unidade (str): Unidade para a conversão dos valores nominais. Use 'si' para unidades do Sistema Internacional.
+        unidade (str): Unidade para a conversão dos valores nominais. Use 'si'
+        para unidades do Sistema Internacional.
 
     Returns:
-        NDArray[np.float64]: Array de valores nominais convertidos para a unidade especificada.
+        NDArray[np.float64]: Array de valores nominais convertidos
+        para a unidade especificada.
 
     Raises:
         TypeError: Se algum dos valores não for um objeto Medida.
@@ -32,14 +35,16 @@ def nominais(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
 
 def incertezas(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
     """
-    Converte um iterável de objetos Medida para um array de incertezas em uma unidade especificada.
+    Converte um iterável de objetos Medida para um array de
+    incertezas em uma unidade especificada.
 
     Args:
         medidas (Iterable[Medida]): Iterável de objetos Medida.
-        unidade (str): Unidade para a conversão das incertezas. Use 'si' para unidades do Sistema Internacional.
+        unidade (str): Unidade para a conversão das incertezas. Use 'si'
+        para unidades do Sistema Internacional.
 
     Returns:
-        NDArray[np.float64]: Array de incertezas convertidas para a unidade especificada.
+        NDArray[np.float64]: Array de incertezas convertidas para a unidade escolhida.
 
     Raises:
         TypeError: Se algum dos valores não for um objeto Medida.
@@ -52,6 +57,7 @@ def incertezas(medidas: Iterable[Medida], unidade: str) -> NDArray[np.float64]:
     except AttributeError as e:
         raise TypeError("Os valores do array não são Medidas") from e
 
+
 def curva_min(
     medidas: Iterable[Medida], unidade_y: str, sigmas: float = 2
 ) -> NDArray[np.float64]:
@@ -61,7 +67,7 @@ def curva_min(
     Para usar com um ajuste, passe o resultado de ``ajuste(x_array)`` como argumento.
 
     Args:
-        medidas (Iterable[Medida]): Iterável de objetos Medida (e.g. saída de um Ajuste chamável).
+        medidas (Iterable[Medida]): Iterável de objetos Medida.
         unidade_y (str): Unidade da variável dependente.
         sigmas (float): Número de sigmas para a curva mínima.
 
@@ -82,7 +88,7 @@ def curva_max(
     Para usar com um ajuste, passe o resultado de ``ajuste(x_array)`` como argumento.
 
     Args:
-        medidas (Iterable[Medida]): Iterável de objetos Medida (e.g. saída de um Ajuste chamável).
+        medidas (Iterable[Medida]): Iterável de objetos Medida.
         unidade_y (str): Unidade da variável dependente.
         sigmas (float): Número de sigmas para a curva máxima.
 
@@ -92,6 +98,7 @@ def curva_max(
     if sigmas <= 0:
         raise ValueError("O número de sigmas deve ser positivo")
     return nominais(medidas, unidade_y) + sigmas * incertezas(medidas, unidade_y)
+
 
 def linspaceM(
     a: float, b: float, n: int, unidade: str, incertezas: float
@@ -107,7 +114,7 @@ def linspaceM(
         incertezas (float): A incerteza associada a cada medida.
 
     Returns:
-        NDArray[np.object_]: Um array de objetos Medida com valores igualmente espaçados.
+        NDArray[np.object_]: Um array de objetos Medida com valores igualmente espaçados
     """
     return np.array(
         [Medida(i, unidade, incertezas) for i in np.linspace(a, b, n)], dtype=object

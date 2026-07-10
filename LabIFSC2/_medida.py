@@ -5,8 +5,8 @@ import re
 from collections.abc import Callable, Iterable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
-from statistics import NormalDist
 from numbers import Real
+from statistics import NormalDist
 from string import Template
 from typing import cast, overload
 
@@ -65,7 +65,8 @@ class Medida:
         Inicializa uma instância da classe com valores nominais, unidade e incerteza.
 
         Args:
-            nominal (float | Iterable[float]): Valor nominal ou uma coleção de valores nominais.
+            nominal (float | Iterable[float]): Valor nominal ou uma coleção de
+            valores nominais.
             unidade (str): Unidade de medida.
             incerteza (float): Incerteza associada ao valor nominal.
 
@@ -98,7 +99,7 @@ class Medida:
 
         Args:
             unidade (str): A unidade na qual o valor nominal deve ser retornado.
-                           'si', retorna o valor em unidades do Sistema Internacional (SI).
+            'si', retorna o valor em unidades do Sistema Internacional (SI).
 
         Returns:
             float: O valor nominal da medida na unidade especificada.
@@ -115,7 +116,7 @@ class Medida:
 
         Args:
             unidade (str): A unidade na qual a incerteza deve ser retornado.
-                            'si' retorna o valor em unidades do Sistema Internacional (SI).
+            'si' retorna o valor em unidades do Sistema Internacional (SI).
 
         Returns:
             float: O valor da incerteza da medida na unidade especificada.
@@ -234,15 +235,9 @@ class Medida:
 
         # escolhendo template
         if exato:
-            if latex:
-                template = template_latex_exato
-            else:
-                template = template_console_exato
+            template = template_latex_exato if latex else template_console_exato
         else:
-            if latex:
-                template = template_latex
-            else:
-                template = template_console
+            template = template_latex if latex else template_console
 
         unidade = f"{nominal_pint.units:~L}" if latex else f"{nominal_pint.units:~P}"
         return template.substitute(
@@ -303,14 +298,16 @@ class Medida:
     def __eq__(self, outro: object) -> bool:
         raise TypeError(
             '"Como a comparação entre Medidas pode gerar três resultados \
-    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    diferentes: iguais, diferentes, ou inconclusivo, optamos por \
+    fazer uma função separada \
     chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"'
         )
 
     def __ne__(self, outro: object) -> bool:
         raise TypeError(
             '"Como a comparação entre Medidas pode gerar três resultados \
-    diferentes: iguais, diferentes, ou inconclusivo, optamos por fazer uma função separada \
+    diferentes: iguais, diferentes, ou inconclusivo, \
+    optamos por fazer uma função separada \
     chamada compara_medidas(x:Medida,y:Medida) -> [Iguais | Diferentes | Inconclusivo]"'
         )
 
@@ -350,7 +347,9 @@ class Medida:
                 self._incerteza.magnitude,
             )
             if self._histograma is not None:
-                nova_medida._histograma = self._histograma + (outro * self._nominal.units)
+                nova_medida._histograma = self._histograma + (
+                    outro * self._nominal.units
+                )
             return nova_medida
         elif isinstance(outro, Medida):
             if self._nominal.is_compatible_with(outro._nominal):
@@ -371,7 +370,8 @@ class Medida:
                     return montecarlo(lambda x, y: x + y, self, outro)
             else:
                 raise ValueError(
-                    f"A soma entre {self._nominal.dimensionality} e {outro._nominal.dimensionality} não é possível"
+                    f"A soma entre {self._nominal.dimensionality} e"
+                    f" {outro._nominal.dimensionality} não é possível"
                 )
         else:
             return NotImplemented
@@ -410,9 +410,7 @@ class Medida:
                 self._incerteza.magnitude / abs(outro),
             )
             if self._histograma is not None:
-                resultado._histograma = cast(
-                    HistogramaType, self._histograma / outro
-                )
+                resultado._histograma = cast(HistogramaType, self._histograma / outro)
             return resultado
         else:
             return NotImplemented
@@ -490,7 +488,8 @@ class Medida:
 
         Raises:
             ValueError: Se o valor de `a` for maior que `b`.
-            ValueError: Se a unidade fornecida não for compatível com a unidade da medida.
+            ValueError: Se a unidade fornecida não for compatível
+            com a unidade da medida.
         """
         if a > b:
             raise ValueError("a deve ser menor que b")
@@ -521,7 +520,7 @@ class Medida:
         Calcula o intervalo de confiança para a medida.
 
         Args:
-            p (float): Probabilidade associada ao intervalo de confiança. Deve estar entre 0 e 1.
+            p (float): Probabilidade associada ao intervalo de confiança (0,1)
             unidade (str): Unidade de medida para o intervalo de confiança.
 
         Returns:
@@ -574,16 +573,20 @@ def comparar_medidas(
     sigma_superior: float = 3,
 ) -> Comparacao:
     """
-    Compara duas medidas considerando suas incertezas e retorna o resultado da comparação.
+    Compara duas medidas considerando suas incertezas e
+    retorna o resultado da comparação.
 
     Args:
         medida1 (Medida): A primeira medida a ser comparada.
         medida2 (Medida): A segunda medida a ser comparada.
-        sigma_inferior (float, opcional): O fator sigma inferior para considerar as medidas equivalentes. Default é 2.
-        sigma_superior (float, opcional): O fator sigma superior para considerar as medidas diferentes. Default é 3.
+        sigma_inferior (float, opcional): O fator sigma inferior para
+        considerar as medidas equivalentes. Default é 2.
+        sigma_superior (float, opcional): O fator sigma superior para
+        considerar as medidas diferentes. Default é 3.
 
     Returns:
-        Comparacao: O resultado da comparação, que pode ser EQUIVALENTES, DIFERENTES ou INCONCLUSIVO.
+        Comparacao: O resultado da comparação, que pode ser
+        EQUIVALENTES, DIFERENTES ou INCONCLUSIVO.
 
     Raises:
         ValueError: Se o sigma_inferior for maior que o sigma_superior.
