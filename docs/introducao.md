@@ -88,7 +88,7 @@ Mesmo que existam incertezas, geralmente o que você se refere como min,max é e
 Como estamos falando de medidas experimentais, falamos de **intervalos** e não valores exatos. Objetos da classe `Medida` possuem um método chamado `intervalo_de_confiança`. Com ele, podemos especificar uma probabilidade `p` de estarmos representando os valores possíveis das Medidas.
 
 ```py title="Intervalo de confiança IMC"
---8<-- "tests/test_doc_intervalo_de_confianca.py:5:7"
+--8<-- "tests/test_doc_intervalo_de_confianca.py:5:8"
 ```
 Basicamente, isso significa que estamos 95% certos de que o IMC está entre \(23,91 \le IMC \le 25,08\). Talvez você esteja surpreso que pelo método de medida temos 1 unidade inteira de IMC podendo variar.
 
@@ -104,7 +104,7 @@ print(f"{medida:unidade}")
 Um exemplo concreto se encontra abaixo:
 
 ```py title="Conversão de unidades Medida"
---8<-- "tests/test_doc_imc_cm.py:10:14"
+--8<-- "tests/test_doc_imc_cm.py:11:14"
 ```
 
 ## Dimensão

@@ -10,10 +10,8 @@ def test_doc_lei_de_hook():
     deslocamentos=arrayM([0,0.5,1.1,1.6,2,2.3,2.8,3.2,3.7,4],'cm',0.01) #medindo deslocamentos
 
     reta=regressao_linear(deslocamentos,forças)
-    print(reta)
-    #MPolinomio(coefs=[(2,51 ± 0,06) N/cm, (-3 ± 2)x10⁻¹ N],grau=1)
-    print(f"Constante da mola {reta.a:si}") 
-    #Constante da mola (2,51 ± 0,06)x10² kg/s²
+    assert str(reta) == "AjusteLinear(a=(2,51 ± 0,06)x10² kg/s², b=(-3 ± 2)x10⁻¹ kg·m/s²)"
+    assert f"Constante da mola {reta.a:si}" == "Constante da mola (2,51 ± 0,06)x10² kg/s²"
 
     unidade_x='cm'
     unidade_y='N'

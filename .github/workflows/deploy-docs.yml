@@ -5,7 +5,13 @@ on:
       - main
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -21,20 +27,21 @@ jobs:
           python-version: "3.11"
 
       - name: Install Poetry
-        uses: Gr1N/setup-poetry@v8
-        with:
-          poetry-version: "2.1.4"
+        run: pipx install poetry==2.1.4
 
       - name: Install dependencies
         run: |
-          poetry install --only main,docs --no-root
+          poetry install --only main,docs
 
       - name: Build documentation
         run: |
           poetry run mkdocs build
 
-      - name: Deploy docs
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+          path: ./site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

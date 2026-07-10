@@ -37,7 +37,7 @@ A função é o análogo do [np.linspace](https://numpy.org/doc/stable/reference
 Agora que temos as distâncias, medimos o campo magnético para cada distância. Como registramos esses campos? Teríamos que criar 10 objetos `Medida` diretamente? Não, a solução é o lab.arrayM. Ele recebe uma lista/array de valores nominais, a incerteza das medidas e a unidade.
 
 ```py 
---8<-- "tests/test_doc_linspace.py:10:13"
+--8<-- "tests/test_doc_linspace.py:11:17"
 ```
 
 ## Nominais

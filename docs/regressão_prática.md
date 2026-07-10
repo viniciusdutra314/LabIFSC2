@@ -32,7 +32,7 @@ Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Pytho
 Imagine um experimento em que queremos determinar a meia-vida de um material radioativo. *As escalas de massa e tempo são somente ilustrativas*. Podemos acessar a amplitude do ajuste fazendo `exponencial.amplitude` e o expoente fazendo `exponencial.expoente`.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:20:30"
+--8<-- "tests/test_doc_regressoes_construir.py:17:26"
 ```
 Repare que a regressão aceita uma base (por padrão base=\(e\)).
 
