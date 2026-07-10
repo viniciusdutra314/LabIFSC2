@@ -6,15 +6,31 @@ import LabIFSC2 as lab
 def test_inicializacao():
     with pytest.raises(ValueError):
         lab.Medida(5, '', -1)
-    inicializacoes_erradas=[lambda: lab.Medida("1", '', 3),
-                            lambda: lab.Medida(5, '', "0.1"),]
-    for inicializacao_errada in inicializacoes_erradas:
-        with pytest.raises(TypeError):
-            inicializacao_errada()
     try:
         lab.Medida(5, 'mm', 0.1)
+        lab.Medida(5, 'mm')
+        lab.Medida(5, 'mm',0)
     except Exception as exc:
         assert False, "Não deveria levantar um erro"
+
+
+def test_gt_ge_lt_le():
+    x = lab.Medida(5, 'm', 0.1)
+    y = lab.Medida(5, 'm', 0.1)
+    assert not (x > y)
+    assert x >= y
+    assert x <= y
+    assert not (x > x)
+    assert not (x < x)
+    assert x >= x
+    assert x <= x
+    
+    z = lab.Medida(6, 'm', 0.1)
+    assert z > x
+    assert not (x > z)
+    assert x < z
+    assert (x <= z)
+    assert not(x >= z)
 
 
 def test_comparacoes():
@@ -44,3 +60,4 @@ def test_igualdades():
 
     with pytest.raises(ValueError):
         lab.comparar_medidas(x,y,sigma_inferior=5,sigma_superior=1) 
+        

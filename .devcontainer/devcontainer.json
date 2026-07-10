@@ -1,10 +1,9 @@
 {
 	"name": "Python-Poetry",
 	"image": "debian:trixie",
-
 	"customizations": {
-        "vscode": {
-            "extensions":[
+		"vscode": {
+			"extensions": [
 				"ms-python.python",
 				"njpwerner.autodocstring",
 				"matangover.mypy",
@@ -14,11 +13,22 @@
 				"twixes.pypi-assistant",
 				"GitHub.vscode-github-actions"
 			]
-            }
-		},
-		"features": {
-			"ghcr.io/devcontainers/features/python:1": {},
-			"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {},
-			"ghcr.io/devcontainers-extra/features/poetry:2": {}
 		}
+	},
+	"features": {
+		"ghcr.io/devcontainers/features/python:1": {
+			"installTools": true,
+			"version": "3.11"
+		},
+		"ghcr.io/nils-geistmann/devcontainers-features/zsh:0": {
+			"setLocale": true,
+			"theme": "robbyrussell",
+			"plugins": "git docker",
+			"desiredLocale": "en_US.UTF-8 UTF-8"
+		},
+		"ghcr.io/devcontainers-extra/features/poetry:2": {
+			"version": "latest"
+		}
+	},
+	"postCreateCommand": "poetry self add poethepoet@0.37 && poetry lock && poetry install --no-root"
 }

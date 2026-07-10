@@ -5,22 +5,20 @@ from scipy.optimize import curve_fit
 import LabIFSC2 as lab
 
 
-def test_MExponencial_valores():
-    a,k,base=lab.Medida(1,'',0.1),lab.Medida(3,'',0.01),np.exp(1)
-    exponencial=lab._regressoes.MExponencial(a,k,base)
-    assert exponencial.cte_multiplicativa.nominal("")==a.nominal("")
-    assert exponencial.expoente.nominal("")==k.nominal("")
-    assert exponencial.base==base
-    a_armazenado,k_armazenado,base_armazenado=exponencial
-    assert a_armazenado.nominal("")==a.nominal("")
-    assert k_armazenado.nominal("")==k.nominal("")
-    assert base_armazenado==base
+def test_AjusteExponencial_valores():
+    a, k = lab.Medida(1,'',0.1), lab.Medida(3,'',0.01)
+    exponencial = lab.AjusteExponencial(a, k)
+    assert exponencial.amplitude.nominal("") == a.nominal("")
+    assert exponencial.expoente.nominal("") == k.nominal("")
+    a_armazenado, k_armazenado = exponencial
+    assert a_armazenado.nominal("") == a.nominal("")
+    assert k_armazenado.nominal("") == k.nominal("")
     
-def test_MExponencial_amostrar():
-    a,k,base=lab.Medida(1,'',0.001),lab.Medida(3,'',0.01),np.exp(1)
-    exponencial=lab._regressoes.MExponencial(a,k,base)
-    x_array=lab.linspaceM(0,1,10,'',0.1)
-    exponencial.amostrar(x_array,'')
+def test_AjusteExponencial_call():
+    a, k = lab.Medida(1,'',0.001), lab.Medida(3,'',0.01)
+    exponencial = lab.AjusteExponencial(a, k)
+    x_array = lab.linspaceM(0,1,10,'',0.1)
+    lab.nominais(exponencial(x_array), '')
 
 @pytest.mark.parametrize("a, k", [
     (3.6, 1.05),
@@ -46,10 +44,10 @@ def test_equivalencia_com_scipy(a, k):
     y_dados = exponencial_np(x_dados, a, k) * ruido
     exponencial_np = lab.regressao_exponencial(x_dados, y_dados)
 
-    assert np.isclose(a_scipy.nominal(""),exponencial_np.cte_multiplicativa.nominal(""),atol=(5e-1)*a)
+    assert np.isclose(a_scipy.nominal(""),exponencial_np.amplitude.nominal(""),atol=(5e-1)*a)
     assert np.isclose(k_scipy.nominal(""),exponencial_np.expoente.nominal(""),atol=(1e-2))
-    assert np.isclose(a,exponencial_np.cte_multiplicativa.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_np.cte_multiplicativa.nominal(""),atol=1e-2) 
-    assert np.isclose(k,exponencial_np.expoente.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_np.expoente.nominal(""),atol=1e-2) 
+    assert np.isclose(a,exponencial_np.amplitude.nominal(""),rtol=1e-2) or np.isclose(a,exponencial_np.amplitude.nominal(""),atol=1e-2) 
+    assert np.isclose(k,exponencial_np.expoente.nominal(""),rtol=1e-2) or np.isclose(k,exponencial_np.expoente.nominal(""),atol=1e-2)
 
 
 

@@ -1,8 +1,7 @@
 Muitas constantes da natureza são usadas para cálculos físicos. Alguns exemplos são \(\pi\), \(c\) e \(G\). A biblioteca possui um submódulo chamado **constantes** que armazena esses valores segundo a [CODATA2022](https://arxiv.org/abs/2409.03787). É altamente recomendado que você utilize um editor de texto com **autocompletar** para rapidamente encontrar a constante desejada.
 
 ## Exatas
-Como os nomes das constantes são geralmente verbosos, é interessante salvar a constante com uma variável de nome reduzido no seu código. O código abaixo calcula o tempo que um fóton leva para sair do Sol e chegar até a Terra, usando a velocidade da luz e o semi-eixo maior médio da órbita da Terra:
-
+Como os nomes das constantes são geralmente verbosos, é interessante salvar a constante com uma variável de nome reduzido no seu código. O código abaixo calcula o tempo para um foton percorrer 1 unidade astronômica (que é aproxidamente o tempo que um fóton leva para sair do Sol e chegar até a Terra).
 ```py
 --8<-- "tests/test_doc_constantes.py:2:9"
 ```

@@ -4,5 +4,13 @@
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
-    "cSpell.language": "en,pt-BR,pt"
+    "cSpell.language": "en,pt-BR,pt",
+    "python-envs.defaultEnvManager": "ms-python.python:poetry",
+    "python-envs.defaultPackageManager": "ms-python.python:poetry",
+    "python-envs.pythonProjects": [],
+    "cSpell.words": [
+        "ddof",
+        "ndarray",
+        "ureg"
+    ]
 }

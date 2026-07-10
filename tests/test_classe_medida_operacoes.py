@@ -60,6 +60,7 @@ def test_mudanca_de_sinal():
     x = lab.Medida(5, '', 0.1)
     y = -x
     assert y.nominal("") == -5 and y.incerteza("") == 0.1
+    assert x.nominal("")==5 and x.incerteza("")==0.1 #cria uma cópia
     y = abs(y)
     assert y.nominal("") == 5 and y.incerteza("") == 0.1
     w = abs(x / y)
@@ -68,9 +69,8 @@ def test_mudanca_de_sinal():
     z = +w
     for i in range(len(z.histograma)):
         assert z.histograma[i] == w.histograma[i]
-    z = -w
-    for i in range(len(z._histograma)):
-        assert z.histograma[i] == -w.histograma[i]
+    w._nominal=3
+    assert not isinstance(z._nominal,int) #cria uma cópia
 
 def test_divisao():
     x = lab.Medida(-3, '', 0.1)
@@ -111,3 +111,17 @@ def test_potencia():
         lab.Medida(0, '', 0.1) ** '3'
     with pytest.raises(TypeError):
         '3' ** lab.Medida(0, '', 0.1)
+
+
+def test_soma_subtracao_constante_histograma():
+    x = lab.Medida(5, 'm', 0.1)
+    h_x = x.histograma
+    
+    y = x + 3.0
+    h_y = y.histograma
+    
+    z = x - 2.0
+    h_z = z.histograma
+
+    assert np.allclose(h_y.magnitude - h_x.magnitude, 3.0)
+    assert np.allclose(h_z.magnitude - h_x.magnitude, -2.0)

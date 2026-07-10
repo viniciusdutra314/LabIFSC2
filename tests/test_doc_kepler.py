@@ -6,39 +6,37 @@ from LabIFSC2 import *
 
 
 def test_doc_kepler():
-    #https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_british.html
     dados = [
-        {"planeta": "Mercúrio", "distancia_em_milhoes_milhas": 36.0, "orbita_em_dias": 88.0},
-        {"planeta": "Vênus", "distancia_em_milhoes_milhas": 67.2, "orbita_em_dias": 224.7},
-        {"planeta": "Terra", "distancia_em_milhoes_milhas": 93.0, "orbita_em_dias": 365.2},
-        {"planeta": "Marte", "distancia_em_milhoes_milhas": 141.6, "orbita_em_dias": 687.0},
-        {"planeta": "Júpiter", "distancia_em_milhoes_milhas": 483.7, "orbita_em_dias": 4331.0},
-        {"planeta": "Saturno", "distancia_em_milhoes_milhas": 889.8, "orbita_em_dias": 10747.0},
-        {"planeta": "Urano", "distancia_em_milhoes_milhas": 1781.5, "orbita_em_dias": 30589.0},
-        {"planeta": "Netuno", "distancia_em_milhoes_milhas": 2805.5, "orbita_em_dias": 59800.0},
+        {"planeta": "Mercúrio", "distancia": 36.0, "periodo": 88.0},
+        {"planeta": "Vênus", "distancia": 67.2, "periodo": 224.7},
+        {"planeta": "Terra", "distancia": 93.0, "periodo": 365.2},
+        {"planeta": "Marte", "distancia": 141.6, "periodo": 687.0},
+        {"planeta": "Júpiter", "distancia": 483.7, "periodo": 4331.0},
+        {"planeta": "Saturno", "distancia": 889.8, "periodo": 10747.0},
+        {"planeta": "Urano", "distancia": 1781.5, "periodo": 30589.0},
+        {"planeta": "Netuno", "distancia": 2805.5, "periodo": 59800.0},
     ]
-    distancias=np.array([Medida(planeta["distancia_em_milhoes_milhas"],"Mmiles",0) for planeta in dados])
-    periodos=np.array([Medida(planeta["orbita_em_dias"],"days",0) for planeta in dados])
-    fitting=regressao_potencia(distancias,periodos)
-    
-    print(f"{fitting.potencia}")#(1,4979 ± 0,0008)
+    distancias=lab.arrayM([planeta["distancia"] for planeta in dados],"Mmiles",0)
+    periodos=lab.arrayM([planeta["periodo"] for planeta in dados],"days",0)
+    fitting=lab.regressao_potencia(distancias,periodos)
+    print(f"{fitting.potencia}")#(1,4979 ± 0,0008) esperado que fosse 1.5
     G=constantes.Newtonian_constant_of_gravitation
     pi=constantes.pi
     massa_sol=constantes.solar_mass
     constante_teorica=np.sqrt(4*pi**2/(G*massa_sol))
     print(f"Teórica:{constante_teorica:si}") #(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵
-    print(f"Experimental:{fitting.cte_multiplicativa:si}") #(5,59 ± 0,03)x10⁻¹ s/m¹⋅⁴⁹⁷⁸⁷
+    print(f"Experimental:{fitting.amplitude:si}") #(5,59 ± 0,03)x10⁻¹ s/m¹⋅⁴⁹⁷⁸⁷
 
     assert f"{fitting.potencia}"=="(1,4979 ± 0,0008) "
     assert f"{constante_teorica:si}"=="(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵"
-    assert f"{fitting.cte_multiplicativa:si}"=="(5,76 ± 0,03)x10⁻¹⁰ s/m¹⋅⁴⁹⁷⁸⁷"
+    assert f"{fitting.amplitude:si}"=="(5,8 ± 0,1)x10⁻¹⁰ s"
 
     unidade_x='astronomical_unit'
     unidade_y='years'
 
     x=linspaceM(0,30,100,'astronomical_unit',0)
-    amostragem=fitting.amostrar(x,unidade_y)
-    print(amostragem)
+    amostragem=fitting(x)
+    print(nominais(amostragem,unidade_y))
     '''
     [  0.           0.16720236   0.47222204   0.86677871   1.33367488
     1.86297947   2.44799678   3.08382118   3.76665199   4.49338729
@@ -64,7 +62,7 @@ def test_doc_kepler():
     
     plt.style.use('ggplot')
     plt.plot(nominais(x,unidade_x),
-             amostragem,
+             nominais(amostragem, unidade_y),
              color='red',
              label='Teórica')
     plt.scatter(
@@ -79,7 +77,5 @@ def test_doc_kepler():
     plt.cla()
 
 
-    print(curva_min(fitting,'years')[0:5])
-    #[0 0.16563505 0.46786682 0.85881466 1.3214152 ]
-    print(curva_max(fitting,'years')[0:5])
-    #[0  0.16875531 0.47653809 0.87467204 1.34582704]
+    print(curva_min(amostragem,'years')[0:5])
+    print(curva_max(amostragem,'years')[0:5])

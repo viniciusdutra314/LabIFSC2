@@ -11,6 +11,9 @@ from ._arrays import (arrayM, curva_max, curva_min, incertezas, linspaceM,
                       nominais)
 from ._medida import (Comparacao, Medida, alterar_monte_carlo_samples,
                       comparar_medidas)
-from ._regressoes import (regressao_exponencial, regressao_linear,
-                          regressao_polinomial, regressao_potencia)
+from ._regressoes import (AjusteExponencial, AjusteLeiDePotencia,
+                          AjusteLinear, AjustePolinomial, AjusteQuadratico,
+                          regressao_exponencial, regressao_linear,
+                          regressao_polinomial, regressao_potencia,
+                          regressao_quadratica)
 from .constantes import constantes

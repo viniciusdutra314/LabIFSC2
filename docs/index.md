@@ -17,9 +17,10 @@ Podemos copiar o resultado em formato \(\LaTeX\) e adicioná-lo em nosso relató
 ```
 
 ## O que há de novo?
-O LabIFSC2 é uma modernização da biblioteca [LabIFSC](https://github.com/gjvnq/LabIFSC). Os desenvolvedores do LabIFSC2 não são os mesmos do LabIFSC, porém, gostaríamos de deixar aqui nosso agradecimento por terem concebido uma solução tão elegante que agilizou a graduação de várias pessoas.
+O LabIFSC2 é uma modernização da biblioteca [LabIFSC](https://github.com/gjvnq/LabIFSC). Eu [Vinícius Dutra](https://github.com/viniciusdutra314) queria deixar aqui meu agradecimento por terem concebido uma solução tão elegante que agilizou a graduação de várias pessoas, a minha modernização e a preservação do nome é uma forma de homenagem.
 
-Mesmo que a interface seja intencionalmente parecida, a implementação é totalmente nova. Para resumir as melhorias, estamos fazendo esta tabela:
+
+Mesmo que a interface seja intencionalmente parecida, a implementação é feita do zero. Para resumir as melhorias, eu fiz esta tabela:
 
 | Feature         | LabIFSC       | LabIFSC2      |
 |-----------------|---------------|---------------|
@@ -34,7 +35,7 @@ Mesmo que a interface seja intencionalmente parecida, a implementação é total
 | Documentação    | Parcial      | Completa      |
 
 ## Instalação
-A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python igual ou superior a 3.10. Para descobrir a versão do seu Python, digite `python --version` no terminal:
+A biblioteca está disponível no PyPI (Python Package Index), então ela pode ser instalada facilmente usando pip. Atualmente, é necessário ter uma versão do Python igual ou superior a 3.11. Para descobrir a versão do seu Python, digite `python --version` no terminal:
 
 ```bash
 pip install LabIFSC2
@@ -68,6 +69,6 @@ Somente no laboratório II, devido ao [Breno Pelegrin](https://github.com/brenop
 
 Eu acredito que o meu primeiro semestre manual foi muito importante para a minha real compreensão de como esses cálculos são feitos. **Eu sei como essas coisas funcionam**, tanto que consegui fazer uma biblioteca que implementa esses cálculos quase do zero.
 
-A minha recomendação pessoal é que você NÃO utilize esta biblioteca a menos que tenha uma noção de como ela funciona. Eu não quero que, por exemplo, as funções `regressao_linear`, `comparar_medidas`, `intervalo_de_confianca`... sejam coisas mágicas que você utilize sem pensar.
+A minha recomendação pessoal é que você NÃO utilize esta biblioteca a menos que tenha uma noção de como ela funciona. Eu não quero que, por exemplo, as funções `regressao_linear`, `comparar_medidas`, `intervalo_de_confianca`, sejam coisas mágicas que você utilize sem pensar.
 
 Eu gostaria que ela fosse usada igual ao uso de uma calculadora para realizar operações com números de vários dígitos. **Certamente você sabe como multiplicar `134,5` e `0.215` na mão**, só que não faz sentido perder horas calculando essas coisas se você tem uma calculadora para isso.

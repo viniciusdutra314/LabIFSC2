@@ -23,7 +23,8 @@ def test_probabilidade_analitico():
          y.intervalo_de_confiança(0,'s')
     with pytest.raises(ValueError):
         y.intervalo_de_confiança(-1,'s')
-    y.intervalo_de_confiança(1,'s')
+    with pytest.raises(ValueError):
+        y.intervalo_de_confiança(1,'s')
 def test_probabilidade_unidade_errada():
     x=lab.Medida(0,'ly',1)
     with pytest.raises(ValueError):
@@ -33,9 +34,16 @@ def test_probabilidade_e_intervalo_de_confianca():
     x=lab.Medida(4,'s',0.3)
     y=lab.Medida(4,'s',0.3)
     z=x*y
-    for p in np.linspace(0.01,1,10):
+    for p in np.linspace(0.01, 0.99, 10):
         x_min,x_max=z.intervalo_de_confiança(p,'s²')
         assert np.isclose(z.probabilidade_de_estar_entre(x_min,x_max,'s²'),p,atol=1e-4) 
 
     with pytest.raises(ValueError):
         z.probabilidade_de_estar_entre(6,3,'s²')
+
+
+def test_regressao_polinomial_mensagem_de_erro_com_grau():
+    x = [lab.Medida(i, 'm', 0.1) for i in range(3)]
+    y = [lab.Medida(i, 's', 0.1) for i in range(3)]
+    with pytest.raises(ValueError, match=r"grau 3"):
+        lab.regressao_polinomial(x, y, 3)
