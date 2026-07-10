@@ -51,6 +51,7 @@ uncertainties = "^3.2.2"
 pytest = "^9.1.1"
 pytest-cov = "^7.1.0"
 scipy = "^1.15.1"
+mutmut = "^3.6.0"
 
 
 [tool.poetry.group.linter.dependencies]
@@ -66,7 +67,6 @@ strict = true
 disallow_any_explicit = true
 warn_unused_ignores = true
 warn_redundant_casts = true
-exclude = 'tests/.*'
 
 #all tasks
 
@@ -79,7 +79,7 @@ sequence = ["type-checking","unit-tests"]
 
 [tool.poe.tasks.type-checking]
 help="Run a type checker (mypy)"
-cmd="mypy LabIFSC2/"
+cmd="mypy LabIFSC2/ tests/"
 
 [tool.poe.tasks.unit-tests]
 help="Run the unit tests (pytest)"
@@ -89,6 +89,14 @@ cmd = "pytest -vv  -s "
 help="Calculates test coverage (pytest-coverage)"
 cmd = "pytest -vv -s --cov LabIFSC2/ --cov-append  --no-cov-on-fail --cov-branch --cov-report=html"
 
+[tool.poe.tasks.test-mutation]
+help="Run mutation tests (mutmut)"
+cmd="mutmut run"
+
 [tool.poe.tasks.docs]
 help="Create the documentation"
 cmd="mkdocs serve"
+
+[tool.mutmut]
+source_paths = ["LabIFSC2/"]
+pytest_add_cli_args = ["-x", "--tb=no", "--ignore=tests/doctest"]
