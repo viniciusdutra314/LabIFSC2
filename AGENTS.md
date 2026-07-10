@@ -2,7 +2,7 @@
 
 **LabIFSC2** is a Python library for physics laboratory calculations, used by undergraduates at IFSC (Instituto de Física de São Carlos — USP). It provides **automatic uncertainty propagation via Monte Carlo simulation** and **unit conversion** powered by [pint](https://pint.readthedocs.io/). It is a complete modernization of the original [LabIFSC](https://github.com/gjvnq/LabIFSC) library.
 
-- **Language**: Python ≥ 3.12 (tested on 3.12, 3.13, 3.14)
+- **Language**: Python ≥ 3.11 (tested on 3.11, 3.12, 3.13, 3.14)
 - **License**: GPL-3.0
 - **Package Manager / Build System**: [Poetry](https://python-poetry.org/) with `poetry-core` masonry backend
 - **Task Runner**: [Poe the Poet](https://github.com/nat-n/poethepoet) (`poethepoet`)
@@ -50,7 +50,7 @@ The `montecarlo()` function is the propagation engine: it samples histograms fro
 
 ### Prerequisites
 
-- Python ≥ 3.12
+- Python ≥ 3.11
 - [Poetry](https://python-poetry.org/) (v2.1.4+)
 - [poethepoet](https://github.com/nat-n/poethepoet) plugin for Poetry
 
@@ -82,7 +82,7 @@ All tasks are defined in `pyproject.toml` under `[tool.poe.tasks]`:
 
 ### DevContainer
 
-A `.devcontainer/` configuration is provided for VS Code, based on Debian with Python 3.12 and Poetry pre-installed.
+A `.devcontainer/` configuration is provided for VS Code, based on Debian with Python 3.11 and Poetry pre-installed.
 
 ## Important Gotchas
 

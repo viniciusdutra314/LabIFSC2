@@ -6,22 +6,20 @@ from LabIFSC2 import *
 
 
 def test_doc_kepler():
-    #https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_british.html
     dados = [
-        {"planeta": "Mercúrio", "distancia_em_milhoes_milhas": 36.0, "orbita_em_dias": 88.0},
-        {"planeta": "Vênus", "distancia_em_milhoes_milhas": 67.2, "orbita_em_dias": 224.7},
-        {"planeta": "Terra", "distancia_em_milhoes_milhas": 93.0, "orbita_em_dias": 365.2},
-        {"planeta": "Marte", "distancia_em_milhoes_milhas": 141.6, "orbita_em_dias": 687.0},
-        {"planeta": "Júpiter", "distancia_em_milhoes_milhas": 483.7, "orbita_em_dias": 4331.0},
-        {"planeta": "Saturno", "distancia_em_milhoes_milhas": 889.8, "orbita_em_dias": 10747.0},
-        {"planeta": "Urano", "distancia_em_milhoes_milhas": 1781.5, "orbita_em_dias": 30589.0},
-        {"planeta": "Netuno", "distancia_em_milhoes_milhas": 2805.5, "orbita_em_dias": 59800.0},
+        {"planeta": "Mercúrio", "distancia": 36.0, "periodo": 88.0},
+        {"planeta": "Vênus", "distancia": 67.2, "periodo": 224.7},
+        {"planeta": "Terra", "distancia": 93.0, "periodo": 365.2},
+        {"planeta": "Marte", "distancia": 141.6, "periodo": 687.0},
+        {"planeta": "Júpiter", "distancia": 483.7, "periodo": 4331.0},
+        {"planeta": "Saturno", "distancia": 889.8, "periodo": 10747.0},
+        {"planeta": "Urano", "distancia": 1781.5, "periodo": 30589.0},
+        {"planeta": "Netuno", "distancia": 2805.5, "periodo": 59800.0},
     ]
-    distancias=np.array([Medida(planeta["distancia_em_milhoes_milhas"],"Mmiles",0) for planeta in dados])
-    periodos=np.array([Medida(planeta["orbita_em_dias"],"days",0) for planeta in dados])
-    fitting=regressao_potencia(distancias,periodos)
-    
-    print(f"{fitting.potencia}")#(1,4979 ± 0,0008)
+    distancias=lab.arrayM([planeta["distancia"] for planeta in dados],"Mmiles",0)
+    periodos=lab.arrayM([planeta["periodo"] for planeta in dados],"days",0)
+    fitting=lab.regressao_potencia(distancias,periodos)
+    print(f"{fitting.potencia}")#(1,4979 ± 0,0008) esperado que fosse 1.5
     G=constantes.Newtonian_constant_of_gravitation
     pi=constantes.pi
     massa_sol=constantes.solar_mass

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 import re
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable
 from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from statistics import NormalDist
@@ -55,17 +55,17 @@ class Medida:
 
     @overload
     def __init__(
-        self, nominal: Sequence[float], unidade: str, incerteza: float = 0
+        self, nominal: Iterable[float], unidade: str, incerteza: float = 0
     ): ...
 
     def __init__(
-        self, nominal: float | Sequence[float], unidade: str, incerteza: float = 0
+        self, nominal: float | Iterable[float], unidade: str, incerteza: float = 0
     ):
         """
         Inicializa uma instância da classe com valores nominais, unidade e incerteza.
 
         Args:
-            nominal (float | Sequence[float]): Valor nominal ou uma sequência de valores nominais.
+            nominal (float | Iterable[float]): Valor nominal ou uma coleção de valores nominais.
             unidade (str): Unidade de medida.
             incerteza (float): Incerteza associada ao valor nominal.
 
@@ -76,7 +76,8 @@ class Medida:
 
         if incerteza < 0:
             raise ValueError("Incerteza não pode ser negativa")
-        if isinstance(nominal, Sequence):
+        if isinstance(nominal, Iterable):
+            nominal = list(nominal)
             if len(nominal) < 2:
                 raise ValueError("Lista de medidas deve ter pelo menos 2 elementos")
             mean = np.mean(nominal)

@@ -32,7 +32,7 @@ Essas curvas são as [bandas de confiança](https://en.wikipedia.org/wiki/Confid
 Resumidamente, estamos pegando \(2\sigma\) abaixo e acima do fitting. Pela hipótese de distribuição gaussiana[^1], os dados devem cair nesse intervalo com 95% de certeza.
 
 Essas funções podem ser aplicadas diretamente em uma regressão,voltando para
-o [exemplo da lei de kepler](regressão_prática.md#lei-de-potência), vemos que
+o [exemplo da lei de kepler](regressão_prática.md#lei-de-potencia), vemos que
 o fitting tem pouca incerteza, visto que as curva min e max são bastante próximas
 
 ```py

@@ -26,7 +26,7 @@ def test_regressao_linear():
         assert np.isclose(a.incerteza("m/s"),resposta['Δa'],rtol=1e-3)
         assert np.isclose(b.incerteza("m"),resposta['Δb'],rtol=1e-3)
 def test_regressao_polinominal_nominal():
-    num=10
+    num=100
     a,b=np.random.normal(0,1,2)
     epsilon=np.random.normal(0,0.001,num)
     x=np.arange(num)

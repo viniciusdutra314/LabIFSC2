@@ -15,11 +15,15 @@ O resultado é armazenado respectivamente em um objeto `AjusteLinear`, `AjusteQu
 
 ## Calcular Regressão
 
-### Polinomial e Quadrática
+### Polinomial
+As funções `regressao_linear` e `regressao_quadratica` são casos especiais da **`regressao_polinomial`**, eu criei  
+essas funções auxiliares somente por conveniência.
+
+
 Não há muito segredo nessa parte, as funções recebem os arrays de medidas em \(x\) e \(y\). É importante salientar que essas funções recebem **Medidas**, isso porque queremos os parâmetros da regressão tendo unidades. Como exemplo, estamos imaginando aqui um objeto em queda livre vertical, nós registramos a sua posição na vertical em função do tempo e queremos encontrar a melhor parábola que se encaixa nos dados.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:7:16"
+--8<-- "tests/test_doc_regressoes_construir.py:7:15"
 ```
 Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Python, igualando os coeficientes ao ajuste/polinômio (igual ao unpacking de uma tupla, retornando em ordem decrescente de grau: do termo de maior grau até o termo constante). Para o caso linear (`AjusteLinear`) e quadrático (`AjusteQuadratico`), também é possível acessar os coeficientes diretamente pelos atributos (`a`, `b`, etc.).
 
@@ -28,21 +32,22 @@ Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Pytho
 Imagine um experimento em que queremos determinar a meia-vida de um material radioativo. *As escalas de massa e tempo são somente ilustrativas*. Podemos acessar a amplitude do ajuste fazendo `exponencial.amplitude` e o expoente fazendo `exponencial.expoente`.
 
 ```py
---8<-- "tests/test_doc_regressoes_construir.py:23:33"
+--8<-- "tests/test_doc_regressoes_construir.py:20:30"
 ```
 Repare que a regressão aceita uma base (por padrão base=\(e\)).
 
 ## Lei de Potência
 Um exemplo clássico de lei de potência é a terceira lei de Kepler, onde o período orbital (T) se relaciona com o raio orbital (R) segundo:
 $$\frac{T²}{R³}=\frac{4\pi^2}{GM}\to T \propto R^{1.5}$$
-A regressão de lei de potência encontra parâmetros como a amplitude, potência e a escala de referência $x_0$ a partir de dados experimentais da forma:
+A regressão de lei de potência encontra a amplitude e potência a partir de dados experimentais da forma:
 $$y = \text{amplitude} \cdot \left(\frac{x}{x_0}\right)^{\text{potência}}$$
-O uso de $x_0$ (que por padrão é $1.0$ na unidade SI de $x$) garante que a razão $\frac{x}{x_0}$ seja adimensional, prevenindo que a amplitude receba uma unidade com expoentes fracionários (como $\text{s/m}^{1.4853}$). Assim, a amplitude terá exatamente a mesma unidade física da variável $y$.
 
-O exemplo abaixo pega dados da [NASA](https://nssdc.gsfc.nasa.gov/planetary/factsheet/planet_table_british.html) para demonstrar experimentalmente a terceira lei de Kepler. Eu peguei as distâncias em milhas justamente para demonstrar como com o LabIFSC2 você não precisa se preocupar com unidades.
+É usado aqui um valor de referência \(x_0\) por uma razão técnica, ele garante que a razão \(\frac{x}{x_0}\) seja adimensional, prevenindo que a amplitude receba tenha uma unidade com expoentes fracionários (como \(\text{s/m}^{1.4853}\)), que faz com ela seja uma `Medida` quase que impossível de interagir e ser comparada com outra `Medida`. Usando \( x_0 \), garantimos que a amplitude tem exatamente a mesma unidade física da variável \(y\).
+
+O exemplo abaixo pega dados da NASA para demonstrar experimentalmente a terceira lei de Kepler. Eu peguei as distâncias em milhas justamente para demonstrar como que com o LabIFSC2 você não precisa se preocupar com unidades.
 
 ```py
---8<-- "tests/test_doc_kepler.py:8:30"
+--8<-- "tests/test_doc_kepler.py:9:28"
 ```
 Perceba como essa lei de fato aproxima muito bem os dados. Essa 'lei' na verdade é uma aproximação que só considera a atração gravitacional do sol, então é esperado observar alguns pequenos desvios visto que o sistema solar não é composto só pelo sol, mas um sistema complexo de dezenas de milhares de corpos massivos.
 
@@ -75,4 +80,3 @@ Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para le
 ## curva_min e curva_max
 
 Uma função que creio ser muito útil é aplicar `curva_min` e `curva_max` em uma regressão. Para que tudo sobre gráficos fique na sua respectiva seção, vá para a seção de [gráficos](graficos.md#curva-minmax) para ler a documentação sobre isso.
-
