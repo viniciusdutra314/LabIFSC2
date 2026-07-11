@@ -36,12 +36,12 @@ jobs:
       - name: mypy
         env:
             PYTHONIOENCODING: utf-8
-        run: uv run task type-checking
+        run: uv run task type-checker
 
-      - name: Testing code with pytest
+      - name: Run all possible tests
         env:
           PYTHONIOENCODING: utf-8
-        run: uv run task unit-tests
+        run: uv run task test-all
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5

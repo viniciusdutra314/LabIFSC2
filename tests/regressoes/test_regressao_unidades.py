@@ -44,6 +44,7 @@ def test_regressao_polinomial_preserva_unidades(
         campo_magnetico,
     )
 
+
 @pytest.mark.parametrize("regressao", [regressao_exponencial, regressao_potencia])
 def test_regressoes_nao_lineares_preservam_unidades(
     regressao: Callable[[NDArray[np.object_], NDArray[np.object_]], Ajuste],
@@ -67,7 +68,7 @@ def test_regressoes_rejeitam_unidade_de_entrada_incompativel(
 ) -> None:
     ajuste = regressao(distancias, campo_magnetico)
     with pytest.raises((DimensionalityError, ValueError)):
-        nominais(ajuste(medidas_unidade_incompativel), "muT")  # type: ignore
+        nominais(cast(NDArray[np.object_], ajuste(medidas_unidade_incompativel)), "muT")
 
 
 def test_regressao_rejeita_unidade_de_saida_incompativel(
@@ -75,4 +76,4 @@ def test_regressao_rejeita_unidade_de_saida_incompativel(
 ) -> None:
     ajuste = regressao_linear(distancias, campo_magnetico)
     with pytest.raises(DimensionalityError):
-        nominais(ajuste(distancias), "kg")  # type: ignore
+        nominais(cast(NDArray[np.object_], ajuste(distancias)), "kg") 

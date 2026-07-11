@@ -3,7 +3,7 @@ from typing import cast
 import numpy as np
 import pytest
 from numpy.typing import NDArray
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit  # type: ignore
 
 import LabIFSC2 as lab
 

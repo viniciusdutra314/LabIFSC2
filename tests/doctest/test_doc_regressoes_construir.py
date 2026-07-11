@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_regressoes_construir():
+def test_doc_regressoes_construir()->None:
 
     tempos = linspaceM(0, 5, 10, "s", 0.01)
     alturas = arrayM([0, 1.4, 6, 13, 24, 36, 52, 70, 95, 120], "m", 0.1)

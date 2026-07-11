@@ -50,4 +50,4 @@ pip install LabIFSC2
 ```
 
 ## Documentação Completa
-A documentação completa se encontra no site [readthedocs](https://labifsc2.readthedocs.io)
+A documentação completa se encontra em um site hospedado no github pages do projeto https://viniciusdutra314.github.io/LabIFSC2/

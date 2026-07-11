@@ -72,7 +72,7 @@ Use uv to run the shell tasks defined under `[tool.taskipy.tasks]` in
 | Command                       | Description                                   |
 | ----------------------------- | --------------------------------------------- |
 | `uv run task tests`           | Run mypy type checking + pytest               |
-| `uv run task type-checking`   | Run mypy on `LabIFSC2/` and `tests/`          |
+| `uv run task type-checker`   | Run mypy on `LabIFSC2/` and `tests/`          |
 | `uv run task unit-tests`      | Run pytest with verbose output                |
 | `uv run task test-coverage`   | Run pytest with branch coverage report (HTML) |
 | `uv run task test-mutation`   | Run mutation tests                            |

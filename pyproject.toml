@@ -30,7 +30,7 @@ dependencies=[
 ]
 
 [project.urls]
-"Documentation" = "https://labifsc2.readthedocs.io/pt-br/latest/"
+"Documentation" = "https://viniciusdutra314.github.io/LabIFSC2/"
 "Github" = "https://github.com/viniciusdutra314/LabIFSC2"
 "Issue Tracker"="https://github.com/viniciusdutra314/LabIFSC2/issues"
 
@@ -95,7 +95,7 @@ pydocstyle.convention = "google"
 
 
 [tool.taskipy.tasks]
-test-all = "uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s"
+test-all = "task type-checker && task linter && task test-units"
 test-units = "uv run --group test pytest -vv -s"
 test-coverage = "uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html"
 test-mutation = "uv run --group test mutmut run"
