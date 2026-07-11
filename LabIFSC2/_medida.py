@@ -549,30 +549,35 @@ class Medida:
 
         if not 0 < float(p) < 1:
             raise ValueError("p deve estar entre 0 e 1 (exclusivo)")
+        if not self._nominal.is_compatible_with(unidade):
+            raise ValueError(
+                f"Unidade {unidade} não é compatível com a unidade da medida"
+            )
 
-        elif self._histograma is None:
+        if self._histograma is None:
             # estamos resolvendo de maneira analítica
-            mu = self._nominal.magnitude
-            sigma = self._incerteza.magnitude
+            mu = self._nominal.to(unidade).magnitude
+            sigma = self._incerteza.to(unidade).magnitude
+            if sigma == 0:
+                return (float(mu), float(mu))
             gaussiana = NormalDist(mu, sigma)
             limite_inferior = gaussiana.inv_cdf((1 - float(p)) / 2)
             limite_superior = gaussiana.inv_cdf((1 + float(p)) / 2)
             return (limite_inferior, limite_superior)
         else:
-            h_q = cast(Quantity[NDArray[np.float64]], self._histograma)
-            h_q.sort()
-            h_q.ito(unidade)
-            num_elements = len(h_q)
-            selected_elements = int(np.floor(float(p) * num_elements))
-            magnitudes = np.array(
-                [item.magnitude if isinstance(item, Quantity) else item for item in h_q]
+            h_q = cast(Quantity[NDArray[np.float64]], self.histograma)
+            magnitudes = np.sort(np.asarray(h_q.to(unidade).magnitude))
+            num_elements = len(magnitudes)
+            selected_elements = max(1, int(np.ceil(float(p) * num_elements)))
+            intervals = (
+                magnitudes[selected_elements - 1 :]
+                - magnitudes[: num_elements - selected_elements + 1]
             )
-            intervals = magnitudes[selected_elements:] - magnitudes[:-selected_elements]
 
             shortest_interval_index = np.argmin(intervals)
             shortest_interval = (
-                float(h_q[shortest_interval_index].magnitude),
-                float(h_q[shortest_interval_index + selected_elements].magnitude),
+                float(magnitudes[shortest_interval_index]),
+                float(magnitudes[shortest_interval_index + selected_elements - 1]),
             )
             return shortest_interval
 
@@ -609,8 +614,8 @@ def comparar_medidas(
         ValueError: Se o sigma_inferior for maior que o sigma_superior.
     """
 
-    diferenca_nominal = abs(medida1._nominal - medida2._nominal)
-    soma_incertezas = medida1._incerteza + medida2._incerteza
+    diferenca_nominal = abs(medida1 - medida2).nominal("si")
+    soma_incertezas = medida1.incerteza("si") + medida2.incerteza("si")
     if sigma_inferior > sigma_superior:
         raise ValueError(
             "Sigma para serem consideradas iguais é maior que o sigma \
