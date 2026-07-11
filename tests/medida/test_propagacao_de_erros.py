@@ -1,10 +1,10 @@
 from collections.abc import Callable
 
-import mcerp
-import mcerp.umath as umath
+import mcerp  # type: ignore[import-untyped]
+import mcerp.umath as umath  # type: ignore[import-untyped]
 import numpy as np
 import pytest
-from mcerp.core import UncertainFunction
+from mcerp.core import UncertainFunction  # type: ignore[import-untyped]
 
 import LabIFSC2 as lab
 from tests.medida.utilities import assert_propagacao_igual_mcerp

@@ -71,7 +71,7 @@ def test_histograma_exato() -> None:
     assert histograma.magnitude == 5
 
 
-def test_gt_ge_lt_le():
+def test_gt_ge_lt_le()->None:
     x = lab.Medida(5, "m", 0.1)
     y = lab.Medida(5, "m", 0.1)
     assert not (x > y)
@@ -117,7 +117,7 @@ def test_sorted_python(medidas_desordenadas: NDArray[np.object_]) -> None:
     )
 
 
-def test_medidas_nao_devem_ser_comparaveis():
+def test_medidas_nao_devem_ser_comparaveis()->None:
     x = lab.Medida(5, "", 1)
     y = lab.Medida(6, "", 0.1)
     comparacoes = [lambda x, y: x == y, lambda x, y: x != y]
@@ -126,7 +126,7 @@ def test_medidas_nao_devem_ser_comparaveis():
             comparacao(x, y)
 
 
-def test_medidas_comparacoes():
+def test_medidas_comparacoes()->None:
     x = lab.Medida(1, "", 0.1)
     y = lab.Medida(0.9, "", 0.01)
     z = lab.Medida(50, "", 1)

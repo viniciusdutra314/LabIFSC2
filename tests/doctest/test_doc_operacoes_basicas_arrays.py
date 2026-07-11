@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_operacoes_basicas_arrays():
+def test_doc_operacoes_basicas_arrays() -> None:
     import numpy as np
 
     x = np.array([Medida(1, "m", 0.01), Medida(2, "m", 0.01)])

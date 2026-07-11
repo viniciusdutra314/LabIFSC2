@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_seno_vetorizado():
+def test_doc_seno_vetorizado() -> None:
     import numpy as np
 
     theta = Medida(30, "degree", 0.01)

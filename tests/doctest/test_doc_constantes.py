@@ -1,4 +1,4 @@
-def test_doc_constantes():
+def test_doc_constantes() -> None:
     import LabIFSC2 as lab
 
     c = lab.constantes.speed_of_light_in_vacuum

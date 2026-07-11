@@ -5,7 +5,7 @@ import LabIFSC2 as lab
 from LabIFSC2 import *
 
 
-def test_doc_kepler():
+def test_doc_kepler() -> None:
     dados = [
         {"planeta": "Mercúrio", "distancia": 36.0, "periodo": 88.0},
         {"planeta": "Vênus", "distancia": 67.2, "periodo": 224.7},

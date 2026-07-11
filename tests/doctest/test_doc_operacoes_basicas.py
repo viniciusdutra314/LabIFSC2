@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_operacoes_basicas():
+def test_doc_operacoes_basicas() -> None:
 
     x = Medida(1, "m", 0.01)
     y = Medida(200, "cm", 1)

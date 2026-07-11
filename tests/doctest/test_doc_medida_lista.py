@@ -3,7 +3,7 @@ import pytest
 from LabIFSC2 import *
 
 
-def test_doc_medida_lista():
+def test_doc_medida_lista() -> None:
     diametro = Medida([1.76, 1.80, 1.77, 1.78], "cm", 0.005)
     assert str(diametro) == "(1,78 ± 0,02) cm"
     diametro_incerteza_grande = Medida([1.76, 1.80, 1.77, 1.78], "cm", 0.1)

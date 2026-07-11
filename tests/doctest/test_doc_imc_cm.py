@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_imc_cm():
+def test_doc_imc_cm() -> None:
 
     massa = Medida(75, "kg", 0.1)
     altura = Medida(175, "cm", 1)

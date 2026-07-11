@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_gravidade_com_LabIFSC2():
+def test_doc_gravidade_com_LabIFSC2() -> None:
     # g=4π²L/T²
     pi = constantes.pi
     L = Medida(15, "cm", 0.1)

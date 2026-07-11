@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_histograma():
+def test_doc_histograma() -> None:
     import matplotlib.pyplot as plt
     import numpy as np
     from matplotlib.gridspec import GridSpec

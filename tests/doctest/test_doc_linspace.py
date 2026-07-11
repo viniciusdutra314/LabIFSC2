@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_linspace():
+def test_doc_linspace() -> None:
     distancias = linspaceM(1, 10, 10, "cm", 0.05)
     assert str(distancias) == (
         "[(1,00 ± 0,05) cm (2,00 ± 0,05) cm (3,00 ± 0,05) cm (4,00 ± 0,05) cm\n"

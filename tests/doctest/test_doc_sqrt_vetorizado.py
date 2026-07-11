@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_sqrt_vetorizado():
+def test_doc_sqrt_vetorizado() -> None:
     import numpy as np
 
     areas = np.array(

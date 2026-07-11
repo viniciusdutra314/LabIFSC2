@@ -1,4 +1,4 @@
-def test_doc_gravidade_sem_labifsc():
+def test_doc_gravidade_sem_labifsc() -> None:
     import math
 
     # g=4π²L/T²

@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_grafico_scatter():
+def test_doc_grafico_scatter() -> None:
     import matplotlib.pyplot as plt
 
     campo_magnético = arrayM([250, 150, 110, 90, 70, 60, 55, 40, 25, 20], "muT", 10)

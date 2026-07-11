@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_grafico_fitting():
+def test_doc_grafico_fitting() -> None:
     import matplotlib.pyplot as plt
 
     campo_magnético = arrayM([210, 90, 70, 54, 39, 32, 33, 27, 22, 20], "muT", 1)

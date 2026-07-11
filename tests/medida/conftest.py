@@ -1,6 +1,6 @@
 from collections.abc import Iterator
 
-import mcerp
+import mcerp  # type: ignore[import-untyped]
 import numpy as np
 import pytest
 from numpy.typing import NDArray

@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_lei_de_hook():
+def test_doc_lei_de_hook() -> None:
     import matplotlib.pyplot as plt
 
     forças = linspaceM(0, 10, 10, "N", 0.1)  # variando a força

@@ -1,4 +1,4 @@
-def test_doc_constantes_com_incerteza():
+def test_doc_constantes_com_incerteza() -> None:
     import LabIFSC2 as lab
 
     mu_0 = lab.constantes.vacuum_mag_permeability

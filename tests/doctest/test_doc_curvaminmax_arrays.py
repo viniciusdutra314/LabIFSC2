@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_cuvraminmax_arrays():
+def test_doc_cuvraminmax_arrays() -> None:
     curva = linspaceM(0, 5, 6, "m", 0.1)
     assert str(curva_min(curva, "m")) == "[-0.2  0.8  1.8  2.8  3.8  4.8]"
     assert str(curva_max(curva, "m")) == "[0.2 1.2 2.2 3.2 4.2 5.2]"

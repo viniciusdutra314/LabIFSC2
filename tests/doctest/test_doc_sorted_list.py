@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_sorted_list():
+def test_doc_sorted_list() -> None:
     voltagens = arrayM([1, 4, 3], "ampere", 0.1)
     voltagem_a = voltagens[0]
     voltagem_b = voltagens[1]

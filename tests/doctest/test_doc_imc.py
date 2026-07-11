@@ -3,7 +3,7 @@ from numpy import isclose
 from LabIFSC2 import *
 
 
-def test_doc_imc():
+def test_doc_imc() -> None:
     massa = Medida(75, "kg", 0.1)
     altura = Medida(1.75, "m", 0.01)
     imc = massa / altura**2

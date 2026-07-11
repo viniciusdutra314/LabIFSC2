@@ -1,7 +1,7 @@
 from LabIFSC2 import *
 
 
-def test_doc_formatacao():
+def test_doc_formatacao() -> None:
     comprimento_de_onda = Medida(500, "nm", 1)
     assert str(comprimento_de_onda) == "(5,00 ± 0,01)x10² nm"
     assert f"{comprimento_de_onda:E0}" == "(500 ± 1) nm"
