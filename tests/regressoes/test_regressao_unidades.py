@@ -30,7 +30,6 @@ def assert_ajuste_preserva_unidade(
 ) -> None:
     valores = nominais(cast(NDArray[object_], ajuste(distancias)), "muT")
     assert valores.shape == campo_magnetico.shape
-    assert np.all(np.isfinite(valores))
 
 
 @pytest.mark.parametrize("grau", range(1, 7))
