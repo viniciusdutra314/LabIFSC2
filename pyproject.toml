@@ -53,13 +53,12 @@ linter = [
     "ruff>=0.15.21",
 ]
 test = [
-    "labifsc >=0.1.13,<0.2.0",
-    "uncertainties >=3.2.2,<4.0.0",
     "pytest >=9.1.1,<10.0.0",
     "pytest-cov >=7.1.0,<8.0.0",
     "scipy >=1.15.1,<2.0.0",
     "mutmut >=3.6.0,<4.0.0",
     "matplotlib >=3.10.0,<4.0.0",
+    "mcerp>=1.1.0",
 ]
 
 [tool.mypy]

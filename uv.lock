@@ -588,15 +588,6 @@ wheels = [
 ]
 
 [[package]]
-name = "labifsc"
-version = "0.1.13"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a3/e6/3d4b1c2c6b596285aa2c03deb9bc8582aceac8eb43bf5e9bdfd3f7aee1a7/LabIFSC-0.1.13.tar.gz", hash = "sha256:07c9819e80db30c5a40eabd73e0467a81b96534299845a559cd1ea06cc9ec8c5", size = 18112, upload-time = "2019-04-12T00:23:53.814Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/1f/ac/f34b906122432f63a7027cb24297ef714937437260a3ab355d21dd10568f/LabIFSC-0.1.13-py3-none-any.whl", hash = "sha256:8630b5d1a29861e8f12646ce30c182c4198e9fe5299625988c2983ef761645af", size = 20590, upload-time = "2019-04-12T00:23:52.288Z" },
-]
-
-[[package]]
 name = "labifsc2"
 version = "0.1.2"
 source = { editable = "." }
@@ -622,14 +613,13 @@ linter = [
     { name = "ruff" },
 ]
 test = [
-    { name = "labifsc" },
     { name = "matplotlib" },
+    { name = "mcerp" },
     { name = "mutmut" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "uncertainties" },
 ]
 
 [package.metadata]
@@ -652,13 +642,12 @@ linter = [
     { name = "ruff", specifier = ">=0.15.21" },
 ]
 test = [
-    { name = "labifsc", specifier = ">=0.1.13,<0.2.0" },
     { name = "matplotlib", specifier = ">=3.10.0,<4.0.0" },
+    { name = "mcerp", specifier = ">=1.1.0" },
     { name = "mutmut", specifier = ">=3.6.0,<4.0.0" },
     { name = "pytest", specifier = ">=9.1.1,<10.0.0" },
     { name = "pytest-cov", specifier = ">=7.1.0,<8.0.0" },
     { name = "scipy", specifier = ">=1.15.1,<2.0.0" },
-    { name = "uncertainties", specifier = ">=3.2.2,<4.0.0" },
 ]
 
 [[package]]
@@ -971,6 +960,21 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/0f/c2/f5da6cd37ed6871f5c9b3c0507ddb69f14d6c36fac4541e4e0c60cb8cdfc/matplotlib-3.11.0-pp311-pypy311_pp73-macosx_10_15_x86_64.whl", hash = "sha256:81ae77077a1e16d37a5b61096ccb07c8d90a99b518fa8256b8f21578932f2f62", size = 9434094, upload-time = "2026-06-12T02:29:09.135Z" },
     { url = "https://files.pythonhosted.org/packages/f8/07/56f66906e0f87a0c6d0d0acbd34dbc9432b1931d8f26ef618bd6f92932a9/matplotlib-3.11.0-pp311-pypy311_pp73-macosx_11_0_arm64.whl", hash = "sha256:ddef37840695f5eef65f9f070fe2d2f510f584c2156203f9f622a5b0584efffd", size = 9262183, upload-time = "2026-06-12T02:29:11.283Z" },
     { url = "https://files.pythonhosted.org/packages/0c/d8/c4ecab06b7ea36a570c4f3bd2d48d1799fd5d9174470e45c2194199431e7/matplotlib-3.11.0-pp311-pypy311_pp73-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:cf662e5ac5707658cb931e19972c4bd99f7b4f8b7bf79d3c821d239fa6b71e64", size = 10015653, upload-time = "2026-06-12T02:29:13.251Z" },
+]
+
+[[package]]
+name = "mcerp"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c0/89/115024797267d820198aac2293b70ee6d87a84f25dff44d10875508bddbe/mcerp-1.1.0.tar.gz", hash = "sha256:5d0753e10e2fecdb5f8408afabb936fb9df1446ea429d90b94f4652963294b19", size = 389139, upload-time = "2026-05-19T18:57:45.611Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ee/3e/40f11e982e120d73c893c62a868f46e98d41963ac89cf8110a15de71080d/mcerp-1.1.0-py3-none-any.whl", hash = "sha256:88f915dd970f85bb6dc0280049af22018e05c70f20e8e68f01c4b5e80b8dd880", size = 25123, upload-time = "2026-05-19T18:57:43.962Z" },
 ]
 
 [[package]]
@@ -2045,15 +2049,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/78/67/9a363818028526e2d4579334460df777115bdec1bb77c08f9db88f6389f2/uc_micro_py-2.0.0.tar.gz", hash = "sha256:c53691e495c8db60e16ffc4861a35469b0ba0821fe409a8a7a0a71864d33a811", size = 6611, upload-time = "2026-03-01T06:31:27.526Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/61/73/d21edf5b204d1467e06500080a50f79d49ef2b997c79123a536d4a17d97c/uc_micro_py-2.0.0-py3-none-any.whl", hash = "sha256:3603a3859af53e5a39bc7677713c78ea6589ff188d70f4fee165db88e22b242c", size = 6383, upload-time = "2026-03-01T06:31:26.257Z" },
-]
-
-[[package]]
-name = "uncertainties"
-version = "3.2.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/fe/0c/cb09f33b26955399c675ab378e4063ed7e48422d3d49f96219ab0be5eba9/uncertainties-3.2.3.tar.gz", hash = "sha256:76a5653e686f617a42922d546a239e9efce72e6b35411b7750a1d12dcba03031", size = 160492, upload-time = "2025-04-21T19:58:28.63Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/8f/5e/f1e1dd319e35e962a4e00b33150a8868b6329cc1d19fd533436ba5488f09/uncertainties-3.2.3-py3-none-any.whl", hash = "sha256:313353900d8f88b283c9bad81e7d2b2d3d4bcc330cbace35403faaed7e78890a", size = 60118, upload-time = "2025-04-21T19:58:26.864Z" },
 ]
 
 [[package]]

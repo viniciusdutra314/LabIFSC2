@@ -49,8 +49,8 @@ def test_inicializacao_escalar_e_conversao_si(medida: lab.Medida) -> None:
 def test_inicializacao_por_amostras_usa_media_e_desvio_amostral() -> None:
     medida = lab.Medida([1, 2, 3], "s")
     assert medida.nominal("s") == pytest.approx(2)
-    assert medida.incerteza("s") == pytest.approx(np.std([1,2,3], ddof=1))
-    assert medida.incerteza("s") != pytest.approx(np.std([1,2,3])) #without ddof=1
+    assert medida.incerteza("s") == pytest.approx(np.std([1, 2, 3], ddof=1))
+    assert medida.incerteza("s") != pytest.approx(np.std([1, 2, 3]))  # without ddof=1
 
 
 def test_inicializacao_por_amostras_preserva_maior_incerteza() -> None:

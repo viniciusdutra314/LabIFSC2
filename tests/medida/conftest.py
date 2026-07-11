@@ -1,11 +1,25 @@
 from collections.abc import Iterator
 
+import mcerp
 import numpy as np
 import pytest
 from numpy.typing import NDArray
 
 import LabIFSC2 as lab
 from tests.utilities import SEMENTE_MONTE_CARLO
+
+
+@pytest.fixture(autouse=True)
+def configurar_rng_mcerp() -> Iterator[None]:
+    estado = np.random.get_state()
+    quantidade_amostras = mcerp.npts
+    np.random.seed(SEMENTE_MONTE_CARLO % 2**32)
+    mcerp.npts = 100_000
+    try:
+        yield
+    finally:
+        np.random.set_state(estado)
+        mcerp.npts = quantidade_amostras
 
 
 @pytest.fixture
