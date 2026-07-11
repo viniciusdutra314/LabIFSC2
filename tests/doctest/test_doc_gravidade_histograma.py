@@ -10,6 +10,8 @@ def test_doc_histograma() -> None:
     from pint import Quantity
     from scipy.stats import norm  # type: ignore[import-untyped]
 
+    # fmt: off
+    # --8<-- [start:gravidade_histogramas]
     # Definindo as lab.constantes e medidas
     pi = lab.constantes.pi
     L = lab.Medida(15, "cm", 1)
@@ -18,6 +20,8 @@ def test_doc_histograma() -> None:
     histograma_g = gravidade.histograma
     histograma_L = L.histograma
     histograma_T = T.histograma
+    # --8<-- [end:gravidade_histogramas]
+    # fmt: on
     assert isinstance(histograma_g, Quantity)
     assert isinstance(histograma_L, Quantity)
     assert isinstance(histograma_T, Quantity)

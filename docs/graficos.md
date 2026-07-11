@@ -3,13 +3,13 @@ O LabIFSC2 precisa implementar algumas funções para converter um objeto `Medid
 ## Nominais
 Para obter os valores nominais de um array numpy de medidas, basta usar a função `nominais(array_medida, unidade)`:
 ```py
---8<-- "tests/doctest/test_doc_nominal.py:7:9"
+--8<-- "tests/doctest/test_doc_nominal.py:nominais"
 ```
 
 ## Incertezas
 De maneira análoga, podemos também pegar as incertezas com `incertezas(array_medida, unidade)`:
 ```py
---8<-- "tests/doctest/test_doc_incerteza.py:7:9"
+--8<-- "tests/doctest/test_doc_incerteza.py:incertezas"
 ```
 
 ## Dispersão com barras de erro 
@@ -18,7 +18,7 @@ Eis um exemplo simples de como fazer um gráfico de dispersão com erros tanto e
 <img src="./images/graficos_scatter.jpg" width=400>
 
 ```py
---8<-- "tests/doctest/test_doc_grafico_scatter.py:5:22"
+--8<-- "tests/doctest/test_doc_grafico_scatter.py:grafico_scatter"
 ```
 
 Repare que as unidades são variáveis no código que podem ser modificadas rapidamente.
@@ -36,16 +36,16 @@ o [exemplo da lei de kepler](regressão_prática.md#lei-de-potencia), vemos que
 o fitting tem pouca incerteza, visto que as curva min e max são bastante próximas
 
 ```py
---8<-- "tests/doctest/test_doc_kepler.py:82:85"
+--8<-- "tests/doctest/test_doc_kepler.py:kepler_curvas"
 ```
 
 Essas funções também podem ser aplicadas diretamente em arrays de medidas
 ```py
---8<-- "tests/doctest/test_doc_curvaminmax_arrays.py:5:7"
+--8<-- "tests/doctest/test_doc_curvaminmax_arrays.py:curvas_padrao"
 ```
 Podemos alterar a quantidade de sigmas (por padrão são dois)
 ```py
---8<-- "tests/doctest/test_doc_curvaminmax_arrays.py:10:11"
+--8<-- "tests/doctest/test_doc_curvaminmax_arrays.py:curvas_sigmas"
 ```
 ## Curva teórica com erro
 Regressões de dados inevitavelmente apresentam incertezas nos parâmetros encontrados. Podemos representá-las usando as funções `curva_min` e `curva_max`, que calculam a curva teórica \(\pm \, \, 2\sigma\).
@@ -53,7 +53,7 @@ Regressões de dados inevitavelmente apresentam incertezas nos parâmetros encon
 <img src="./images/graficos_fitting.jpg" width=400>
 
 ```py
---8<-- "tests/doctest/test_doc_grafico_fitting.py:26:34"
+--8<-- "tests/doctest/test_doc_grafico_fitting.py:grafico_fitting"
 ```
 
 Isso é algo pessoal, mas como as funções do matplotlib recebem vários argumentos

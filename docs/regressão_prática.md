@@ -21,7 +21,7 @@ A função `regressao_linear` é um caso especial da **`regressao_polinomial`** 
 Não há muito segredo nessa parte, as funções recebem os arrays de medidas em \(x\) e \(y\). É importante salientar que essas funções recebem **Medidas**, isso porque queremos os parâmetros da regressão tendo unidades. Como exemplo, estamos imaginando aqui um objeto em queda livre vertical, nós registramos a sua posição na vertical em função do tempo e queremos encontrar a melhor parábola que se encaixa nos dados.
 
 ```py
---8<-- "tests/doctest/test_doc_regressoes_construir.py:7:15"
+--8<-- "tests/doctest/test_doc_regressoes_construir.py:regressao_polinomial"
 ```
 Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Python, igualando os coeficientes ao ajuste/polinômio (igual ao unpacking de uma tupla, retornando em ordem decrescente de grau: do termo de maior grau até o termo constante).
 
@@ -30,7 +30,7 @@ Nós podemos acessar os coeficientes utilizando a técnica de unpacking do Pytho
 Imagine um experimento em que queremos determinar a meia-vida de um material radioativo. *As escalas de massa e tempo são somente ilustrativas*. Podemos acessar a amplitude do ajuste fazendo `exponencial.amplitude` e o expoente fazendo `exponencial.expoente`.
 
 ```py
---8<-- "tests/doctest/test_doc_regressoes_construir.py:17:26"
+--8<-- "tests/doctest/test_doc_regressoes_construir.py:regressao_exponencial"
 ```
 Repare que a regressão aceita uma base (por padrão base=\(e\)).
 
@@ -45,7 +45,7 @@ $$y = \text{amplitude} \cdot \left(\frac{x}{x_0}\right)^{\text{potência}}$$
 O exemplo abaixo pega dados da NASA para demonstrar experimentalmente a terceira lei de Kepler. Eu peguei as distâncias em milhas justamente para demonstrar como que com o LabIFSC2 você não precisa se preocupar com unidades.
 
 ```py
---8<-- "tests/doctest/test_doc_kepler.py:9:28"
+--8<-- "tests/doctest/test_doc_kepler.py:kepler_regressao"
 ```
 Perceba como essa lei de fato aproxima muito bem os dados. Essa 'lei' na verdade é uma aproximação que só considera a atração gravitacional do sol, então é esperado observar alguns pequenos desvios visto que o sistema solar não é composto só pelo sol, mas um sistema complexo de dezenas de milhares de corpos massivos.
 
@@ -58,8 +58,8 @@ Para avaliar um ajuste em um conjunto de pontos, basta chamá-lo como uma funç�
 
 No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no intervalo de distâncias dos planetas do sistema solar ([0,30] unidades astronômicas), e pedimos para ele retornar esse resultado em anos.
 
-```py hl_lines="36 61"
---8<-- "tests/doctest/test_doc_kepler.py:36:63"
+```py
+--8<-- "tests/doctest/test_doc_kepler.py:kepler_amostragem"
 ```
 
 <img src="./images/kepler.jpg" width=600>
@@ -67,7 +67,7 @@ No exemplo abaixo, calculamos a nossa regressão (da seção anterior) no interv
 Podemos visualizar esses dados fazendo um pequeno código em matplotlib. Para ler mais sobre gráficos, vá para a seção [Gráficos](graficos.md).
 
 ```py 
---8<-- "tests/doctest/test_doc_kepler.py:64:79"
+--8<-- "tests/doctest/test_doc_kepler.py:kepler_grafico"
 ```
 
 !!! warning

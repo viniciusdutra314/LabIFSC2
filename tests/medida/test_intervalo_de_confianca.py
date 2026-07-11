@@ -8,9 +8,9 @@ import LabIFSC2 as lab
 
 def criar_distribuicao_multimodal() -> lab.Medida:
     exponencial: lab.Medida = np.exp(
-        lab.Medida(0, "", 1.5)  # type: ignore[call-overload]
+        lab.Medida(0, "", 1.5) 
     )
-    return np.sin(exponencial)  # type: ignore[call-overload,no-any-return]
+    return np.sin(exponencial)  
 
 
 @pytest.mark.parametrize("probabilidade", [0.68, 0.95, 0.997])

@@ -22,6 +22,8 @@ def test_doc_grafico_fitting() -> None:
         color="red",
     )
 
+    # fmt: off
+    # --8<-- [start:grafico_fitting]
     x = lab.linspaceM(1, 10, 100, unidade_x, 0)
     amostragem = fitting(x)
     plt.plot(
@@ -37,6 +39,8 @@ def test_doc_grafico_fitting() -> None:
         color="blue",
         alpha=0.3,
     )
+    # --8<-- [end:grafico_fitting]
+    # fmt: on
     plt.legend()
     plt.savefig("docs/images/graficos_fitting.jpg", dpi=300)
     plt.cla()

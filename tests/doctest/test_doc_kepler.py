@@ -5,6 +5,8 @@ import LabIFSC2 as lab
 
 
 def test_doc_kepler() -> None:
+    # fmt: off
+    # --8<-- [start:kepler_regressao]
     dados: list[dict[str, str | float]] = [
         {"planeta": "Mercúrio", "distancia": 36.0, "periodo": 88.0},
         {"planeta": "Vênus", "distancia": 67.2, "periodo": 224.7},
@@ -24,17 +26,21 @@ def test_doc_kepler() -> None:
     G = lab.constantes.Newtonian_constant_of_gravitation
     pi = lab.constantes.pi
     massa_sol = lab.constantes.solar_mass
-    constante_teorica = np.sqrt(  # type: ignore[call-overload]
-        4 * pi**2 / (G * massa_sol)
-    )
+    constante_teorica = np.sqrt(4 * pi**2 / (G * massa_sol))
     assert f"{constante_teorica:si}" == "(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵"
     assert f"{fitting.amplitude:si}" == "(5,8 ± 0,1)x10⁻¹⁰ s"
+    # --8<-- [end:kepler_regressao]
+    # fmt: on
 
+    # fmt: off
+    # --8<-- [start:kepler_amostragem]
     unidade_x = "astronomical_unit"
     unidade_y = "years"
 
     x = lab.linspaceM(0, 30, 100, "astronomical_unit", 0)
     amostragem = fitting(x)
+    # --8<-- [end:kepler_amostragem]
+    # fmt: on
     assert np.allclose(
         lab.nominais(amostragem, unidade_y),
         [
@@ -142,6 +148,8 @@ def test_doc_kepler() -> None:
         atol=0.5,
     )
 
+    # fmt: off
+    # --8<-- [start:kepler_grafico]
     plt.style.use("ggplot")
     plt.plot(
         lab.nominais(x, unidade_x),
@@ -160,7 +168,11 @@ def test_doc_kepler() -> None:
     plt.legend()
     plt.savefig("docs/images/kepler.jpg", dpi=300)
     plt.cla()
+    # --8<-- [end:kepler_grafico]
+    # fmt: on
 
+    # fmt: off
+    # --8<-- [start:kepler_curvas]
     assert np.allclose(
         lab.curva_min(amostragem, "years")[0:5],
         [0.0, 0.15783305, 0.44541954, 0.81721102, 1.25700057],
@@ -171,3 +183,5 @@ def test_doc_kepler() -> None:
         [0.0, 0.17670968, 0.4994268, 0.91709789, 1.41152222],
         atol=1e-2,
     )
+    # --8<-- [end:kepler_curvas]
+    # fmt: on

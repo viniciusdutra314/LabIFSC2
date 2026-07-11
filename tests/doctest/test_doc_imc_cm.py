@@ -5,9 +5,13 @@ def test_doc_imc_cm() -> None:
 
     massa = lab.Medida(75, "kg", 0.1)
     altura = lab.Medida(175, "cm", 1)
-    imc = massa / altura**2
+    imc = massa / (altura**2)
     assert str(imc) == "(2,45 ± 0,03)x10⁻³ kg/cm²"
+    # fmt: off
+    # --8<-- [start:imc_unidades]
     assert f"{imc}" == "(2,45 ± 0,03)x10⁻³ kg/cm²"
     assert f"{imc:kg/m²}" == "(2,45 ± 0,03)x10¹ kg/m²"
     assert f"{imc:g/cm²}" == "(2,45 ± 0,03) g/cm²"
     assert f"{imc:si}" == "(2,45 ± 0,03)x10¹ kg/m²"
+    # --8<-- [end:imc_unidades]
+    # fmt: on

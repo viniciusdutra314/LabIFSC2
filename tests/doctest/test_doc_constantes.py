@@ -1,10 +1,11 @@
 def test_doc_constantes() -> None:
     import LabIFSC2 as lab
 
+    # fmt: off
+    # --8<-- [start:constantes_exatas]
     c = lab.constantes.speed_of_light_in_vacuum
     UA = lab.constantes.astronomical_unit
-
     tempo = UA / c
-
     assert f"{tempo:minute}" == "8,316746397269273671781775192 min"
-    assert (8.31 - tempo.nominal("minute")) < 1e-2
+    # --8<-- [end:constantes_exatas]
+    # fmt: on

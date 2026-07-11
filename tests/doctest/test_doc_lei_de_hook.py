@@ -4,10 +4,14 @@ import LabIFSC2 as lab
 def test_doc_lei_de_hook() -> None:
     import matplotlib.pyplot as plt
 
+    # fmt: off
+    # --8<-- [start:hook_dados]
     forças = lab.linspaceM(0, 10, 10, "N", 0.1)  # variando a força
     deslocamentos = lab.arrayM(
         [0, 0.5, 1.1, 1.6, 2, 2.3, 2.8, 3.2, 3.7, 4], "cm", 0.01
     )  # medindo deslocamentos
+    # --8<-- [end:hook_dados]
+    # fmt: on
 
     reta = lab.regressao_linear(deslocamentos, forças)
     a, b = reta

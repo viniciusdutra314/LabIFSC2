@@ -12,7 +12,7 @@ $$\vec{F}=-k\vec{x}$$
 Para certos regimes de deslocamento, a força aplicada a uma mola é linear com a sua distensão. Vamos imaginar que um experimento foi realizado e chegamos a este conjunto de forças e deslocamentos.
 
 ```py
---8<-- "tests/doctest/test_doc_lei_de_hook.py:9:10"
+--8<-- "tests/doctest/test_doc_lei_de_hook.py:hook_dados"
 ```
 
 Qual é a constante elástica \(k\) da mola?
