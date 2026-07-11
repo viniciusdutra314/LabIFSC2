@@ -9,15 +9,15 @@ def test_doc_histograma():
 
     # Definindo as constantes e medidas
     pi = constantes.pi
-    L = Medida(15, 'cm',1)
-    T = Medida(780, 'ms',80)
+    L = Medida(15, "cm", 1)
+    T = Medida(780, "ms", 80)
     gravidade = (4 * pi**2) * L / T**2
     histograma_g = gravidade.histograma
     histograma_L = L.histograma
     histograma_T = T.histograma
 
     # Configurando o estilo do plot
-    plt.style.use('ggplot')
+    plt.style.use("ggplot")
 
     # Criando a grade personalizada
     fig = plt.figure(figsize=(10, 8))
@@ -34,28 +34,28 @@ def test_doc_histograma():
         xmin, xmax = ax.get_xlim()
         x = np.linspace(xmin, xmax, 100)
         p = norm.pdf(x, mu, std)
-        ax.plot(x, p, color=color, linestyle='--', linewidth=2)
+        ax.plot(x, p, color=color, linestyle="--", linewidth=2)
 
     # Histograma de L
-    ax1.hist(histograma_L, bins=100, color='green', alpha=0.7, density=True)
-    ax1.set_title('PDF (L)')
-    ax1.set_xlabel('L (cm)')
-    ax1.set_ylabel('Frequência')
-    plot_gaussian(ax1, histograma_L, 'green')
+    ax1.hist(histograma_L, bins=100, color="green", alpha=0.7, density=True)
+    ax1.set_title("PDF (L)")
+    ax1.set_xlabel("L (cm)")
+    ax1.set_ylabel("Frequência")
+    plot_gaussian(ax1, histograma_L, "green")
 
     # Histograma de T
-    ax2.hist(histograma_T, bins=100, color='red', alpha=0.7, density=True)
-    ax2.set_title('PDF (T)')
-    ax2.set_xlabel('T (ms)')
-    ax2.set_ylabel('Frequência')
-    plot_gaussian(ax2, histograma_T, 'red')
+    ax2.hist(histograma_T, bins=100, color="red", alpha=0.7, density=True)
+    ax2.set_title("PDF (T)")
+    ax2.set_xlabel("T (ms)")
+    ax2.set_ylabel("Frequência")
+    plot_gaussian(ax2, histograma_T, "red")
 
     # Histograma da gravidade
-    ax3.hist(histograma_g.to('m/s²'), bins=100, color='blue', alpha=0.7, density=True)
-    ax3.set_title(r'PDF ($g=\frac{4\pi^2L}{T^2}$)')
-    ax3.set_xlabel('g (m/s²)')
-    ax3.set_ylabel('Frequência')
-    plot_gaussian(ax3, histograma_g.to('m/s²'), 'blue')
+    ax3.hist(histograma_g.to("m/s²"), bins=100, color="blue", alpha=0.7, density=True)
+    ax3.set_title(r"PDF ($g=\frac{4\pi^2L}{T^2}$)")
+    ax3.set_xlabel("g (m/s²)")
+    ax3.set_ylabel("Frequência")
+    plot_gaussian(ax3, histograma_g.to("m/s²"), "blue")
 
     # Ajustando o layout
     plt.tight_layout()

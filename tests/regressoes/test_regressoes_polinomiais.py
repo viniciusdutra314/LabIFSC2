@@ -1,0 +1,117 @@
+import LabIFSC as lab1
+import numpy as np
+import pytest
+
+import LabIFSC2 as lab2
+from LabIFSC2 import Medida, regressao_polinomial
+from tests.utilities import assert_array_proximo
+
+
+def test_regressao_linear():
+
+    for _ in range(10):
+        num = 10
+        a, b = np.random.normal(0, 1, 2)
+        epsilon = np.random.normal(0, 0.01, num)
+        x = np.arange(num)
+        y = a * x + b + epsilon
+        resposta = lab1.linearize(x, y)
+
+        x_dados = lab2.arrayM(x, "s", 0.01)
+        y_dados = lab2.arrayM(y, "m", 0.01)
+        reta = lab2.regressao_linear(x_dados, y_dados)
+        a, b = reta
+        assert np.isclose(a.nominal("m/s"), resposta["a"], rtol=1e-3)
+        assert np.isclose(b.nominal("m"), resposta["b"], rtol=1e-3)
+        assert np.isclose(a.incerteza("m/s"), resposta["Δa"], rtol=1e-3)
+        assert np.isclose(b.incerteza("m"), resposta["Δb"], rtol=1e-3)
+
+
+def test_regressao_polinominal_nominal():
+    num = 100
+    a, b = np.random.normal(0, 1, 2)
+    epsilon = np.random.normal(0, 0.001, num)
+    x = np.arange(num)
+    y = a * x + b + epsilon
+
+    x_dados = lab2.arrayM(x, "s", 0.01)
+    y_dados = lab2.arrayM(y, "m", 0.01)
+    parabola = lab2.regressao_polinomial(x_dados, y_dados, 2)
+    parabola_coef2, a_predito, b_predito = parabola
+    assert np.isclose(parabola_coef2.nominal("m/s²"), 0, atol=1e-2)
+    assert np.isclose(a_predito.nominal("m/s"), a, rtol=1e-1)
+    assert np.isclose(b_predito.nominal("m"), b, rtol=1e-1)
+
+
+def test_regressao_polinomial_basic():
+    x_dados = lab2.arrayM([1, 2, 3, 4, 5], "", 0)
+    y_dados = lab2.arrayM([1, 4, 9, 16, 25], "", 0)
+    grau = 2
+    polinomio = regressao_polinomial(x_dados, y_dados, grau)
+    assert isinstance(polinomio, lab2.AjustePolinomial)
+    assert polinomio.grau == grau
+
+
+def test_regressao_polinomial_medida():
+    x_dados = np.array(
+        [
+            Medida(1, "", 0.1),
+            Medida(2, "", 0.1),
+            Medida(3, "", 0.1),
+            Medida(4, "", 0.1),
+            Medida(5, "", 0.1),
+        ]
+    )
+    y_dados = np.array(
+        [
+            Medida(1, "", 0.1),
+            Medida(4, "", 0.1),
+            Medida(9, "", 0.1),
+            Medida(16, "", 0.1),
+            Medida(25, "", 0.1),
+        ]
+    )
+    grau = 2
+
+    polinomio = regressao_polinomial(x_dados, y_dados, grau)
+    assert polinomio.grau == grau
+
+
+def test_regressao_polinomial_mismatched_lengths():
+    x_dados = np.array([1, 2, 3])
+    y_dados = np.array([1, 4, 9, 16])
+    grau = 2
+    with pytest.raises(ValueError, match="x_dados e y_dados não tem o mesmo tamanho"):
+        regressao_polinomial(x_dados, y_dados, grau)
+
+
+def test_regressao_polinomial_insufficient_data():
+    x_dados = lab2.arrayM([1, 2], "", 0)
+    y_dados = lab2.arrayM([1, 4], "", 0)
+    grau = 1
+    with pytest.raises(ValueError):
+        regressao_polinomial(x_dados, y_dados, grau)
+
+
+def test_regressao_polinominal_tipos_errados():
+    x_dados = np.array([1, 2, 3, 4])
+    y_dados = np.array([1, 4, 7, 6])
+    grau = 1
+    with pytest.raises(TypeError):
+        regressao_polinomial(x_dados, y_dados, grau)
+
+
+def test_AjustePolinomial_call():
+    coeficientes = np.array(
+        [Medida(4, "", 0.001), Medida(3, "", 0.001), Medida(2, "", 0.001)]
+    )
+    polinomio = lab2.AjustePolinomial(coeficientes)
+
+    def polinomio_esperado(x: int) -> int:
+        return 2 * x**2 + 3 * x + 4
+
+    # Teste de chamada com um array
+    x_array = np.array([Medida(1, "", 0.1), Medida(2, "", 0.1), Medida(3, "", 0.1)])
+    resultado_array = lab2.nominais(polinomio(x_array), "")
+    esperado = [polinomio_esperado(x) for x in range(1, 4)]
+    assert_array_proximo(resultado_array, esperado, rtol=5e-3)

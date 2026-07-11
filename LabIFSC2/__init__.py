@@ -11,7 +11,13 @@ Documentação completa em https://viniciusdutra314.github.io/LabIFSC2/
 MCSamples = 100_000
 
 from ._arrays import arrayM, curva_max, curva_min, incertezas, linspaceM, nominais
-from ._medida import Comparacao, Medida, alterar_monte_carlo_samples, comparar_medidas
+from ._medida import (
+    Comparacao,
+    Medida,
+    alterar_monte_carlo_rng,
+    alterar_monte_carlo_samples,
+    comparar_medidas,
+)
 from ._regressoes import (
     AjusteExponencial,
     AjusteLeiDePotencia,
@@ -32,6 +38,7 @@ __all__ = [
     "nominais",
     "Comparacao",
     "Medida",
+    "alterar_monte_carlo_rng",
     "alterar_monte_carlo_samples",
     "comparar_medidas",
     "AjusteExponencial",

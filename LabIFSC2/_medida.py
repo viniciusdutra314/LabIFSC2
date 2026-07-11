@@ -17,12 +17,29 @@ from pint.util import UnitsContainer
 
 from . import MCSamples
 
+_gerador_monte_carlo = np.random.default_rng()
+
 
 def alterar_monte_carlo_samples(novo_valor: int) -> None:
     global MCSamples
     if novo_valor <= 0:
         raise ValueError("MCSamples deve ser maior que 0")
     MCSamples = novo_valor
+
+
+def alterar_monte_carlo_rng(novo_gerador: np.random.Generator) -> None:
+    """Altera o gerador aleatório usado nas simulações de Monte Carlo.
+
+    Args:
+        novo_gerador: Gerador aleatório usado nas próximas simulações.
+
+    Raises:
+        TypeError: Se o valor não for um ``numpy.random.Generator``.
+    """
+    global _gerador_monte_carlo
+    if not isinstance(novo_gerador, np.random.Generator):
+        raise TypeError("O gerador deve ser uma instância de numpy.random.Generator")
+    _gerador_monte_carlo = novo_gerador
 
 
 ureg: UnitRegistry[float] = UnitRegistry()
@@ -137,7 +154,7 @@ class Medida:
                 self._histograma = cast(
                     Quantity[NDArray[np.float64]],
                     (
-                        np.random.normal(
+                        _gerador_monte_carlo.normal(
                             self._nominal.magnitude,
                             self._incerteza.magnitude,
                             size=MCSamples,

@@ -1,0 +1,57 @@
+import numpy as np
+import pytest
+from scipy.optimize import curve_fit
+
+import LabIFSC2 as lab
+
+
+@pytest.mark.parametrize(
+    "a, b", [(3.6, 1.05), (2.0, 0.5), (1.0, -2.0), (4.5, -0.75), (3.0, 1.5), (1, 0.05)]
+)
+def test_lei_de_potencia(a, b):
+    potencia_np = lambda x, a, b: a * np.power(x, b)
+
+    ruido = np.random.normal(1, 0.002, 100)
+    x_dados = np.linspace(3, 10, 100)
+    y_dados = potencia_np(x_dados, a, b) * ruido
+    popt, pcov = curve_fit(potencia_np, x_dados, y_dados)
+    a_scipy, b_scipy = popt
+
+    x_dados = lab.linspaceM(3, 10, 100, "", 0.01)
+    y_dados = potencia_np(x_dados, a, b) * ruido
+    potencia_np = lab.regressao_potencia(x_dados, y_dados)
+    assert np.isclose(a_scipy, potencia_np.amplitude.nominal(""), atol=(1e-2) * a)
+    assert np.isclose(b_scipy, potencia_np.potencia.nominal(""), atol=(1e-2))
+    assert np.isclose(a, potencia_np.amplitude.nominal(""), rtol=1e-2) or np.isclose(
+        a, potencia_np.amplitude.nominal(""), atol=1e-2
+    )
+    assert np.isclose(b, potencia_np.potencia.nominal(""), rtol=1e-2) or np.isclose(
+        b, potencia_np.potencia.nominal(""), atol=1e-2
+    )
+
+
+def test_exceptions():
+    negativo = lab.linspaceM(-5, 5, 11, "", 0.01)
+    positivo = lab.linspaceM(5, 10, 11, "", 0.01)
+
+    with pytest.raises(ValueError):
+        lab.regressao_potencia(negativo, positivo)
+
+    with pytest.raises(ValueError):
+        lab.regressao_potencia(positivo, negativo)
+
+    with pytest.raises(ValueError):
+        lab.regressao_potencia(negativo, negativo)
+    lab.regressao_potencia(positivo, positivo)
+
+
+def test_lei_de_potencia_com_x0():
+    a = 3.0
+    b = 2.0
+    x_dados = lab.linspaceM(1, 10, 100, "m", 0.01)
+    y_dados = a * (x_dados / lab.Medida(2.0, "m")) ** b
+    x0 = lab.Medida(2.0, "m")
+    ajuste = lab.regressao_potencia(x_dados, y_dados, x0=x0)
+    assert np.isclose(ajuste.amplitude.nominal(""), a, rtol=1e-2)
+    assert np.isclose(ajuste.potencia.nominal(""), b, rtol=1e-2)
+    assert np.isclose(ajuste.x0.nominal("m"), 2.0, rtol=1e-5)
