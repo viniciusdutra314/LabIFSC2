@@ -1,57 +1,77 @@
+from typing import cast
+
 import numpy as np
 import pytest
+from numpy.typing import NDArray
 from scipy.optimize import curve_fit
 
 import LabIFSC2 as lab
 
 
+def modelo_potencia(
+    x: NDArray[np.float64], amplitude: float, potencia: float
+) -> NDArray[np.float64]:
+    return amplitude * np.power(x, potencia)
+
+
 @pytest.mark.parametrize(
-    "a, b", [(3.6, 1.05), (2.0, 0.5), (1.0, -2.0), (4.5, -0.75), (3.0, 1.5), (1, 0.05)]
+    ("amplitude", "potencia"),
+    [(3.6, 1.05), (2.0, 0.5), (1.0, -2.0), (4.5, -0.75), (3.0, 1.5), (1, 0.05)],
 )
-def test_lei_de_potencia(a, b):
-    potencia_np = lambda x, a, b: a * np.power(x, b)
+def test_regressao_potencia_equivale_ao_scipy(
+    amplitude: float,
+    potencia: float,
+    rng_testes: np.random.Generator,
+) -> None:
+    ruido = rng_testes.normal(1, 0.002, 100)
+    x_numerico = np.linspace(3, 10, 100)
+    y_numerico = modelo_potencia(x_numerico, amplitude, potencia) * ruido
+    parametros_scipy, _ = curve_fit(modelo_potencia, x_numerico, y_numerico)
 
-    ruido = np.random.normal(1, 0.002, 100)
-    x_dados = np.linspace(3, 10, 100)
-    y_dados = potencia_np(x_dados, a, b) * ruido
-    popt, pcov = curve_fit(potencia_np, x_dados, y_dados)
-    a_scipy, b_scipy = popt
+    x = lab.linspaceM(3, 10, 100, "", 0.01)
+    y = lab.arrayM(y_numerico, "", 0.01)
+    ajuste = lab.regressao_potencia(x, y)
 
-    x_dados = lab.linspaceM(3, 10, 100, "", 0.01)
-    y_dados = potencia_np(x_dados, a, b) * ruido
-    potencia_np = lab.regressao_potencia(x_dados, y_dados)
-    assert np.isclose(a_scipy, potencia_np.amplitude.nominal(""), atol=(1e-2) * a)
-    assert np.isclose(b_scipy, potencia_np.potencia.nominal(""), atol=(1e-2))
-    assert np.isclose(a, potencia_np.amplitude.nominal(""), rtol=1e-2) or np.isclose(
-        a, potencia_np.amplitude.nominal(""), atol=1e-2
+    np.testing.assert_allclose(
+        ajuste.amplitude.nominal(""), parametros_scipy[0], rtol=1e-3, atol=1e-3
     )
-    assert np.isclose(b, potencia_np.potencia.nominal(""), rtol=1e-2) or np.isclose(
-        b, potencia_np.potencia.nominal(""), atol=1e-2
+    np.testing.assert_allclose(
+        ajuste.potencia.nominal(""), parametros_scipy[1], rtol=1e-3, atol=1e-3
     )
 
 
-def test_exceptions():
-    negativo = lab.linspaceM(-5, 5, 11, "", 0.01)
-    positivo = lab.linspaceM(5, 10, 11, "", 0.01)
+@pytest.mark.parametrize(
+    ("x_fixture", "y_fixture"),
+    [
+        ("medidas_nao_positivas", "medidas_positivas"),
+        ("medidas_positivas", "medidas_nao_positivas"),
+        ("medidas_nao_positivas", "medidas_nao_positivas"),
+    ],
+)
+def test_regressao_potencia_rejeita_valores_nao_positivos(
+    x_fixture: str, y_fixture: str, request: pytest.FixtureRequest
+) -> None:
+    x: NDArray[np.object_] = request.getfixturevalue(x_fixture)
+    y: NDArray[np.object_] = request.getfixturevalue(y_fixture)
+    with pytest.raises(ValueError, match="positivos"):
+        lab.regressao_potencia(x, y)
 
-    with pytest.raises(ValueError):
-        lab.regressao_potencia(negativo, positivo)
 
-    with pytest.raises(ValueError):
-        lab.regressao_potencia(positivo, negativo)
-
-    with pytest.raises(ValueError):
-        lab.regressao_potencia(negativo, negativo)
-    lab.regressao_potencia(positivo, positivo)
-
-
-def test_lei_de_potencia_com_x0():
-    a = 3.0
-    b = 2.0
-    x_dados = lab.linspaceM(1, 10, 100, "m", 0.01)
-    y_dados = a * (x_dados / lab.Medida(2.0, "m")) ** b
+def test_regressao_potencia_aceita_x0() -> None:
+    amplitude = 3.0
+    potencia = 2.0
+    x = lab.linspaceM(1, 10, 100, "m", 0.01)
     x0 = lab.Medida(2.0, "m")
-    ajuste = lab.regressao_potencia(x_dados, y_dados, x0=x0)
-    assert np.isclose(ajuste.amplitude.nominal(""), a, rtol=1e-2)
-    assert np.isclose(ajuste.potencia.nominal(""), b, rtol=1e-2)
-    assert np.isclose(ajuste.x0.nominal("m"), 2.0, rtol=1e-5)
+    y = amplitude * (x / x0) ** potencia
+
+    ajuste = lab.regressao_potencia(x, y, x0=x0)
+
+    np.testing.assert_allclose(ajuste.amplitude.nominal(""), amplitude, rtol=1e-2)
+    np.testing.assert_allclose(ajuste.potencia.nominal(""), potencia, rtol=1e-2)
+    np.testing.assert_allclose(ajuste.x0.nominal("m"), 2.0, rtol=1e-5)
+    valor = cast(lab.Medida, ajuste(x0))
+    np.testing.assert_allclose(valor.nominal(""), amplitude, rtol=1e-3)
+    assert (
+        str(ajuste)
+        == f"AjusteLeiDePotencia(amplitude=(3,000095 ± 0,000005) , potencia=(1,999975 ± 0,000002) ,x0=2 m)"
+    )

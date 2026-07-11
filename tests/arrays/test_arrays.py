@@ -33,6 +33,7 @@ def medidas_nominais(valores_nominais: list[float]) -> list[Medida]:
 def medidas_em_centimetros(valores_nominais: list[float]) -> list[Medida]:
     return [Medida(valor, "cm", 1) for valor in valores_nominais]
 
+
 def test_nominais(
     medidas_nominais: list[Medida], valores_nominais: list[float]
 ) -> None:
@@ -57,7 +58,7 @@ def test_nominais_rejeitam_valores_que_nao_sao_medidas() -> None:
 
 @pytest.fixture
 def valores_incerteza() -> list[float]:
-    return [3.5, 4.003, 310, 0,56]
+    return [3.5, 4.003, 310, 0, 56]
 
 
 @pytest.fixture
@@ -119,7 +120,6 @@ def amostragem_regressao() -> NDArray[np.object_]:
     return cast(NDArray[np.object_], linha(x))
 
 
-
 def test_curva_min(medidas_para_curva: list[Medida]) -> None:
     assert_array_proximo(curva_min(medidas_para_curva, ""), [4.8, 5, 10], rtol=0)
     assert_array_proximo(curva_min(medidas_para_curva, "", 3), [4.7, 3, 9.5], rtol=0)
@@ -137,13 +137,15 @@ def test_curvas_rejeitam_valores_que_nao_sao_medidas(
     with pytest.raises(TypeError):
         calcular_curva(np.arange(10), "")
 
+
 @pytest.mark.parametrize("sigmas", [0, -1])
 def test_curvas_rejeitam_numero_de_sigmas_nao_positivo(
     amostragem_regressao: NDArray[np.object_], sigmas: int
 ) -> None:
     with pytest.raises(ValueError):
         curva_max(amostragem_regressao, "si", sigmas)
-
+    with pytest.raises(ValueError):
+        curva_min(amostragem_regressao, "si", sigmas)
 
 
 def test_linspace() -> None:

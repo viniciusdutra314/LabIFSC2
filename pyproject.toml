@@ -75,7 +75,6 @@ norecursedirs = ["mutants"]
 [tool.mutmut]
 source_paths = ["LabIFSC2/"]
 pytest_add_cli_args = ["-x", "--tb=no", "--ignore=tests/doctest"]
-
 [tool.ruff.lint]
 select = [
     # pycodestyle
@@ -96,11 +95,11 @@ pydocstyle.convention = "google"
 
 
 [tool.taskipy.tasks]
-tests = "uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s"
-type-checking = "uv run --group linter mypy LabIFSC2/ tests/"
-unit-tests = "uv run --group test pytest -vv -s"
+test-all = "uv run --group linter mypy LabIFSC2/ tests/ && uv run --group test pytest -vv -s"
+test-units = "uv run --group test pytest -vv -s"
 test-coverage = "uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html"
 test-mutation = "uv run --group test mutmut run"
 docs = "uv run --group docs mkdocs serve"
+type-checker = "uv run --group linter mypy LabIFSC2/ tests/"
 linter = "uv run ruff check --fix"
 format = "uv run ruff format"

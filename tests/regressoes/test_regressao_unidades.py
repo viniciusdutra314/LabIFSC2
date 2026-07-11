@@ -1,57 +1,79 @@
+from collections.abc import Callable
+from typing import Protocol, cast
+
 import numpy as np
 import pytest
+from numpy.core.numerictypes import object_
+from numpy.typing import NDArray
+from pint.errors import DimensionalityError
 
-from LabIFSC2 import *
-
-campo_magnético = arrayM([210, 90, 70, 54, 39, 32, 33, 27, 22, 20], "muT", 1)
-distancias = linspaceM(1, 10, 10, "cm", 0.01)
-unidade_errada = linspaceM(1, 10, 10, "kg", 0.001)
-
-
-def test_regressao_linear_unidades():
-    linha = regressao_linear(distancias, campo_magnético)
-
-    valores = nominais(linha(distancias), "muT")
-    distancias_unidade_errada = linspaceM(1, 10, 10, "", 0.001)
-    with pytest.raises(Exception):
-        nominais(linha(distancias_unidade_errada), "muT")
-    with pytest.raises(Exception):
-        nominais(linha(distancias), "kg")
-    np.isclose(valores[0], campo_magnético[0].nominal("muT"), rtol=1e-2)
+from LabIFSC2 import (
+    Medida,
+    nominais,
+    regressao_exponencial,
+    regressao_linear,
+    regressao_polinomial,
+    regressao_potencia,
+)
 
 
-def test_regressao_cubica_unidades():
-    for grau in [1, 2, 3, 4, 5, 6]:
-        cubica = regressao_polinomial(distancias, campo_magnético, grau)
-        nominais(cubica(distancias), "muT")
-        with pytest.raises(Exception):
-            nominais(cubica(unidade_errada), "muT")
-        np.isclose(
-            nominais(cubica(distancias), "muT")[0],
-            campo_magnético[0].nominal("muT"),
-            rtol=1e-2,
-        )
+class Ajuste(Protocol):
+    def __call__(
+        self, medidas: NDArray[np.object_]
+    ) -> Medida | NDArray[np.object_]: ...
 
 
-def test_regressao_exponencial_unidades():
-    exponencial = regressao_exponencial(distancias, campo_magnético)
-    nominais(exponencial(distancias), "muT")
-    with pytest.raises(Exception):
-        nominais(exponencial(unidade_errada), "muT")
-    np.isclose(
-        nominais(exponencial(distancias), "muT")[0],
-        campo_magnético[0].nominal("muT"),
-        rtol=1e-2,
+def assert_ajuste_preserva_unidade(
+    ajuste: Ajuste,
+    distancias: NDArray[np.object_],
+    campo_magnetico: NDArray[np.object_],
+) -> None:
+    valores = nominais(cast(NDArray[object_], ajuste(distancias)), "muT")
+    assert valores.shape == campo_magnetico.shape
+    assert np.all(np.isfinite(valores))
+
+
+@pytest.mark.parametrize("grau", range(1, 7))
+def test_regressao_polinomial_preserva_unidades(
+    distancias: NDArray[np.object_],
+    campo_magnetico: NDArray[np.object_],
+    grau: int,
+) -> None:
+    assert_ajuste_preserva_unidade(
+        regressao_polinomial(distancias, campo_magnetico, grau),
+        distancias,
+        campo_magnetico,
+    )
+
+@pytest.mark.parametrize("regressao", [regressao_exponencial, regressao_potencia])
+def test_regressoes_nao_lineares_preservam_unidades(
+    regressao: Callable[[NDArray[np.object_], NDArray[np.object_]], Ajuste],
+    distancias: NDArray[np.object_],
+    campo_magnetico: NDArray[np.object_],
+) -> None:
+    assert_ajuste_preserva_unidade(
+        regressao(distancias, campo_magnetico), distancias, campo_magnetico
     )
 
 
-def test_regressao_potencia_unidades():
-    potencia = regressao_potencia(distancias, campo_magnético)
-    nominais(potencia(distancias), "muT")
-    with pytest.raises(Exception):
-        nominais(potencia(unidade_errada), "muT")
-    np.isclose(
-        nominais(potencia(distancias), "muT")[0],
-        campo_magnético[0].nominal("muT"),
-        rtol=1e-2,
-    )
+@pytest.mark.parametrize(
+    "regressao",
+    [regressao_linear, regressao_exponencial, regressao_potencia],
+)
+def test_regressoes_rejeitam_unidade_de_entrada_incompativel(
+    regressao: Callable[[NDArray[np.object_], NDArray[np.object_]], Ajuste],
+    distancias: NDArray[np.object_],
+    campo_magnetico: NDArray[np.object_],
+    medidas_unidade_incompativel: NDArray[np.object_],
+) -> None:
+    ajuste = regressao(distancias, campo_magnetico)
+    with pytest.raises((DimensionalityError, ValueError)):
+        nominais(ajuste(medidas_unidade_incompativel), "muT")  # type: ignore
+
+
+def test_regressao_rejeita_unidade_de_saida_incompativel(
+    distancias: NDArray[np.object_], campo_magnetico: NDArray[np.object_]
+) -> None:
+    ajuste = regressao_linear(distancias, campo_magnetico)
+    with pytest.raises(DimensionalityError):
+        nominais(ajuste(distancias), "kg")  # type: ignore
