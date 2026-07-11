@@ -1,5 +1,3 @@
-import pytest
-
 import LabIFSC2 as lab
 
 

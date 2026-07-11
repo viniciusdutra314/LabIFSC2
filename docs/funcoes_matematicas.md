@@ -21,4 +21,6 @@ Veja que as unidades se comportam como o esperado. Outro exemplo interessante é
 --8<-- "tests/doctest/test_doc_seno.py:seno"
 ```
 
-[^1]: Para os curiosos, isso é feito implementando métodos específicos na classe `Medida`. Por exemplo, a função `np.sqrt(x)` verifica se o tipo de `x` tem o método `x.sqrt`. Se tiver, ele chama `x.sqrt`. A classe `Medida` possui uma simulação Monte Carlo de `sqrt` e todas as funções matemáticas. Isso é feito criando-se dinamicamente os métodos com [**getattr**](https://docs.python.org/3/reference/datamodel.html#object.__getattr__).
+[^1]:
+    Para os curiosos, o numpy tem uma seção inteira na sua [documentação](https://numpy.org/doc/stable/user/basics.interoperability.html#) sobre como usar funções numpy em objetos
+    arbitrários e até como implementar o seu próprio tipo array

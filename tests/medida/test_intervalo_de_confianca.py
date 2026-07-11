@@ -1,3 +1,5 @@
+from typing import cast
+
 import mcerp  # type: ignore[import-untyped]
 import numpy as np
 import pytest
@@ -7,10 +9,8 @@ import LabIFSC2 as lab
 
 
 def criar_distribuicao_multimodal() -> lab.Medida:
-    exponencial: lab.Medida = np.exp(
-        lab.Medida(0, "", 1.5) 
-    )
-    return np.sin(exponencial)  
+    exponencial = cast(lab.Medida, np.exp(lab.Medida(0, "", 1.5)))
+    return cast(lab.Medida, np.sin(exponencial))
 
 
 @pytest.mark.parametrize("probabilidade", [0.68, 0.95, 0.997])

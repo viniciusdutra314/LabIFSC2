@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import operator
 import re
 from collections.abc import Callable, Iterable
 from decimal import ROUND_HALF_UP, Decimal
@@ -8,7 +9,7 @@ from enum import Enum
 from numbers import Real
 from statistics import NormalDist
 from string import Template
-from typing import cast, overload
+from typing import Literal, cast, overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -47,6 +48,46 @@ ureg: UnitRegistry[float] = UnitRegistry()
 HistogramaType = (
     Quantity[NDArray[np.float64]] | Quantity[float] | float | NDArray[np.float64]
 )
+
+
+FUNCOES_NUMPY_SUPORTADAS = frozenset(
+    {
+        "sin",
+        "cos",
+        "exp",
+        "sqrt",
+        "sinh",
+        "cosh",
+        "tanh",
+        "arcsinh",
+        "arccosh",
+        "arctanh",
+        "cbrt",
+        "tan",
+        "arcsin",
+        "arccos",
+        "arctan",
+        "log",
+        "log2",
+        "log10",
+    }
+)
+
+OPERACOES_UFUNC_UNARIAS: dict[str, Callable[[Medida], Medida]] = {
+    "positive": operator.pos,
+    "negative": operator.neg,
+    "absolute": operator.abs,
+    "fabs": operator.abs,
+}
+
+OPERACOES_UFUNC_BINARIAS: dict[str, Callable[[object, object], object]] = {
+    "add": operator.add,
+    "subtract": operator.sub,
+    "multiply": operator.mul,
+    "divide": operator.truediv,
+    "true_divide": operator.truediv,
+    "power": operator.pow,
+}
 
 
 def montecarlo(  # type: ignore[explicit-any]
@@ -270,42 +311,43 @@ class Medida:
     def __repr__(self) -> str:
         return self.__format__("")
 
-    """O método abaixo faz a magia que basicamente qualquer função do numpy possa
-    ser aplicada diretamente em uma medida
-    """
+    def __array_ufunc__(
+        self,
+        ufunc: np.ufunc,
+        method: Literal["__call__", "reduce", "reduceat", "accumulate", "outer", "at"],
+        *inputs: object,
+        **kwargs: object,
+    ) -> object:
+        if method != "__call__" or kwargs:
+            return NotImplemented
+
+        nome = ufunc.__name__
+        funcao_matematica = nome in FUNCOES_NUMPY_SUPORTADAS
+        op_unary = OPERACOES_UFUNC_UNARIAS.get(nome)
+        op_binary = OPERACOES_UFUNC_BINARIAS.get(nome)
+        has_array = any(isinstance(entrada, np.ndarray) for entrada in inputs)
+
+        match inputs:
+            case (Medida() as medida,) if funcao_matematica:
+                return montecarlo(ufunc, medida)
+            case (Medida() as medida,) if op_unary:
+                return op_unary(medida)
+            case (l, r) if op_binary and has_array:
+                return np.vectorize(op_binary, otypes=[object])(l, r)
+            case (l, r) if op_binary:
+                return op_binary(l, r)
+            case _:
+                return NotImplemented
 
     def __getattr__(self, func_name: str) -> Callable[[], Medida]:
-        funcoes_suportadas = [
-            "sin",
-            "cos",
-            "exp",
-            "sqrt",
-            "sinh",
-            "cosh",
-            "tanh",
-            "arcsinh",
-            "arccosh",
-            "arctanh",
-            "cbrt",
-            "power",
-            "pow",
-            "tan",
-            "arcsin",
-            "arccos",
-            "arctan",
-            "log",
-            "log2",
-            "log10",
-        ]
-        if func_name not in funcoes_suportadas:
+        if func_name not in FUNCOES_NUMPY_SUPORTADAS:
             raise AttributeError
-        else:
-            func = getattr(np, func_name)
+        func = getattr(np, func_name)
 
-            def funcao_recebe_medida() -> Medida:
-                return montecarlo(func, self)
+        def funcao_recebe_medida() -> Medida:
+            return montecarlo(func, self)
 
-            return funcao_recebe_medida
+        return funcao_recebe_medida
 
     """Essas funções de comparação são necessárias para que max,min ou
     np.max,np.min funcionem com medidas do jeito esperado (comparar o valor nominal)

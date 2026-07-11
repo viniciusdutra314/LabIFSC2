@@ -90,6 +90,8 @@ select = [
     "I",
 ]
 pydocstyle.convention = "google"
+[tool.ruff.lint.per-file-ignores]
+"tests/doctest/test_doc_*.py" = ["E501"]
 
 
 
