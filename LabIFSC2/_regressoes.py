@@ -1,5 +1,5 @@
-from collections.abc import Iterable
-from typing import Iterator, NamedTuple
+from collections.abc import Iterable, Iterator
+from typing import NamedTuple
 
 import numpy as np
 from numpy.typing import NDArray
@@ -78,7 +78,10 @@ class AjusteLeiDePotencia(NamedTuple):
             )
 
     def __repr__(self) -> str:
-        return f"AjusteLeiDePotencia(amplitude={self.amplitude}, potencia={self.potencia},x0={self.x0})"
+        return (
+            f"AjusteLeiDePotencia(amplitude={self.amplitude}, "
+            f"potencia={self.potencia}, x0={self.x0})"
+        )
 
 
 class AjustePolinomial:

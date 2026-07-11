@@ -94,11 +94,13 @@ pydocstyle.convention = "google"
 
 
 [tool.taskipy.tasks]
-test-all = "task type-checker && task linter && task test-units"
+test-all = "task type-checker && task lint-check && task format-check && task test-units"
 test-units = "uv run --group test pytest -vv -s"
 test-coverage = "uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html"
 test-mutation = "uv run --group test mutmut run"
 docs = "uv run --group docs mkdocs serve"
 type-checker = "uv run --group linter mypy LabIFSC2/ tests/"
-linter = "uv run ruff check --fix"
-format = "uv run ruff format"
+lint-check = "uv run --group linter ruff check"
+format-check = "uv run --group linter ruff format --check"
+lint = "uv run --group linter ruff check --fix"
+format = "uv run --group linter ruff format"

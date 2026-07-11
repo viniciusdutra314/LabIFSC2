@@ -2,11 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 import LabIFSC2 as lab
-from LabIFSC2 import *
 
 
 def test_doc_kepler() -> None:
-    dados = [
+    dados: list[dict[str, str | float]] = [
         {"planeta": "Mercúrio", "distancia": 36.0, "periodo": 88.0},
         {"planeta": "Vênus", "distancia": 67.2, "periodo": 224.7},
         {"planeta": "Terra", "distancia": 93.0, "periodo": 365.2},
@@ -16,24 +15,28 @@ def test_doc_kepler() -> None:
         {"planeta": "Urano", "distancia": 1781.5, "periodo": 30589.0},
         {"planeta": "Netuno", "distancia": 2805.5, "periodo": 59800.0},
     ]
-    distancias = lab.arrayM([planeta["distancia"] for planeta in dados], "Mmiles", 0)
-    periodos = lab.arrayM([planeta["periodo"] for planeta in dados], "days", 0)
+    distancias = lab.arrayM(
+        [float(planeta["distancia"]) for planeta in dados], "Mmiles", 0
+    )
+    periodos = lab.arrayM([float(planeta["periodo"]) for planeta in dados], "days", 0)
     fitting = lab.regressao_potencia(distancias, periodos)
     assert f"{fitting.potencia}" == "(1,4979 ± 0,0008) "
-    G = constantes.Newtonian_constant_of_gravitation
-    pi = constantes.pi
-    massa_sol = constantes.solar_mass
-    constante_teorica = np.sqrt(4 * pi**2 / (G * massa_sol))
+    G = lab.constantes.Newtonian_constant_of_gravitation
+    pi = lab.constantes.pi
+    massa_sol = lab.constantes.solar_mass
+    constante_teorica = np.sqrt(  # type: ignore[call-overload]
+        4 * pi**2 / (G * massa_sol)
+    )
     assert f"{constante_teorica:si}" == "(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵"
     assert f"{fitting.amplitude:si}" == "(5,8 ± 0,1)x10⁻¹⁰ s"
 
     unidade_x = "astronomical_unit"
     unidade_y = "years"
 
-    x = linspaceM(0, 30, 100, "astronomical_unit", 0)
+    x = lab.linspaceM(0, 30, 100, "astronomical_unit", 0)
     amostragem = fitting(x)
     assert np.allclose(
-        nominais(amostragem, unidade_y),
+        lab.nominais(amostragem, unidade_y),
         [
             0.0,
             0.16720236,
@@ -141,14 +144,14 @@ def test_doc_kepler() -> None:
 
     plt.style.use("ggplot")
     plt.plot(
-        nominais(x, unidade_x),
-        nominais(amostragem, unidade_y),
+        lab.nominais(x, unidade_x),
+        lab.nominais(amostragem, unidade_y),
         color="red",
         label="Teórica",
     )
     plt.scatter(
-        nominais(distancias, unidade_x),
-        nominais(periodos, unidade_y),
+        lab.nominais(distancias, unidade_x),
+        lab.nominais(periodos, unidade_y),
         color="blue",
         label="Dados",
     )
@@ -159,12 +162,12 @@ def test_doc_kepler() -> None:
     plt.cla()
 
     assert np.allclose(
-        curva_min(amostragem, "years")[0:5],
+        lab.curva_min(amostragem, "years")[0:5],
         [0.0, 0.15783305, 0.44541954, 0.81721102, 1.25700057],
         atol=1e-2,
     )
     assert np.allclose(
-        curva_max(amostragem, "years")[0:5],
+        lab.curva_max(amostragem, "years")[0:5],
         [0.0, 0.17670968, 0.4994268, 0.91709789, 1.41152222],
         atol=1e-2,
     )

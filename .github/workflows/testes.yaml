@@ -21,22 +21,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-        
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+
+      - name: Install uv and Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
         with:
           python-version: ${{ matrix.python-version }}
-      
-      - name: Install uv
-        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0        
-        
-      - name: Install dependencies
-        run: uv sync --group test --group linter
 
-      - name: mypy
-        env:
-            PYTHONIOENCODING: utf-8
-        run: uv run task type-checker
+      - name: Install dependencies
+        run: uv sync --locked --group test --group linter
 
       - name: Run all possible tests
         env:

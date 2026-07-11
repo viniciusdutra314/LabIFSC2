@@ -19,7 +19,7 @@ def teste_ajuste_polinomial() -> None:
     assert d.nominal("") == 1
     with pytest.raises(TypeError):
         polinomio(0)  # type: ignore[arg-type]
-    avaliado=cast(lab.Medida,polinomio(lab.Medida(0, "", 0)))
+    avaliado = cast(lab.Medida, polinomio(lab.Medida(0, "", 0)))
     assert avaliado.nominal("") == d.nominal("")
 
 
@@ -49,20 +49,12 @@ def test_regressao_linear_equivale_ao_numpy(
     ajuste = lab.regressao_linear(
         lab.arrayM(x_numerico, "s", 0.01), lab.arrayM(y_numerico, "m", 0.01)
     )
-    a,b = ajuste
+    a, b = ajuste
 
-    np.testing.assert_allclose(
-        a.nominal("m/s"), coeficientes_numpy[0], rtol=1e-3
-    )
-    np.testing.assert_allclose(
-        b.nominal("m"), coeficientes_numpy[1], rtol=1e-3
-    )
-    np.testing.assert_allclose(
-        a.incerteza("m/s"), incertezas_numpy[0], rtol=1e-3
-    )
-    np.testing.assert_allclose(
-        b.incerteza("m"), incertezas_numpy[1], rtol=1e-3
-    )
+    np.testing.assert_allclose(a.nominal("m/s"), coeficientes_numpy[0], rtol=1e-3)
+    np.testing.assert_allclose(b.nominal("m"), coeficientes_numpy[1], rtol=1e-3)
+    np.testing.assert_allclose(a.incerteza("m/s"), incertezas_numpy[0], rtol=1e-3)
+    np.testing.assert_allclose(b.incerteza("m"), incertezas_numpy[1], rtol=1e-3)
 
 
 def test_regressao_quadratica_recupera_reta(

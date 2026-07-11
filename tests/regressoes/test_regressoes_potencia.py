@@ -72,6 +72,6 @@ def test_regressao_potencia_aceita_x0() -> None:
     valor = cast(lab.Medida, ajuste(x0))
     np.testing.assert_allclose(valor.nominal(""), amplitude, rtol=1e-3)
     assert (
-        str(ajuste)
-        == f"AjusteLeiDePotencia(amplitude=(3,000095 ± 0,000005) , potencia=(1,999975 ± 0,000002) ,x0=2 m)"
+        str(ajuste) == "AjusteLeiDePotencia(amplitude=(3,000095 ± 0,000005) , "
+        "potencia=(1,999975 ± 0,000002) , x0=2 m)"
     )

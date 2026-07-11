@@ -72,7 +72,7 @@ def test_soma_de_angulos_converte_graus_e_radianos(
 ) -> None:
     resultado = lab.Medida(45, "degree", 0.01) + lab.Medida(1, "radian", 0.01)
     esperado = cast(
-        pint.Quantity,
+        pint.Quantity[float],
         ureg_referencia.Quantity(45, "degree") + ureg_referencia.Quantity(1, "radian"),
     )
     assert resultado.nominal("degree") == pytest.approx(esperado.to("degree").magnitude)

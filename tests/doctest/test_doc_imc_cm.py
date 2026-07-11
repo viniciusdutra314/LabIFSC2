@@ -1,10 +1,10 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_imc_cm() -> None:
 
-    massa = Medida(75, "kg", 0.1)
-    altura = Medida(175, "cm", 1)
+    massa = lab.Medida(75, "kg", 0.1)
+    altura = lab.Medida(175, "cm", 1)
     imc = massa / altura**2
     assert str(imc) == "(2,45 ± 0,03)x10⁻³ kg/cm²"
     assert f"{imc}" == "(2,45 ± 0,03)x10⁻³ kg/cm²"

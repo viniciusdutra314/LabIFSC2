@@ -1,21 +1,21 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_grafico_scatter() -> None:
     import matplotlib.pyplot as plt
 
-    campo_magnético = arrayM([250, 150, 110, 90, 70, 60, 55, 40, 25, 20], "muT", 10)
-    distancias = linspaceM(1, 10, 10, "cm", 0.5)
+    campo_magnético = lab.arrayM([250, 150, 110, 90, 70, 60, 55, 40, 25, 20], "muT", 10)
+    distancias = lab.linspaceM(1, 10, 10, "cm", 0.5)
 
     unidade_x = "cm"
     unidade_y = "muT"
 
     plt.style.use("ggplot")
     plt.errorbar(
-        x=nominais(distancias, unidade_x),
-        y=nominais(campo_magnético, unidade_y),
-        xerr=incertezas(distancias, unidade_x),
-        yerr=incertezas(campo_magnético, unidade_y),
+        x=lab.nominais(distancias, unidade_x),
+        y=lab.nominais(campo_magnético, unidade_y),
+        xerr=lab.incertezas(distancias, unidade_x),
+        yerr=lab.incertezas(campo_magnético, unidade_y),
         fmt="o",
     )
 

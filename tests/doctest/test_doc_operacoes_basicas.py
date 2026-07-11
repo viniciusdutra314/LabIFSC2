@@ -1,10 +1,10 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_operacoes_basicas() -> None:
 
-    x = Medida(1, "m", 0.01)
-    y = Medida(200, "cm", 1)
+    x = lab.Medida(1, "m", 0.01)
+    y = lab.Medida(200, "cm", 1)
     # Operações básicas
     assert str(x + y) == "(3,00 ± 0,01) m"
     assert str(x - y) == "(-1,00 ± 0,01) m"

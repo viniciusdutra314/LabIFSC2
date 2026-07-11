@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 import numpy as np
 import pytest
 from numpy.typing import NDArray
@@ -71,7 +73,7 @@ def test_histograma_exato() -> None:
     assert histograma.magnitude == 5
 
 
-def test_gt_ge_lt_le()->None:
+def test_gt_ge_lt_le() -> None:
     x = lab.Medida(5, "m", 0.1)
     y = lab.Medida(5, "m", 0.1)
     assert not (x > y)
@@ -117,16 +119,24 @@ def test_sorted_python(medidas_desordenadas: NDArray[np.object_]) -> None:
     )
 
 
-def test_medidas_nao_devem_ser_comparaveis()->None:
-    x = lab.Medida(5, "", 1)
-    y = lab.Medida(6, "", 0.1)
-    comparacoes = [lambda x, y: x == y, lambda x, y: x != y]
-    for comparacao in comparacoes:
-        with pytest.raises(TypeError):
-            comparacao(x, y)
+ComparacaoMedidas = Callable[[lab.Medida, lab.Medida], bool]
 
 
-def test_medidas_comparacoes()->None:
+@pytest.mark.parametrize(
+    "comparacao",
+    [
+        pytest.param(lambda x, y: x == y, id="igualdade"),
+        pytest.param(lambda x, y: x != y, id="desigualdade"),
+    ],
+)
+def test_medidas_nao_devem_ser_comparaveis(
+    comparacao: ComparacaoMedidas,
+) -> None:
+    with pytest.raises(TypeError):
+        comparacao(lab.Medida(5, "", 1), lab.Medida(6, "", 0.1))
+
+
+def test_medidas_comparacoes() -> None:
     x = lab.Medida(1, "", 0.1)
     y = lab.Medida(0.9, "", 0.01)
     z = lab.Medida(50, "", 1)

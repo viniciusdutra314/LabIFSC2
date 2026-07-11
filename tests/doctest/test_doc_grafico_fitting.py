@@ -1,39 +1,39 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_grafico_fitting() -> None:
     import matplotlib.pyplot as plt
 
-    campo_magnético = arrayM([210, 90, 70, 54, 39, 32, 33, 27, 22, 20], "muT", 1)
-    distancias = linspaceM(1, 10, 10, "cm", 0.01)
+    campo_magnético = lab.arrayM([210, 90, 70, 54, 39, 32, 33, 27, 22, 20], "muT", 1)
+    distancias = lab.linspaceM(1, 10, 10, "cm", 0.01)
 
     unidade_x = "cm"
     unidade_y = "muT"
 
-    fitting = regressao_potencia(distancias, campo_magnético)
+    fitting = lab.regressao_potencia(distancias, campo_magnético)
     plt.style.use("ggplot")
     plt.errorbar(
-        x=nominais(distancias, unidade_x),
-        y=nominais(campo_magnético, unidade_y),
-        xerr=incertezas(distancias, unidade_x),
-        yerr=incertezas(campo_magnético, unidade_y),
+        x=lab.nominais(distancias, unidade_x),
+        y=lab.nominais(campo_magnético, unidade_y),
+        xerr=lab.incertezas(distancias, unidade_x),
+        yerr=lab.incertezas(campo_magnético, unidade_y),
         fmt="o",
         label="Dados experimentais",
         color="red",
     )
 
-    x = linspaceM(1, 10, 100, unidade_x, 0)
+    x = lab.linspaceM(1, 10, 100, unidade_x, 0)
     amostragem = fitting(x)
     plt.plot(
-        nominais(x, unidade_x),
-        nominais(amostragem, unidade_y),
+        lab.nominais(x, unidade_x),
+        lab.nominais(amostragem, unidade_y),
         color="blue",
         label="Curva teórica",
     )
     plt.fill_between(
-        x=nominais(x, unidade_x),
-        y1=curva_min(amostragem, unidade_y),
-        y2=curva_max(amostragem, unidade_y),
+        x=lab.nominais(x, unidade_x),
+        y1=lab.curva_min(amostragem, unidade_y),
+        y2=lab.curva_max(amostragem, unidade_y),
         color="blue",
         alpha=0.3,
     )

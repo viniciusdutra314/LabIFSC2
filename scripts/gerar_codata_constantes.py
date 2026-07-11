@@ -29,10 +29,7 @@ with file_like_object as txt:
         name = name.replace("(", "").replace(")", "").replace(",", "")
         nominal = float(line[60:85].rstrip().replace(" ", "").replace("...", ""))
         incerteza_str = line[85:110].rstrip().replace(" ", "")
-        if incerteza_str == "(exact)":
-            incerteza = float(0)
-        else:
-            incerteza = float(incerteza_str)
+        incerteza = float(0) if incerteza_str == "(exact)" else float(incerteza_str)
         unidade = line[110:].strip()
         constantes_dict[name] = [nominal, incerteza, unidade]
 

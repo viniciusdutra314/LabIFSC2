@@ -1,8 +1,8 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_combinando_formatacoes() -> None:
-    g = Medida(9.8, "m/s²", 0.1)
+    g = lab.Medida(9.8, "m/s²", 0.1)
     assert f"{g:E2}" == "(0,098 ± 0,001)x10² m/s²"
     assert (
         f"{g:E2_latex}"

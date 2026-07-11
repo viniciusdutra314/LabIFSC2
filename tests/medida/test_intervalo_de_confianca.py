@@ -7,8 +7,8 @@ import LabIFSC2 as lab
 
 
 def criar_distribuicao_multimodal() -> lab.Medida:
-    exponencial: lab.Medida = np.exp(  
-        lab.Medida(0, "", 1.5) # type: ignore[call-overload]
+    exponencial: lab.Medida = np.exp(
+        lab.Medida(0, "", 1.5)  # type: ignore[call-overload]
     )
     return np.sin(exponencial)  # type: ignore[call-overload,no-any-return]
 
@@ -69,6 +69,7 @@ def test_intervalo_amostral_contem_probabilidade_em_distribuicao_multimodal(
     )
 
     assert probabilidade_obtida == pytest.approx(probabilidade, abs=1e-5)
+
 
 def test_intervalo_de_medida_exata_e_degenerado_na_unidade_solicitada() -> None:
     medida = lab.Medida(2, "m")

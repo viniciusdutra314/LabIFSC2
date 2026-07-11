@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 import pytest
@@ -49,7 +50,9 @@ def test_operacoes_exatas_transformam_cada_amostra_do_histograma(
     assert isinstance(histograma_resultado, Quantity)
     np.testing.assert_allclose(
         histograma_resultado.magnitude,
-        transformacao_no_histograma(histograma_original.magnitude),
+        transformacao_no_histograma(
+            cast(NDArray[np.float64], histograma_original.magnitude)
+        ),
     )
 
 

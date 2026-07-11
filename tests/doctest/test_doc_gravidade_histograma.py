@@ -1,20 +1,26 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_histograma() -> None:
     import matplotlib.pyplot as plt
     import numpy as np
+    from matplotlib.axes import Axes
     from matplotlib.gridspec import GridSpec
-    from scipy.stats import norm
+    from numpy.typing import ArrayLike
+    from pint import Quantity
+    from scipy.stats import norm  # type: ignore[import-untyped]
 
-    # Definindo as constantes e medidas
-    pi = constantes.pi
-    L = Medida(15, "cm", 1)
-    T = Medida(780, "ms", 80)
+    # Definindo as lab.constantes e medidas
+    pi = lab.constantes.pi
+    L = lab.Medida(15, "cm", 1)
+    T = lab.Medida(780, "ms", 80)
     gravidade = (4 * pi**2) * L / T**2
     histograma_g = gravidade.histograma
     histograma_L = L.histograma
     histograma_T = T.histograma
+    assert isinstance(histograma_g, Quantity)
+    assert isinstance(histograma_L, Quantity)
+    assert isinstance(histograma_T, Quantity)
 
     # Configurando o estilo do plot
     plt.style.use("ggplot")
@@ -29,7 +35,7 @@ def test_doc_histograma() -> None:
     ax3 = fig.add_subplot(gs[1, :])
 
     # Função para ajustar e plotar uma gaussiana
-    def plot_gaussian(ax, data, color):
+    def plot_gaussian(ax: Axes, data: ArrayLike, color: str) -> None:
         mu, std = norm.fit(data)
         xmin, xmax = ax.get_xlim()
         x = np.linspace(xmin, xmax, 100)

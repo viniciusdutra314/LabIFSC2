@@ -1,11 +1,11 @@
-from LabIFSC2 import *
+import LabIFSC2 as lab
 
 
 def test_doc_operacoes_basicas_arrays() -> None:
     import numpy as np
 
-    x = np.array([Medida(1, "m", 0.01), Medida(2, "m", 0.01)])
-    y = np.array([Medida(200, "cm", 1), Medida(400, "cm", 1)])
+    x = np.array([lab.Medida(1, "m", 0.01), lab.Medida(2, "m", 0.01)])
+    y = np.array([lab.Medida(200, "cm", 1), lab.Medida(400, "cm", 1)])
 
     assert str(x + y) == "[(3,00 ± 0,01) m (6,00 ± 0,01) m]"
     assert str(x - y) == "[(-1,00 ± 0,01) m (-2,00 ± 0,01) m]"
