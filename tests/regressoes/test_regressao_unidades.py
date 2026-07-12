@@ -76,4 +76,4 @@ def test_regressao_rejeita_unidade_de_saida_incompativel(
 ) -> None:
     ajuste = regressao_linear(distancias, campo_magnetico)
     with pytest.raises(DimensionalityError):
-        nominais(cast(NDArray[np.object_], ajuste(distancias)), "kg")
+        nominais(ajuste(distancias), "kg")

@@ -1,5 +1,5 @@
 from collections.abc import Iterable, Iterator
-from typing import NamedTuple
+from typing import NamedTuple, overload
 
 import numpy as np
 from numpy.typing import NDArray
@@ -35,6 +35,14 @@ class AjusteExponencial(NamedTuple):
     amplitude: Medida
     expoente: Medida
 
+    @overload
+    def __call__(  # type: ignore[overload-overlap]
+        self, medidas: Medida
+    ) -> Medida: ...
+
+    @overload
+    def __call__(self, medidas: Iterable[Medida]) -> NDArray[np.object_]: ...
+
     def __call__(
         self, medidas: Medida | Iterable[Medida]
     ) -> Medida | NDArray[np.object_]:
@@ -65,6 +73,14 @@ class AjusteLeiDePotencia(NamedTuple):
     amplitude: Medida
     potencia: Medida
     x0: Medida
+
+    @overload
+    def __call__(  # type: ignore[overload-overlap]
+        self, medidas: Medida
+    ) -> Medida: ...
+
+    @overload
+    def __call__(self, medidas: Iterable[Medida]) -> NDArray[np.object_]: ...
 
     def __call__(
         self, medidas: Medida | Iterable[Medida]
@@ -99,6 +115,14 @@ class AjustePolinomial:
 
     def __repr__(self) -> str:
         return f"AjustePolinomial(grau={self.grau}, coeficientes={self.coef})"
+
+    @overload
+    def __call__(  # type: ignore[overload-overlap]
+        self, medidas: Medida
+    ) -> Medida: ...
+
+    @overload
+    def __call__(self, medidas: Iterable[Medida]) -> NDArray[np.object_]: ...
 
     def __call__(
         self, medidas: Medida | Iterable[Medida]

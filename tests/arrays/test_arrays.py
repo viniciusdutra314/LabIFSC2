@@ -1,5 +1,4 @@
 from collections.abc import Callable, Iterable
-from typing import cast
 
 import numpy as np
 import pytest
@@ -117,7 +116,7 @@ def amostragem_regressao() -> NDArray[np.object_]:
         ]
     )
     linha: AjustePolinomial = regressao_linear(x, x)
-    return cast(NDArray[np.object_], linha(x))
+    return linha(x)
 
 
 def test_curva_min(medidas_para_curva: list[Medida]) -> None:

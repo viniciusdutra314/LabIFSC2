@@ -1,4 +1,4 @@
-from typing import cast
+from typing import assert_type
 
 import numpy as np
 import pytest
@@ -54,7 +54,8 @@ def test_ajuste_exponencial_avalia_array(
     ajuste_exponencial: lab.AjusteExponencial,
 ) -> None:
     x = lab.linspaceM(0, 1, 10, "", 0)
-    valores = cast(NDArray[np.object_], ajuste_exponencial(x))
+    valores = assert_type(ajuste_exponencial(x), NDArray[np.object_])
+    assert_type(ajuste_exponencial(lab.Medida(0, "")), lab.Medida)
     assert_array_proximo(
         lab.nominais(valores, ""),
         modelo_exponencial(

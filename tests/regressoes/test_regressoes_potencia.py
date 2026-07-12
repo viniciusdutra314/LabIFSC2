@@ -1,4 +1,4 @@
-from typing import cast
+from typing import assert_type
 
 import numpy as np
 import pytest
@@ -69,7 +69,8 @@ def test_regressao_potencia_aceita_x0() -> None:
     np.testing.assert_allclose(ajuste.amplitude.nominal(""), amplitude, rtol=1e-2)
     np.testing.assert_allclose(ajuste.potencia.nominal(""), potencia, rtol=1e-2)
     np.testing.assert_allclose(ajuste.x0.nominal("m"), 2.0, rtol=1e-5)
-    valor = cast(lab.Medida, ajuste(x0))
+    valor = assert_type(ajuste(x0), lab.Medida)
+    assert_type(ajuste(x), NDArray[np.object_])
     np.testing.assert_allclose(valor.nominal(""), amplitude, rtol=1e-3)
     assert (
         str(ajuste) == "AjusteLeiDePotencia(amplitude=(3,000095 ± 0,000005) , "

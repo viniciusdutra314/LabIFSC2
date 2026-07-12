@@ -1,4 +1,4 @@
-from typing import cast
+from typing import assert_type
 
 import numpy as np
 import pytest
@@ -18,8 +18,8 @@ def teste_ajuste_polinomial() -> None:
     assert c.nominal("") == 2
     assert d.nominal("") == 1
     with pytest.raises(TypeError):
-        polinomio(0)  # type: ignore[arg-type]
-    avaliado = cast(lab.Medida, polinomio(lab.Medida(0, "", 0)))
+        polinomio(0)  # type: ignore[call-overload]
+    avaliado = assert_type(polinomio(lab.Medida(0, "", 0)), lab.Medida)
     assert avaliado.nominal("") == d.nominal("")
 
 
@@ -80,7 +80,7 @@ def test_ajuste_polinomial_avalia_array() -> None:
     ]
     ajuste = lab.AjustePolinomial(coeficientes)
     x = lab.arrayM([1, 2, 3], "", 0.1)
-    resultado = cast(NDArray[np.object_], ajuste(x))
+    resultado = assert_type(ajuste(x), NDArray[np.object_])
 
     assert_array_proximo(lab.nominais(resultado, ""), [9, 18, 31], rtol=5e-3)
 
