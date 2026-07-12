@@ -15,8 +15,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11","3.12", "3.13","3.14"] 
-        os: [windows-latest,windows-11-arm,macos-latest, ubuntu-latest,ubuntu-26.04-arm ]
+        python-version: ["3.11", "3.14"]
+        os:
+          - windows-latest
+          - windows-11-arm
+          - macos-latest
+          - ubuntu-latest
+          - ubuntu-26.04-arm
+        include:
+          - python-version: "3.12"
+            os: ubuntu-latest
+          - python-version: "3.13"
+            os: ubuntu-latest
+          - python-version: "pypy@3.11"
+            os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
