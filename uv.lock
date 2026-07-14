@@ -621,6 +621,9 @@ test = [
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "scipy", version = "1.18.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
 ]
+test-pypy = [
+    { name = "pytest" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -649,6 +652,7 @@ test = [
     { name = "pytest-cov", specifier = ">=7.1.0,<8.0.0" },
     { name = "scipy", specifier = ">=1.15.1,<2.0.0" },
 ]
+test-pypy = [{ name = "pytest", specifier = ">=9.1.1,<10.0.0" }]
 
 [[package]]
 name = "libcst"

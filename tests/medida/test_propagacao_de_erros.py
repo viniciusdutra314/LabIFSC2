@@ -1,13 +1,20 @@
 from collections.abc import Callable
 
+import pytest
+
+pytest.importorskip("mcerp", reason="mcerp não está disponível neste interpretador")
+
 import mcerp  # type: ignore[import-untyped]
 import mcerp.umath as umath  # type: ignore[import-untyped]
 import numpy as np
-import pytest
 from mcerp.core import UncertainFunction  # type: ignore[import-untyped]
 
 import LabIFSC2 as lab
 from tests.medida.utilities import assert_propagacao_igual_mcerp
+
+pytestmark = [
+    pytest.mark.usefixtures("configurar_rng_mcerp"),
+]
 
 OperacaoLab = Callable[[lab.Medida], lab.Medida]
 OperacaoMcerp = Callable[[UncertainFunction], UncertainFunction]
@@ -94,27 +101,3 @@ def test_correlacao_preserva_a_mesma_amostra() -> None:
     assert_propagacao_igual_mcerp(quadrado, esperado)
     referencia = mcerp.N(2, 0.1)
     assert_propagacao_igual_mcerp(medida / medida, referencia / referencia)
-
-
-@pytest.mark.parametrize(
-    ("ufunc", "operacao"),
-    [
-        (np.add, lambda x, y: x + y),
-        (np.subtract, lambda x, y: x - y),
-        (np.multiply, lambda x, y: x * y),
-        (np.divide, lambda x, y: x / y),
-        (np.power, lambda x, y: x**y),
-    ],
-)
-def test_ufuncs_aritmeticas_usam_as_operacoes_de_medida(
-    ufunc: Callable[[lab.Medida, lab.Medida], lab.Medida],
-    operacao: Callable[[lab.Medida, lab.Medida], lab.Medida],
-) -> None:
-    esquerda = lab.Medida(2, "", 0.01)
-    direita = lab.Medida(3, "", 0.01)
-
-    obtido = ufunc(esquerda, direita)
-    esperado = operacao(esquerda, direita)
-
-    np.testing.assert_allclose(obtido.nominal(""), esperado.nominal(""))
-    np.testing.assert_allclose(obtido.incerteza(""), esperado.incerteza(""), rtol=5e-3)

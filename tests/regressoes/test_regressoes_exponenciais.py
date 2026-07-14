@@ -1,9 +1,9 @@
+import sys
 from typing import assert_type
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
-from scipy.optimize import curve_fit  # type: ignore[import-untyped]
 
 import LabIFSC2 as lab
 from tests.utilities import assert_array_proximo, assert_medida_proxima
@@ -67,6 +67,10 @@ def test_ajuste_exponencial_avalia_array(
     )
 
 
+@pytest.mark.skipif(
+    sys.implementation.name == "pypy",
+    reason="SciPy não está disponível no PyPy",
+)
 @pytest.mark.parametrize(
     ("amplitude", "expoente"),
     [(3.6, 1.05), (2.0, 0.5), (1.0, -2.0), (4.5, -0.75), (3.0, 1.5), (1, 0)],
@@ -76,6 +80,8 @@ def test_regressao_exponencial_equivale_ao_scipy(
     expoente: float,
     rng_testes: np.random.Generator,
 ) -> None:
+    from scipy.optimize import curve_fit  # type: ignore[import-untyped]
+
     ruido = rng_testes.normal(1, 0.001, 100)
     x_numerico = np.linspace(3, 10, 100)
     y_numerico = modelo_exponencial(x_numerico, amplitude, expoente) * ruido

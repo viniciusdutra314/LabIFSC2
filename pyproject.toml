@@ -60,6 +60,9 @@ test = [
     "matplotlib >=3.10.0,<4.0.0",
     "mcerp>=1.1.0",
 ]
+test-pypy = [
+    "pytest >=9.1.1,<10.0.0",
+]
 
 [tool.mypy]
 strict = true
@@ -98,6 +101,7 @@ pydocstyle.convention = "google"
 [tool.taskipy.tasks]
 test-all = "task type-checker && task lint-check && task format-check && task test-units"
 test-units = "uv run --group test pytest -vv -s"
+test-pypy = "uv run --no-dev --group test-pypy pytest -vv -s --ignore=tests/doctest"
 test-coverage = "uv run --group test pytest -vv -s --cov LabIFSC2/ --cov-append --no-cov-on-fail --cov-branch --cov-report=html"
 test-mutation = "uv run --group test mutmut run"
 docs = "uv run --group docs mkdocs serve"

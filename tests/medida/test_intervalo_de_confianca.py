@@ -1,6 +1,6 @@
+import sys
 from typing import cast
 
-import mcerp  # type: ignore[import-untyped]
 import numpy as np
 import pytest
 from pint import Quantity
@@ -13,10 +13,17 @@ def criar_distribuicao_multimodal() -> lab.Medida:
     return cast(lab.Medida, np.sin(exponencial))
 
 
+@pytest.mark.skipif(
+    sys.implementation.name == "pypy",
+    reason="mcerp não está disponível no PyPy",
+)
+@pytest.mark.usefixtures("configurar_rng_mcerp")
 @pytest.mark.parametrize("probabilidade", [0.68, 0.95, 0.997])
 def test_intervalo_analitico_coincide_com_percentis_do_mcerp(
     probabilidade: float,
 ) -> None:
+    import mcerp  # type: ignore[import-untyped]
+
     medida = lab.Medida(120, "cm", 15)
     referencia = mcerp.N(1.2, 0.15)
     percentis = [(1 - probabilidade) / 2, (1 + probabilidade) / 2]
@@ -27,10 +34,17 @@ def test_intervalo_analitico_coincide_com_percentis_do_mcerp(
     np.testing.assert_allclose(obtido, esperado, rtol=2e-3, atol=2e-3)
 
 
+@pytest.mark.skipif(
+    sys.implementation.name == "pypy",
+    reason="mcerp não está disponível no PyPy",
+)
+@pytest.mark.usefixtures("configurar_rng_mcerp")
 @pytest.mark.parametrize("probabilidade", [0.5, 0.9, 0.99])
 def test_intervalo_amostral_coincide_com_mcerp_para_distribuicao_normal(
     probabilidade: float,
 ) -> None:
+    import mcerp
+
     medida = lab.Medida(2, "s", 0.3)
     _ = medida.histograma
     referencia = mcerp.N(2, 0.3)

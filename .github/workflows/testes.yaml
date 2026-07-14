@@ -2,9 +2,9 @@ name: Unit Testes
 
 on:
   push:
-    branches: [ "*" ]
+    branches: ["*"]
   pull_request:
-    branches: [ "*" ]
+    branches: ["*"]
 
 jobs:
   pytest:
@@ -15,20 +15,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.14"]
+        python-version: ["pypy@3.11", "3.11", "3.12", "3.13", "3.14"]
         os:
-          - windows-latest
-          - windows-11-arm
-          - macos-latest
-          - ubuntu-latest
-          - ubuntu-26.04-arm
-        include:
-          - python-version: "3.12"
-            os: ubuntu-latest
-          - python-version: "3.13"
-            os: ubuntu-latest
+          [
+            windows-latest,
+            windows-11-arm,
+            macos-latest,
+            ubuntu-latest,
+            ubuntu-26.04-arm,
+          ]
+        exclude:
           - python-version: "pypy@3.11"
-            os: ubuntu-latest
+            os: windows-11-arm
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -39,15 +37,24 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install dependencies
+      - name: Install dependencies for the full test suite
+        if: matrix.python-version != 'pypy@3.11'
         run: uv sync --locked --group test --group linter
 
-      - name: Run all possible tests
+      - name: Install dependencies for the PyPy compatibility suite
+        if: matrix.python-version == 'pypy@3.11'
+        run: uv sync --locked --no-dev --group test-pypy
+
+      - name: Run all possible tests on CPython
+        if: matrix.python-version != 'pypy@3.11'
         env:
           PYTHONIOENCODING: utf-8
         run: uv run task test-all
 
-      - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Run limited tests on PyPy
+        if: matrix.python-version == 'pypy@3.11'
+        env:
+          PYTHONIOENCODING: utf-8
+        run: >-
+          uv run --locked --no-dev --group test-pypy pytest -vv -s
+          --ignore=tests/doctest

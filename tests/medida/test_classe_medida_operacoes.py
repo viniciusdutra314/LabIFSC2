@@ -115,3 +115,27 @@ def test_operacoes_entre_medida_e_array_sao_elemento_a_elemento(
             rtol=1e-3,
             atol=1e-6,
         )
+
+
+@pytest.mark.parametrize(
+    ("ufunc", "operacao"),
+    [
+        (np.add, lambda x, y: x + y),
+        (np.subtract, lambda x, y: x - y),
+        (np.multiply, lambda x, y: x * y),
+        (np.divide, lambda x, y: x / y),
+        (np.power, lambda x, y: x**y),
+    ],
+)
+def test_ufuncs_aritmeticas_usam_as_operacoes_de_medida(
+    ufunc: Callable[[lab.Medida, lab.Medida], lab.Medida],
+    operacao: Callable[[lab.Medida, lab.Medida], lab.Medida],
+) -> None:
+    esquerda = lab.Medida(2, "", 0.01)
+    direita = lab.Medida(3, "", 0.01)
+
+    obtido = ufunc(esquerda, direita)
+    esperado = operacao(esquerda, direita)
+
+    np.testing.assert_allclose(obtido.nominal(""), esperado.nominal(""))
+    np.testing.assert_allclose(obtido.incerteza(""), esperado.incerteza(""), rtol=5e-3)

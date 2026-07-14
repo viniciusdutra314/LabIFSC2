@@ -1,9 +1,9 @@
+import sys
 from typing import assert_type
 
 import numpy as np
 import pytest
 from numpy.typing import NDArray
-from scipy.optimize import curve_fit  # type: ignore
 
 import LabIFSC2 as lab
 
@@ -14,6 +14,10 @@ def modelo_potencia(
     return amplitude * np.power(x, potencia)
 
 
+@pytest.mark.skipif(
+    sys.implementation.name == "pypy",
+    reason="SciPy não está disponível no PyPy",
+)
 @pytest.mark.parametrize(
     ("amplitude", "potencia"),
     [(3.6, 1.05), (2.0, 0.5), (1.0, -2.0), (4.5, -0.75), (3.0, 1.5), (1, 0.05)],
@@ -23,6 +27,8 @@ def test_regressao_potencia_equivale_ao_scipy(
     potencia: float,
     rng_testes: np.random.Generator,
 ) -> None:
+    from scipy.optimize import curve_fit  # type: ignore[import-untyped]
+
     ruido = rng_testes.normal(1, 0.002, 100)
     x_numerico = np.linspace(3, 10, 100)
     y_numerico = modelo_potencia(x_numerico, amplitude, potencia) * ruido
