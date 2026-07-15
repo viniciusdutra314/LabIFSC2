@@ -33,7 +33,7 @@ def test_ajuste_exponencial_armazena_parametros(
     )
     assert (
         str(ajuste_exponencial)
-        == "AjusteExponencial(amplitude=(1,0 ± 0,1) , expoente=(3,00 ± 0,01) )"
+        == "AjusteExponencial(amplitude=(1,0 ± 0,1), expoente=(3,00 ± 0,01))"
     )
 
 

@@ -22,13 +22,15 @@ def test_doc_kepler() -> None:
     )
     periodos = lab.arrayM([float(planeta["periodo"]) for planeta in dados], "days", 0)
     fitting = lab.regressao_potencia(distancias, periodos)
-    assert f"{fitting.potencia}" == "(1,4979 ± 0,0008) "
+    assert fitting.potencia.fmt() == "(1,4979 ± 0,0008)"
     G = lab.constantes.Newtonian_constant_of_gravitation
     pi = lab.constantes.pi
     massa_sol = lab.constantes.solar_mass
     constante_teorica = np.sqrt(4 * pi**2 / (G * massa_sol))
-    assert f"{constante_teorica:si}" == "(5,4540 ± 0,0001)x10⁻¹⁰ s/m¹⋅⁵"
-    assert f"{fitting.amplitude:si}" == "(5,8 ± 0,1)x10⁻¹⁰ s"
+    assert constante_teorica.fmt(unidade="si") == (
+        "(5,4540 ± 0,0001) × 10⁻¹⁰ s/m¹⋅⁵"
+    )
+    assert fitting.amplitude.fmt(unidade="si") == "(5,8 ± 0,1) × 10⁻¹⁰ s"
     # --8<-- [end:kepler_regressao]
     # fmt: on
 

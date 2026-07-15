@@ -8,8 +8,8 @@ def test_doc_sorted_list() -> None:
     voltagem_a = voltagens[0]
     voltagem_b = voltagens[1]
 
-    assert str(max(voltagens)) == "(4,0 ± 0,1) A"
-    assert str(min(voltagens)) == "(1,0 ± 0,1) A"
+    assert max(voltagens).fmt() == "(4,0 ± 0,1) A"
+    assert min(voltagens).fmt() == "(1,0 ± 0,1) A"
     assert str(sorted(voltagens)) == "[(1,0 ± 0,1) A, (3,0 ± 0,1) A, (4,0 ± 0,1) A]"
     assert voltagem_a < voltagem_b
     assert not voltagem_a > voltagem_b

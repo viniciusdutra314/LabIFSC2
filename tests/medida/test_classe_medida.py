@@ -106,16 +106,15 @@ def test_min_max_numpy(medidas_ordenadas: NDArray[np.object_]) -> None:
 
 def test_sorted_numpy(medidas_desordenadas: NDArray[np.object_]) -> None:
     tempos = medidas_desordenadas
-    assert str(np.sort(tempos)) == "[1 s 2 s 3 s 4 s 5 s 6 s 7 s 8 s 9 s 1,0x10¹ s]"
+    assert str(np.sort(tempos)) == "[1 s 2 s 3 s 4 s 5 s 6 s 7 s 8 s 9 s 1 × 10 s]"
     tempos.sort()
-    assert str(np.sort(tempos)) == "[1 s 2 s 3 s 4 s 5 s 6 s 7 s 8 s 9 s 1,0x10¹ s]"
+    assert str(np.sort(tempos)) == "[1 s 2 s 3 s 4 s 5 s 6 s 7 s 8 s 9 s 1 × 10 s]"
 
 
 def test_sorted_python(medidas_desordenadas: NDArray[np.object_]) -> None:
     tempos: NDArray[np.object_] = medidas_desordenadas
     assert (
-        str(sorted(tempos))
-        == "[1 s, 2 s, 3 s, 4 s, 5 s, 6 s, 7 s, 8 s, 9 s, 1,0x10¹ s]"
+        str(sorted(tempos)) == "[1 s, 2 s, 3 s, 4 s, 5 s, 6 s, 7 s, 8 s, 9 s, 1 × 10 s]"
     )
 
 

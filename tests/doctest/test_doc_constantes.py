@@ -6,6 +6,6 @@ def test_doc_constantes() -> None:
     c = lab.constantes.speed_of_light_in_vacuum
     UA = lab.constantes.astronomical_unit
     tempo = UA / c
-    assert f"{tempo:minute}" == "8,316746397269273671781775192 min"
+    assert tempo.fmt(unidade="minute") == "8,316746397269274 min"
     # --8<-- [end:constantes_exatas]
     # fmt: on

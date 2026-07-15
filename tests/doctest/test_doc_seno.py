@@ -7,6 +7,6 @@ def test_doc_seno_vetorizado() -> None:
     # fmt: off
     # --8<-- [start:seno]
     theta = lab.Medida(30, "degree", 0.01)
-    assert str(np.sin(theta))  == "(5,000 ± 0,002)x10⁻¹ "
+    assert np.sin(theta).fmt() == "(5,000 ± 0,002) × 10⁻¹"
     # --8<-- [end:seno]
     # fmt: on

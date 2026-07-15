@@ -16,10 +16,12 @@ def test_doc_lei_de_hook() -> None:
     reta = lab.regressao_linear(deslocamentos, forças)
     a, b = reta
     assert (
-        str(reta) == "AjustePolinomial(grau=1, coeficientes=[(-3 ± 2)x10⁻¹ kg·m/s², "
-        "(2,51 ± 0,06)x10² kg/s²])"
+        str(reta) == "AjustePolinomial(grau=1, coeficientes=[(-3 ± 2) × 10⁻¹ kg·m/s², "
+        "(2,51 ± 0,06) × 10² kg/s²])"
     )
-    assert f"Constante da mola {a:si}" == "Constante da mola (2,51 ± 0,06)x10² kg/s²"
+    assert "Constante da mola " + a.fmt(unidade="si") == (
+        "Constante da mola (2,51 ± 0,06) × 10² kg/s²"
+    )
 
     unidade_x = "cm"
     unidade_y = "N"

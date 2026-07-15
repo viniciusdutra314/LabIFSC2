@@ -1,14 +1,10 @@
 from __future__ import annotations
 
-import math
 import operator
-import re
 from collections.abc import Callable, Iterable
-from decimal import ROUND_HALF_UP, Decimal
 from enum import Enum
 from numbers import Real
 from statistics import NormalDist
-from string import Template
 from typing import Literal, cast, overload
 
 import numpy as np
@@ -17,6 +13,7 @@ from pint import Quantity, UnitRegistry
 from pint.util import UnitsContainer
 
 from . import MCSamples
+from ._fmt import _formatar_medida
 
 _gerador_monte_carlo = np.random.default_rng()
 
@@ -207,109 +204,54 @@ class Medida:
                 self._histograma = cast(Quantity[float], self._nominal)
         return self._histograma
 
-    def __format__(self, format_spec: str) -> str:
+    def fmt(
+        self,
+        unidade: str | None = None,
+        expoente: int | None = None,
+        latex: bool = False,
+        separador_decimal: Literal[".", ","] = ",",
+    ) -> str:
+        """Formata a medida para uma string.
 
-        # parsing format_spec
-        format_spec = format_spec.lower()
-        # E3=3, -E1=-1, +E2=2
-        match_reg = re.search(r"e([+-]?\d+)", format_spec)
-        fmt_exp = int(match_reg.group(1)) if match_reg else False
-        unidade = format_spec.split("_")[0]
+        Args:
+            unidade: Unidade usada no resultado. Por padrão, mantém a unidade da
+                medida. O valor ``"si"`` converte a medida para unidades do SI.
+            expoente: Expoente da potência usada para escalar o valor. Quando
+                omitido, valores maiores ou iguais a 10 são normalizados.
+            separador_decimal: Caractere usado como separador decimal.
+            latex: Indica se o resultado deve usar sintaxe LaTeX.
 
-        if unidade == "":
-            unidade = str(self._nominal.units)
-            nominal_pint = self._nominal
-            incerteza_pint = self._incerteza
-        elif unidade == "si":
-            nominal_pint = self._nominal.to_base_units()
-            incerteza_pint = self._incerteza.to_base_units()
-        elif not (re.search(r"e[+-]?(\d+)", unidade) or "latex" in unidade):
-            nominal_pint = self._nominal.to(unidade)
-            incerteza_pint = self._incerteza.to(unidade)
-        else:
-            nominal_pint = self._nominal
-            incerteza_pint = self._incerteza
-            unidade = str(self._nominal.units)
-        nominal = Decimal(float(nominal_pint.magnitude))
-        incerteza = Decimal(float(incerteza_pint.magnitude))
+        Returns:
+            Medida formatada para exibição.
 
-        exato = incerteza == 0
-        latex = "latex" in format_spec
-        # templates
-        template_console = Template(r"($nominal ± $incerteza)$potencia $unidade")
-        template_console_exato = Template(r"$nominal$potencia $unidade")
-        template_latex = Template(
-            r"($nominal \, \pm \, $incerteza)$potencia \, $unidade"
-        )
-        template_latex_exato = Template(r"$nominal$potencia \, $unidade")
+        Raises:
+            ValueError: Se o separador decimal for inválido.
+        """
+        match unidade:
+            case None:
+                nominal, incerteza = self._nominal, self._incerteza
+            case str(valor) if valor.lower() == "si":
+                nominal = self._nominal.to_base_units()
+                incerteza = self._incerteza.to_base_units()
+            case str(valor):
+                nominal = self._nominal.to(valor)
+                incerteza = self._incerteza.to(valor)
 
-        og_nominal = math.floor(math.log10(abs(nominal))) if nominal else 0
-
-        if fmt_exp is False:
-            nominal *= Decimal(f"1e{-og_nominal}")
-            incerteza *= Decimal(f"1e{-og_nominal}")
-        else:
-            nominal *= Decimal(f"1e{-fmt_exp}")
-            incerteza *= Decimal(f"1e{-fmt_exp}")
-
-        # arredondando nominal e incerteza
-        og_incerteza = math.floor(math.log10(abs(incerteza))) if incerteza else 0
-        arred_nominal = (
-            nominal.quantize(Decimal(f"1e{og_incerteza}"), rounding=ROUND_HALF_UP)
-            if not exato
-            else nominal
-        )
-        arred_incerteza = (
-            incerteza.quantize(Decimal(f"1e{og_incerteza}"), rounding=ROUND_HALF_UP)
-            if not exato
-            else incerteza
-        )
-        arred_nominal_str = str(arred_nominal).replace(".", ",")
-        arred_incerteza_str = str(arred_incerteza).replace(".", ",")
-
-        # potencia bonitinha
-        expoente_normalizacao = fmt_exp if fmt_exp is not False else og_nominal
-        if expoente_normalizacao == 0:
-            potencia_bonita = ""
-        elif latex:
-            potencia_bonita = rf"\times 10^{{{expoente_normalizacao}}}"
-        elif not latex:
-            superscript_map = {
-                "0": "⁰",
-                "1": "¹",
-                "2": "²",
-                "3": "³",
-                "4": "⁴",
-                "5": "⁵",
-                "6": "⁶",
-                "7": "⁷",
-                "8": "⁸",
-                "9": "⁹",
-                "-": "⁻",
-            }
-            potencia_bonita = "x10" + "".join(
-                superscript_map[char] for char in str(expoente_normalizacao)
-            )
-
-        # escolhendo template
-        if exato:
-            template = template_latex_exato if latex else template_console_exato
-        else:
-            template = template_latex if latex else template_console
-
-        unidade = f"{nominal_pint.units:~L}" if latex else f"{nominal_pint.units:~P}"
-        return template.substitute(
-            nominal=arred_nominal_str,
-            incerteza=arred_incerteza_str,
-            potencia=potencia_bonita,
-            unidade=unidade,
+        unidade_formatada = f"{nominal.units:~L}" if latex else f"{nominal.units:~P}"
+        return _formatar_medida(
+            nominal=float(nominal.magnitude),
+            incerteza=float(incerteza.magnitude),
+            unidade=unidade_formatada,
+            expoente=expoente,
+            separador_decimal=separador_decimal,
+            latex=latex,
         )
 
     def __str__(self) -> str:
-        return self.__format__("")
+        return self.fmt()
 
     def __repr__(self) -> str:
-        return self.__format__("")
+        return self.fmt()
 
     def __array_ufunc__(
         self,

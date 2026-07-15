@@ -10,8 +10,8 @@ def test_doc_gravidade_com_LabIFSC2() -> None:
     T = lab.Medida(780, "ms", 1)
     gravidade = (4 * pi**2) * L / T**2
     # --8<-- [start:gravidade_latex]
-    assert f"{gravidade:si}" == "(9,73 ± 0,07) m/s²"
-    assert f"{gravidade:si_latex}" == r"(9,73 \, \pm \, 0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}}"
+    assert gravidade.fmt(unidade="si") == "(9,73 ± 0,07) m/s²"
+    assert gravidade.fmt(unidade="si", latex=True) == r"(9,73 \, \pm \, 0,07) \, \frac{\mathrm{m}}{\mathrm{s}^{2}}"
     # --8<-- [end:gravidade_latex]
     # --8<-- [end:gravidade]
     # fmt: on

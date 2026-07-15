@@ -15,8 +15,8 @@ pi=constantes.pi
 L=Medida(15,'cm',0.1)
 T=Medida(780,'ms',1)
 gravidade=(4*pi**2)*L/T**2
-print(f"{gravidade:si}") #(9,73 ± 0,07) m/s²
-print(f"{gravidade:si_latex}") 
+print(gravidade.fmt(unidade="si")) #(9,73 ± 0,07) m/s²
+print(gravidade.fmt(unidade="si", latex=True))
 '''(9,73 \, \pm \, 0,07) \, 
 \frac{\mathrm{m}}{\mathrm{s}^{2}}'''
 ```

@@ -14,7 +14,7 @@ Repare como não há incerteza no resultado anterior. Isso porque a velocidade d
 
 ## Inexatas
 
-As constantes do exemplo anterior eram exatas porque eram definições do sistema métrico. No próximo exemplo, do cálculo do campo magnético de um solenoide, será usada a constante de permeabilidade magnética \(\mu_0\) = (1,2566370613 ± 2E-10)x10⁻⁶ N/A², que possui uma pequena incerteza:
+As constantes do exemplo anterior eram exatas porque eram definições do sistema métrico. No próximo exemplo, do cálculo do campo magnético de um solenoide, será usada a constante de permeabilidade magnética \(\mu_0\) = (1,2566370613 ± 2E-10) × 10⁻⁶ N/A², que possui uma pequena incerteza:
 
 ```py
 --8<-- "tests/doctest/test_doc_constantes_com_incerteza.py:constante_inexata"

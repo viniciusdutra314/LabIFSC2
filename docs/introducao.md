@@ -106,10 +106,10 @@ Basicamente, isso significa que estamos 95% certos de que o IMC está entre \(23
 
 Por padrão, a unidade guardada em um objeto `Medida` é a unidade calculada pela operação realizada na sua geração. Então, se tivéssemos medido a altura usando \(cm\), teríamos o IMC em \(kg/cm²\).
 
-Como o LabIFSC2 abstrai a conversão de unidades, uma das escolhas de design da biblioteca foi que a unidade em que a Medida é representada é decidida no momento do print, fazendo o print de uma string formatada, as chamadas [fstrings](https://www.youtube.com/watch?v=fkGFNOOmXsY) (formatted strings) de Python.
+Como o LabIFSC2 abstrai a conversão de unidades, a unidade em que uma `Medida` é representada pode ser escolhida ao chamar o método `fmt`.
 
 ```py
-print(f"{medida:unidade}")
+print(medida.fmt(unidade="cm"))
 ```
 
 Um exemplo concreto se encontra abaixo:
